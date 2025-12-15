@@ -1,23 +1,22 @@
 import { Alert, CircularProgress, IconButton, Typography } from "@mui/material";
-import { useExpenses } from "../hooks/useExpenses";
-import { useDeleteExpense } from "../hooks/useDeleteExpense";
+import { useIncomes } from "../hooks/useIncomes";
+import DeleteIcon from "@mui/icons-material/Delete"
 import { useState } from "react";
+import { useDeleteIncome } from "../hooks/useDeleteIncome";
 import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import type { Transaction } from "../types/transaction";
-import { GenericTable } from "../components/GenericTable";
-import type { Column } from "../components/GenericTable";
-import DeleteIcon from "@mui/icons-material/Delete"
+import { GenericTable, type Column } from "../components/GenericTable";
 
-export default function ExpensesPage() { 
-  const {data, isLoading, isError} = useExpenses();
+export default function IncomesPage() {
+  const {data, isError, isLoading} = useIncomes();
 
-  const [ toDelete, setToDelete ] = useState<Transaction | null>(null);
+  const [toDelete, setToDelete] = useState<Transaction | null>(null);
 
-  const deleteExpense = useDeleteExpense();
+  const deleteIncome = useDeleteIncome();
 
-  if(isLoading) return <CircularProgress/>;
+  if(isLoading) return <CircularProgress />
 
-  if(isError) return <Alert severity="error">Failed to load expenses.</Alert>;
+  if(isError) return <Alert severity="error">Failed to load incomes.</Alert>
 
   const columns: Column<Transaction>[] = [
     {
@@ -60,10 +59,10 @@ export default function ExpensesPage() {
     },
   ];
 
-  return (
+  return(
     <>
       <Typography variant="h5" sx={{mb:2}}>
-        Expenses
+        Incomes
       </Typography>
 
       <GenericTable
@@ -72,18 +71,18 @@ export default function ExpensesPage() {
         getRowKey={tx => tx.id}
       />
 
-      <DeleteConfirmDialog 
+      <DeleteConfirmDialog
         open={!!toDelete}
-        title="Delete expense"
+        title="Delete Income"
         description={toDelete?.description}
-        loading={deleteExpense.isPending}
-        onCancel={() => setToDelete(null)}
+        loading={deleteIncome.isPending}
+        onCancel={()=>setToDelete(null)}
         onConfirm={()=>{
           if(!toDelete) return;
-          deleteExpense.mutate(toDelete.id);
-          setToDelete(null)
+          deleteIncome.mutate(toDelete.id);
+          setToDelete(null);
         }}
       />
     </>
-  );
+  )
 }

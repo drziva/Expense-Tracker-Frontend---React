@@ -1,8 +1,11 @@
-import {Box, Typography } from "@mui/material";
+import {Box, Typography, useTheme } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
 
 export default function Header() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
     <Box
       sx={{
@@ -21,9 +24,13 @@ export default function Header() {
       >
         <Box
           component="img"
-          src="/vega-it-logo.png"
+          src="/vega-it-logo-2.png"
           alt="VegaIT"
-          sx={{height:102}}
+          sx={{
+            height:102,
+            filter: isDark ? "invert(1)": "none",
+            transition: "filter 0.2s ease"
+          }}
         />
       </Box>
       <Typography variant="h4">

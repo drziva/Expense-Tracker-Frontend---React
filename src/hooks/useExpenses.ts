@@ -5,5 +5,5 @@ export function useExpenses() {
   return useQuery({
     queryKey: ["expenses"],
     queryFn: getExpenses
-  });
+  }); //optimistic update 
 }
