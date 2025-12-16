@@ -1,0 +1,52 @@
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import type { ReactNode } from "react";
+
+type Props = {
+  open: boolean;
+  title: string;
+  action: string;
+  onClose: () => void;
+  onSubmit: () => void;
+  submitting?: boolean;
+  children: ReactNode;
+}
+
+export function FormDialog({
+  open,
+  title,
+  action,
+  onClose,
+  onSubmit,
+  submitting,
+  children
+}: Props) {
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper":{
+          borderRadius:"10px",
+          padding: "15px",
+        }
+      }}
+    >
+      <DialogTitle>{title}</DialogTitle>
+
+      <DialogContent>{children}</DialogContent>
+
+      <DialogActions>
+        <Button
+          onClick={onSubmit}
+          variant="contained"
+          disabled={submitting}
+        >
+          {action}
+        </Button>
+        <Button onClick={onClose}>
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
+}

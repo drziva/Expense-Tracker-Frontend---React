@@ -1,19 +1,21 @@
-import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
 import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
-import { Table, type Column } from "../components/Table";
+import { Table, type Column } from "../components/ui/Table";
 import type { ExpenseGroup } from "../types/expenseGroup.responses";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete"
 import { useDeleteExpenseGroup } from "../hooks/expense-groups/useDeleteExpenseGroups";
 import formatEuros from "../utils/formatMoney";
-import ConfirmDialog from "../components/ConfirmDialog";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { CreateExpenseGroupDialog } from "../components/expense-groups/CreateExpenseGroupDialog";
 
 export default function ExpenseGroupsPage() {
   const {data, isError, isLoading} = useExpenseGroups();
-  const deleteExpenseGroup = useDeleteExpenseGroup();
 
   const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null)
+  const deleteExpenseGroup = useDeleteExpenseGroup();
 
+  const [toCreate, setToCreate] = useState(false);
 
   if(isError) return <Alert severity="error">Failed to load expense groups.</Alert>
   if(isLoading) return <CircularProgress />
@@ -44,24 +46,37 @@ export default function ExpenseGroupsPage() {
       align:"center",
       header:"Actions",
       render: gr => (
-        <IconButton
-          size="small"
-          onClick={e => {
-            e.stopPropagation();
-            setToDelete(gr);
-          }}
-        >
-          <DeleteIcon fontSize="small"/>
-        </IconButton>
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setToDelete(gr);
+            }}
+          >
+            <DeleteIcon fontSize="small"/>
+          </IconButton>
       )
     }
   ];
 
   return(
-    <>
-      <Typography variant="h5" sx={{mb:2}}>
-        Expense Groups
-      </Typography>
+    <>  
+      <Box
+        sx={{
+          display:"flex",
+          gap:"10px",
+          mb: 1
+        }}
+      >      
+        <Typography variant="h5">
+          Expense Groups
+        </Typography>
+        <Button
+          onClick={() => setToCreate(true)}
+        >
+          <strong>Create Expense Group</strong>
+        </Button>
+      </Box>
       <Paper sx={{p:2}}>
         <Table 
           rows={data?.data ?? []}
@@ -81,6 +96,10 @@ export default function ExpenseGroupsPage() {
           deleteExpenseGroup.mutate(toDelete.id);
           setToDelete(null);
         }}
+      />
+      <CreateExpenseGroupDialog 
+        open={toCreate}
+        onClose={() => setToCreate(false)}
       />
     </>
   )

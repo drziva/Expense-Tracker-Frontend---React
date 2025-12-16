@@ -3,11 +3,11 @@ import { useExpenses } from "../hooks/expenses/useExpenses";
 import { useDeleteExpense } from "../hooks/expenses/useDeleteExpense";
 import { useState } from "react";
 import type { Transaction } from "../types/transaction";
-import { Table } from "../components/Table";
-import type { Column } from "../components/Table";
+import { Table } from "../components/ui/Table";
+import type { Column } from "../components/ui/Table";
 import DeleteIcon from "@mui/icons-material/Delete"
 import formatEuros from "../utils/formatMoney";
-import ConfirmDialog from "../components/ConfirmDialog";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 
 export default function ExpensesPage() { 
   const {data, isLoading, isError} = useExpenses();

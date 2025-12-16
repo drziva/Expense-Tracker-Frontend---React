@@ -1,6 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
 import type { ReactNode } from "react";
-import formatEuros from "../utils/formatMoney";
+import formatEuros from "../../utils/formatMoney";
 
 type DashboardTableSectionProps = {
   title: string;

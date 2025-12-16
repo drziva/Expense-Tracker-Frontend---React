@@ -4,9 +4,9 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import { useState } from "react";
 import { useDeleteIncome } from "../hooks/incomes/useDeleteIncome";
 import type { Transaction } from "../types/transaction";
-import { Table, type Column } from "../components/Table";
+import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
-import ConfirmDialog from "../components/ConfirmDialog";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();

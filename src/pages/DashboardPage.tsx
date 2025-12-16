@@ -1,8 +1,8 @@
 import { Alert, Box, CircularProgress, Paper, Typography } from "@mui/material";
 import { useDashboard } from "../hooks/useDashboard";
 import type { Transaction } from "../types/transaction";
-import { Table, type Column } from "../components/Table";
-import { DashboardTableSection } from "../components/DashboardTableSection";
+import { Table, type Column } from "../components/ui/Table";
+import { DashboardTableSection } from "../components/dashboard/DashboardTableSection";
 import formatEuros from "../utils/formatMoney"
 
 export default function DashboardPage() {
