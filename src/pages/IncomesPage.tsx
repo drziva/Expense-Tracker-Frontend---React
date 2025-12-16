@@ -1,24 +1,23 @@
 import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
-import { useExpenses } from "../hooks/useExpenses";
-import { useDeleteExpense } from "../hooks/useDeleteExpense";
-import { useState } from "react";
-import type { Transaction } from "../types/transaction";
-import { Table } from "../components/Table";
-import type { Column } from "../components/Table";
+import { useIncomes } from "../hooks/useIncomes";
 import DeleteIcon from "@mui/icons-material/Delete"
+import { useState } from "react";
+import { useDeleteIncome } from "../hooks/useDeleteIncome";
+import type { Transaction } from "../types/transaction";
+import { Table, type Column } from "../components/Table";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ConfirmDialog";
 
-export default function ExpensesPage() { 
-  const {data, isLoading, isError} = useExpenses();
+export default function IncomesPage() {
+  const {data, isError, isLoading} = useIncomes();
 
-  const [ toDelete, setToDelete ] = useState<Transaction | null>(null);
+  const [toDelete, setToDelete] = useState<Transaction | null>(null);
 
-  const deleteExpense = useDeleteExpense();
+  const deleteIncome = useDeleteIncome();
 
-  if(isLoading) return <CircularProgress/>;
+  if(isLoading) return <CircularProgress />
 
-  if(isError) return <Alert severity="error">Failed to load expenses.</Alert>;
+  if(isError) return <Alert severity="error">Failed to load incomes.</Alert>
 
   const columns: Column<Transaction>[] = [
     {
@@ -61,13 +60,13 @@ export default function ExpensesPage() {
     },
   ];
 
-  return (
+  return(
     <>
-      <Typography variant="h5" sx={{mb:2, color: "text.primary"}}>
-        Expenses
+      <Typography variant="h5" sx={{mb:2}}>
+        Incomes
       </Typography>
 
-      <Paper sx={{ p:2 }} >
+      <Paper sx={{ p:2 }}>
         <Table
           rows={data?.data ?? []}
           columns={columns}
@@ -75,19 +74,19 @@ export default function ExpensesPage() {
         />
       </Paper>
 
-      <ConfirmDialog 
+      <ConfirmDialog
         open={!!toDelete}
-        title="Delete expense"
+        title="Delete income"
         action="Delete"
         description={`Are you sure you want to delete ${toDelete?.description}`}
-        loading={deleteExpense.isPending}
-        onCancel={() => setToDelete(null)}
+        loading={deleteIncome.isPending}
+        onCancel={()=>setToDelete(null)}
         onConfirm={()=>{
           if(!toDelete) return;
-          deleteExpense.mutate(toDelete.id);
-          setToDelete(null)
+          deleteIncome.mutate(toDelete.id);
+          setToDelete(null);
         }}
       />
     </>
-  );
+  )
 }

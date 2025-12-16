@@ -1,7 +1,8 @@
 import type { GetTransactionResponse } from "../types/transaction";
 import { api } from "./client";
 
-export async function getExpenses() {
-  const res = await api.get<GetTransactionResponse>("/expenses");
+
+export async function getIncomes() {
+  const res = await api.get<GetTransactionResponse>("/incomes");
   return res.data;
 }

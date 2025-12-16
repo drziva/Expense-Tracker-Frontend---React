@@ -1,6 +1,24 @@
 import { Box, List, ListItemButton, ListItemText } from "@mui/material";
 import { NavLink } from "react-router-dom";
 
+const navItems = [
+  {
+    label: "Dashboard",
+    to: "/app/dashboard"
+  },
+  {
+    label: "Incomes",
+    to: "/app/incomes"
+  },
+  {
+    label: "Expenses",
+    to: "/app/expenses"
+  },
+  {
+    label: "Expense Groups",
+    to: "/app/expense-groups"
+  }
+]
 
 export default function Sidebar() {
   return(
@@ -12,29 +30,22 @@ export default function Sidebar() {
         py: 2, 
     }}>
       <List>
-        <ListItemButton 
-          component={NavLink} 
-          to="/app/dashboard"
+       {navItems.map((item)=>(
+        <ListItemButton
+          key={item.to}
+          component={NavLink}
+          to={item.to}
           sx={{
             "&.active": {
-              backgroundColor: "action.selected"
-            }
-          }}  
+              backgroundColor: "action.selected",
+              color: "primary.main",
+            },
+          }}
         >
-          <ListItemText primary="Dashboard"/>
+          <ListItemText primary={item.label}/>
         </ListItemButton>
-
-        <ListItemButton 
-          component={NavLink} 
-          to="/app/expenses"
-          sx={{
-            "&.active": {
-              backgroundColor: "action.selected"
-            }
-          }}  
-        >
-          <ListItemText primary="Expenses"/>
-        </ListItemButton>
+       ))
+       }
       </List>
     </Box>
   )
