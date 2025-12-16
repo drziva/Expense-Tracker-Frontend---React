@@ -7,7 +7,8 @@ export function useDeleteExpense() {
   return useMutation({
     mutationFn: (id: number) => deleteExpense(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey:["expenses"] })
+      queryClient.invalidateQueries({ queryKey:["expenses"] });
+      queryClient.invalidateQueries({ queryKey:["dashboard"]});
     }
   })
 }

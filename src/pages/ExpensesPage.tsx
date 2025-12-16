@@ -1,4 +1,4 @@
-import { Alert, CircularProgress, IconButton, Typography } from "@mui/material";
+import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
 import { useExpenses } from "../hooks/useExpenses";
 import { useDeleteExpense } from "../hooks/useDeleteExpense";
 import { useState } from "react";
@@ -66,12 +66,13 @@ export default function ExpensesPage() {
         Expenses
       </Typography>
 
-      <GenericTable
-        rows={data?.data ?? []}
-        columns={columns}
-        getRowKey={tx => tx.id}
-      />
-
+      <Paper sx={{ p:2 }} >
+        <GenericTable
+          rows={data?.data ?? []}
+          columns={columns}
+          getRowKey={tx => tx.id}
+        />
+      </Paper>
       <DeleteConfirmDialog 
         open={!!toDelete}
         title="Delete expense"

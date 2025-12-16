@@ -21,15 +21,28 @@ export function GenericTable<T>({
   onRowClick,
 }: GenericTableProps<T>) {
   return (
-    <TableContainer component={Paper}>
-      <Table>
+    <TableContainer
+      sx={{
+        "& table": {
+          borderCollapse: "separate",
+          borderSpacing: "0 6px",
+        },
+      }}
+    >
+      <Table size="small">
         <TableHead>
           <TableRow>
-            {columns.map(col => (
+            {columns.map((col) => (
               <TableCell
                 key={col.key}
                 align={col.align ?? "left"}
-                sx={{ fontWeight: 700 }}
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "0.85rem",
+                  color: "text.secondary",
+                  borderBottom: "none",
+                  pb: 1,
+                }}
               >
                 {col.header}
               </TableCell>
@@ -38,15 +51,29 @@ export function GenericTable<T>({
         </TableHead>
 
         <TableBody>
-          {rows.map(row => (
+          {rows.map((row) => (
             <TableRow
               key={getRowKey(row)}
               hover
-              sx={{ cursor: onRowClick ? "pointer" : "default" }}
               onClick={() => onRowClick?.(row)}
+              sx={{
+                cursor: onRowClick ? "pointer" : "default",
+                backgroundColor: "background.paper",
+                transition: "background-color 120ms ease",
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                },
+              }}
             >
-              {columns.map(col => (
-                <TableCell key={col.key} align={col.align ?? "left"}>
+              {columns.map((col) => (
+                <TableCell
+                  key={col.key}
+                  align={col.align ?? "left"}
+                  sx={{
+                    borderBottom: "none",
+                    fontSize: "0.9rem",
+                  }}
+                >
                   {col.render(row)}
                 </TableCell>
               ))}
