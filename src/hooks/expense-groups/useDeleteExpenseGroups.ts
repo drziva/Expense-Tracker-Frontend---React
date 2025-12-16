@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteExpenseGroup } from "../api/deleteExpenseGroup";
-import { QUERY_KEYS } from "../constants/queryKeys";
+import { deleteExpenseGroup } from "../../api/expense-groups.api";
+import { QUERY_KEYS } from "../../constants/queryKeys";
 
 export function useDeleteExpenseGroup() {
   const queryClient = useQueryClient();

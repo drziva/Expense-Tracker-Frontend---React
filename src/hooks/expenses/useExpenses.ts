@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { getExpenses } from "../api/expenses";
-import { QUERY_KEYS } from "../constants/queryKeys";
+import { getExpenses } from "../../api/expenses.api";
+import { QUERY_KEYS } from "../../constants/queryKeys";
 
 export function useExpenses() {
   return useQuery({

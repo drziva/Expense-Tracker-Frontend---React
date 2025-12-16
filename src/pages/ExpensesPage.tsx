@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
-import { useExpenses } from "../hooks/useExpenses";
-import { useDeleteExpense } from "../hooks/useDeleteExpense";
+import { useExpenses } from "../hooks/expenses/useExpenses";
+import { useDeleteExpense } from "../hooks/expenses/useDeleteExpense";
 import { useState } from "react";
 import type { Transaction } from "../types/transaction";
 import { Table } from "../components/Table";

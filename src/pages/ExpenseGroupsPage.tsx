@@ -1,10 +1,10 @@
 import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
-import { useExpenseGroups } from "../hooks/useExpenseGroups";
+import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
 import { Table, type Column } from "../components/Table";
-import type { ExpenseGroup } from "../types/expenseGroup";
+import type { ExpenseGroup } from "../types/expenseGroup.responses";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete"
-import { useDeleteExpenseGroup } from "../hooks/useDeleteExpenseGroup";
+import { useDeleteExpenseGroup } from "../hooks/expense-groups/useDeleteExpenseGroups";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ConfirmDialog";
 
