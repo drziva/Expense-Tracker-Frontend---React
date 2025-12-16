@@ -3,6 +3,7 @@ import { useDashboard } from "../hooks/useDashboard";
 import type { Transaction } from "../types/transaction";
 import { GenericTable, type Column } from "../components/GenericTable";
 import { DashboardTableSection } from "../components/DashboardTableSection";
+import formatMoney from "../utils/formatMoney";
 
 export default function DashboardPage() {
   const { data, isError, isLoading } = useDashboard();
@@ -18,8 +19,9 @@ export default function DashboardPage() {
     },
     {
       key:"amount",
-      header:"Amount (€)",
-      render: tx => tx.amount.toFixed(2)
+      header:"Amount",
+      align: "right",
+      render: tx => formatMoney(tx.amount)
     },
     {
       key:"date",
@@ -51,11 +53,11 @@ export default function DashboardPage() {
         }}
       >
         <Box>
-          <Typography variant="subtitle2" color="text.secondary">
-            Current balance
+          <Typography variant="subtitle1" color="text.secondary">
+            Current balance:
           </Typography>
           <Typography variant="h3" fontWeight={700}>
-            {data?.balance.toFixed(2)} €
+            {formatMoney(data?.balance ?? 0)}
           </Typography>
         </Box>
 

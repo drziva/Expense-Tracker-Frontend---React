@@ -1,5 +1,6 @@
 import { Box, Paper, Typography } from "@mui/material";
 import type { ReactNode } from "react";
+import formatMoney from "../utils/formatMoney";
 
 type DashboardTableSectionProps = {
   title: string;
@@ -44,7 +45,7 @@ export function DashboardTableSection({
           }}
         >
           {sign}
-          {total.toFixed(2)} €
+          {formatMoney(total)}
         </Typography>
       </Box>
 

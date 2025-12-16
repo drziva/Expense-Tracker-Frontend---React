@@ -5,6 +5,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import AppLayout from "../layout/AppLayout";
 import ExpensesPage from "../pages/ExpensesPage";
 import IncomesPage from "../pages/IncomesPage";
+import ExpenseGroupsPage from "../pages/ExpenseGroupsPage";
 
 export default function AppRoutes() {
   return(
@@ -17,6 +18,7 @@ export default function AppRoutes() {
           <Route path="dashboard" element={<DashboardPage/>} />
           <Route path="expenses" element={<ExpensesPage/>} />
           <Route path="incomes" element={<IncomesPage/>}/>
+          <Route path="expense-groups" element={<ExpenseGroupsPage/>}/>          
         </Route>
       </Route>
 

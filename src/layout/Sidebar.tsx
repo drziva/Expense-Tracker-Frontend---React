@@ -13,6 +13,10 @@ const navItems = [
   {
     label: "Expenses",
     to: "/app/expenses"
+  },
+  {
+    label: "Expense Groups",
+    to: "/app/expense-groups"
   }
 ]
 

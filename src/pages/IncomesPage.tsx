@@ -6,6 +6,7 @@ import { useDeleteIncome } from "../hooks/useDeleteIncome";
 import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import type { Transaction } from "../types/transaction";
 import { GenericTable, type Column } from "../components/GenericTable";
+import formatMoney from "../utils/formatMoney";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();
@@ -26,9 +27,9 @@ export default function IncomesPage() {
     },
     {
       key: "amount",
-      header: "Amount (€)",
+      header: "Amount",
       align: "right",
-      render: tx => tx.amount.toFixed(2),
+      render: tx => formatMoney(tx.amount),
     },
     {
       key: "date",

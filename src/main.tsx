@@ -4,7 +4,7 @@ import './index.css';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from './App.tsx';
 import { ThemeProvider, CssBaseline } from "@mui/material";
-import { darkTheme } from "./theme";
+import { darkTheme, lightTheme } from "./theme";
 
 const queryClient = new QueryClient();
 

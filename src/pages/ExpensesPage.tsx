@@ -7,6 +7,7 @@ import type { Transaction } from "../types/transaction";
 import { GenericTable } from "../components/GenericTable";
 import type { Column } from "../components/GenericTable";
 import DeleteIcon from "@mui/icons-material/Delete"
+import formatMoney from "../utils/formatMoney";
 
 export default function ExpensesPage() { 
   const {data, isLoading, isError} = useExpenses();
@@ -27,9 +28,9 @@ export default function ExpensesPage() {
     },
     {
       key: "amount",
-      header: "Amount (€)",
+      header: "Amount",
       align: "right",
-      render: tx => tx.amount.toFixed(2),
+      render: tx => formatMoney(tx.amount),
     },
     {
       key: "date",
@@ -62,7 +63,7 @@ export default function ExpensesPage() {
 
   return (
     <>
-      <Typography variant="h5" sx={{mb:2}}>
+      <Typography variant="h5" sx={{mb:2, color: "text.primary"}}>
         Expenses
       </Typography>
 
