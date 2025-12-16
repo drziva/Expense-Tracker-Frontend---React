@@ -2,12 +2,12 @@ import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/mat
 import { useExpenses } from "../hooks/useExpenses";
 import { useDeleteExpense } from "../hooks/useDeleteExpense";
 import { useState } from "react";
-import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import type { Transaction } from "../types/transaction";
-import { GenericTable } from "../components/GenericTable";
-import type { Column } from "../components/GenericTable";
+import { Table } from "../components/Table";
+import type { Column } from "../components/Table";
 import DeleteIcon from "@mui/icons-material/Delete"
-import formatMoney from "../utils/formatMoney";
+import formatEuros from "../utils/formatMoney";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function ExpensesPage() { 
   const {data, isLoading, isError} = useExpenses();
@@ -30,7 +30,7 @@ export default function ExpensesPage() {
       key: "amount",
       header: "Amount",
       align: "right",
-      render: tx => formatMoney(tx.amount),
+      render: tx => formatEuros(tx.amount),
     },
     {
       key: "date",
@@ -68,16 +68,18 @@ export default function ExpensesPage() {
       </Typography>
 
       <Paper sx={{ p:2 }} >
-        <GenericTable
+        <Table
           rows={data?.data ?? []}
           columns={columns}
           getRowKey={tx => tx.id}
         />
       </Paper>
-      <DeleteConfirmDialog 
+
+      <ConfirmDialog 
         open={!!toDelete}
         title="Delete expense"
-        description={toDelete?.description}
+        action="Delete"
+        description={`Are you sure you want to delete ${toDelete?.description}`}
         loading={deleteExpense.isPending}
         onCancel={() => setToDelete(null)}
         onConfirm={()=>{

@@ -10,17 +10,19 @@ import {
 type Props = {
   open: boolean;
   title: string;
-  description?: string;
+  action: string;
+  description: string;
   loading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 };
 
-export default function DeleteConfirmDialog({
+export default function ConfirmDialog({
   open,
   title,
   description,
   loading = false,
+  action,
   onConfirm,
   onCancel,
 }: Props) {
@@ -39,8 +41,7 @@ export default function DeleteConfirmDialog({
 
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to delete{" "}
-          <strong>{description}</strong>?
+          {description}
         </DialogContentText>
       </DialogContent>
 
@@ -50,7 +51,7 @@ export default function DeleteConfirmDialog({
           onClick={onConfirm}
           disabled={loading}
         >
-          Delete
+          {action}
         </Button>
         <Button 
           variant="contained" 

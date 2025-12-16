@@ -3,6 +3,6 @@ const euroFormatter = new Intl.NumberFormat("de-DE", {
   maximumFractionDigits: 2,
 });
 
-export default function formatMoney(amount: number): string {
+export default function formatEuros(amount: number): string {
   return euroFormatter.format(amount) + " €";
 }

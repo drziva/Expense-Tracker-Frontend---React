@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Table as BasicTable, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 export type Column<T> = {
   key: string;
@@ -7,19 +7,19 @@ export type Column<T> = {
   align?: "left" | "right" | "center";
 }
 
-type GenericTableProps<T> = {
+type TableProps<T> = {
   rows: T[];
   columns: Column<T>[];
   getRowKey: (row: T) => string | number;
   onRowClick?: (row: T) => void;
 }
 
-export function GenericTable<T>({
+export function Table<T>({
   rows,
   columns,
   getRowKey,
   onRowClick,
-}: GenericTableProps<T>) {
+}: TableProps<T>) {
   return (
     <TableContainer
       sx={{
@@ -29,7 +29,7 @@ export function GenericTable<T>({
         },
       }}
     >
-      <Table size="small">
+      <BasicTable size="small">
         <TableHead>
           <TableRow>
             {columns.map((col) => (
@@ -80,7 +80,7 @@ export function GenericTable<T>({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </BasicTable>
     </TableContainer>
   );
 }

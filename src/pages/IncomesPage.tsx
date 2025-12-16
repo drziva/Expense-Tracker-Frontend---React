@@ -3,10 +3,10 @@ import { useIncomes } from "../hooks/useIncomes";
 import DeleteIcon from "@mui/icons-material/Delete"
 import { useState } from "react";
 import { useDeleteIncome } from "../hooks/useDeleteIncome";
-import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import type { Transaction } from "../types/transaction";
-import { GenericTable, type Column } from "../components/GenericTable";
-import formatMoney from "../utils/formatMoney";
+import { Table, type Column } from "../components/Table";
+import formatEuros from "../utils/formatMoney";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();
@@ -29,7 +29,7 @@ export default function IncomesPage() {
       key: "amount",
       header: "Amount",
       align: "right",
-      render: tx => formatMoney(tx.amount),
+      render: tx => formatEuros(tx.amount),
     },
     {
       key: "date",
@@ -67,17 +67,18 @@ export default function IncomesPage() {
       </Typography>
 
       <Paper sx={{ p:2 }}>
-        <GenericTable
+        <Table
           rows={data?.data ?? []}
           columns={columns}
           getRowKey={tx => tx.id}
         />
       </Paper>
 
-      <DeleteConfirmDialog
+      <ConfirmDialog
         open={!!toDelete}
-        title="Delete Income"
-        description={toDelete?.description}
+        title="Delete income"
+        action="Delete"
+        description={`Are you sure you want to delete ${toDelete?.description}`}
         loading={deleteIncome.isPending}
         onCancel={()=>setToDelete(null)}
         onConfirm={()=>{

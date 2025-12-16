@@ -1,9 +1,9 @@
 import { Alert, Box, CircularProgress, Paper, Typography } from "@mui/material";
 import { useDashboard } from "../hooks/useDashboard";
 import type { Transaction } from "../types/transaction";
-import { GenericTable, type Column } from "../components/GenericTable";
+import { Table, type Column } from "../components/Table";
 import { DashboardTableSection } from "../components/DashboardTableSection";
-import formatMoney from "../utils/formatMoney";
+import formatEuros from "../utils/formatMoney"
 
 export default function DashboardPage() {
   const { data, isError, isLoading } = useDashboard();
@@ -21,7 +21,7 @@ export default function DashboardPage() {
       key:"amount",
       header:"Amount",
       align: "right",
-      render: tx => formatMoney(tx.amount)
+      render: tx => formatEuros(tx.amount)
     },
     {
       key:"date",
@@ -57,7 +57,7 @@ export default function DashboardPage() {
             Current balance:
           </Typography>
           <Typography variant="h3" fontWeight={700}>
-            {formatMoney(data?.balance ?? 0)}
+            {formatEuros(data?.balance ?? 0)}
           </Typography>
         </Box>
 
@@ -75,7 +75,7 @@ export default function DashboardPage() {
           color="success.main"
           sign="+"
         >
-          <GenericTable
+          <Table
             rows={data?.incomes ?? []}
             columns={txColumns}
             getRowKey={tx=> tx.id}
@@ -88,7 +88,7 @@ export default function DashboardPage() {
           color="error.main"
           sign="-"
         >
-          <GenericTable
+          <Table
             rows={data?.expenses ?? []}
             columns={txColumns}
             getRowKey={tx=> tx.id}

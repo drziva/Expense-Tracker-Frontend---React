@@ -1,12 +1,12 @@
 import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
 import { useExpenseGroups } from "../hooks/useExpenseGroups";
-import { GenericTable, type Column } from "../components/GenericTable";
+import { Table, type Column } from "../components/Table";
 import type { ExpenseGroup } from "../types/expenseGroup";
 import { useState } from "react";
-import DeleteConfirmDialog from "../components/DeleteConfirmDialog";
 import DeleteIcon from "@mui/icons-material/Delete"
 import { useDeleteExpenseGroup } from "../hooks/useDeleteExpenseGroup";
-import formatMoney from "../utils/formatMoney"; 
+import formatEuros from "../utils/formatMoney";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 export default function ExpenseGroupsPage() {
   const {data, isError, isLoading} = useExpenseGroups();
@@ -37,10 +37,11 @@ export default function ExpenseGroupsPage() {
       key:"budget-cap",
       header:"Budget Cap",
       align: "right",
-      render: gr => gr.budgetCap ? formatMoney(gr.budgetCap) : "-"
+      render: gr => gr.budgetCap ? formatEuros(gr.budgetCap) : "-"
     },
     {
       key:"actions",
+      align:"center",
       header:"Actions",
       render: gr => (
         <IconButton
@@ -62,15 +63,18 @@ export default function ExpenseGroupsPage() {
         Expense Groups
       </Typography>
       <Paper sx={{p:2}}>
-        <GenericTable 
+        <Table 
           rows={data?.data ?? []}
           columns={groupColumns}
           getRowKey={gr => gr.id}
         />
       </Paper>
-      <DeleteConfirmDialog
+
+      <ConfirmDialog
         open={!!toDelete}
         title="Delete expense group"
+        action="Delete"
+        description={`Are you sure you want to delete the "${toDelete?.name}" group?`}
         onCancel={()=>setToDelete(null)}
         onConfirm={()=>{
           if(!toDelete) return;
