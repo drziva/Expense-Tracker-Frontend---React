@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
 import { useCreateExpenseGroup } from "../../hooks/expense-groups/useCreateExpenseGroups";
 import { FormDialog } from "../ui/FormDialog";
 import { ExpenseGroupForm } from "./form/ExpenseGroupForm";
 import type { ExpenseGroup } from "../../types/expenseGroup.responses";
 import { useUpdateExpenseGroup } from "../../hooks/expense-groups/useUpdateExpenseGroups";
 import { Alert } from "@mui/material";
+import { expenseGroupSchema } from "../../schemas/expense-group.schema";
+import type { z } from "zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 
 type Props = {
   open: boolean;
@@ -12,63 +16,57 @@ type Props = {
   group?: ExpenseGroup | null;
 }
 
+type FormInput = z.input<typeof expenseGroupSchema>
+type FormOutput = z.infer<typeof expenseGroupSchema>
+
 export function ExpenseGroupDialog({open, onClose, group}: Props) {
   const createExpenseGroup = useCreateExpenseGroup();
   const updateExpenseGroup = useUpdateExpenseGroup();
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [budgetCap, setBudgetCap] = useState("");
-  
-  function resetForm(){
-    setName("");
-    setDescription("");
-    setBudgetCap("");
-  }
+  const form = useForm<FormInput, any, FormOutput>({
+    resolver: zodResolver(expenseGroupSchema),
+    defaultValues:{
+      name:"",
+      description:"",
+      budgetCap:""
+    }
+  })
 
   const isUpdate = !!group;
+
+  useEffect(() => {
+    if(!open){
+      form.reset();
+      createExpenseGroup.reset();
+      updateExpenseGroup.reset();
+    }
+    if(isUpdate && group) {
+      form.reset({
+        name: group.name,
+        description: group?.description,
+        budgetCap: group.budgetCap === undefined ? "" : String(group.budgetCap)
+      })
+    }
+  }, [open, group])
+
+  async function onSubmit(data: FormOutput) {
+    try{
+      if(isUpdate && group) {
+        await updateExpenseGroup.mutateAsync({
+          id: group.id,
+          req: data
+        })
+      }
+      else if(!isUpdate){
+        await createExpenseGroup.mutateAsync(data);
+      }
+      onClose();
+    } catch(error) {}
+  }
+
   const title = isUpdate ? 
     "Update Expense Group" :
     "Create Expense Group";
-
-  useEffect(() => {
-    if(!open) {
-      createExpenseGroup.reset();
-      updateExpenseGroup.reset();
-      resetForm();
-      return;
-    };
-
-    if (isUpdate && group) {
-      setName(group.name);
-      setDescription(group.description);
-      setBudgetCap(group.budgetCap != null ? String(group.budgetCap) : "");
-    }
-  },[open, group])
-
-
-  async function handleSubmit() {
-    const payload = {
-      name,
-      description,
-      budgetCap: budgetCap.trim() === "" ? null : Number(budgetCap)
-    }
-
-    try {
-      if(!isUpdate) {
-        await createExpenseGroup.mutateAsync(payload);
-      }
-      if(isUpdate) {
-        await updateExpenseGroup.mutateAsync({
-          id: group.id,
-          req: payload
-        });
-      }
-      onClose();
-    } catch{
-
-    }
-  }
 
   const isSubmitting =
     isUpdate
@@ -80,7 +78,7 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
       ? updateExpenseGroup.error?.response?.data?.message
       : createExpenseGroup.error?.response?.data?.message
 
-  const error = Array.isArray(rawError) ? rawError[0] : rawError
+  const apiError = Array.isArray(rawError) ? rawError[0] : rawError
   
   return(
     <FormDialog
@@ -88,22 +86,17 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
       title={title}
       action={isUpdate ? "Update" : "Create"}
       onClose={onClose}
-      onSubmit={handleSubmit}
+      onSubmit={form.handleSubmit(onSubmit)}
       submitting={isSubmitting}
     > 
       {
-        error && 
+        apiError && 
         <Alert severity="error">
-          {error ?? `The has been an error ${isUpdate ? "updating" : "creating"} the expense group` }
+          {apiError ?? `The has been an error ${isUpdate ? "updating" : "creating"} the expense group` }
         </Alert>
       }
       <ExpenseGroupForm
-        name={name}
-        description={description}
-        budgetCap={budgetCap}
-        onBudgetCapChange={setBudgetCap}
-        onDescriptionChange={setDescription}
-        onNameChange={setName}
+        form={form}
       />
     </FormDialog>
   )

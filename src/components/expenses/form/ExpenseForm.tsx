@@ -1,62 +1,70 @@
-import { FormControl, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Controller, type UseFormReturn } from "react-hook-form";
 import type { ExpenseGroup } from "../../../types/expenseGroup.responses";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { expenseSchema } from "../../../schemas/expense.schema";
+import type { z } from "zod";
+
+type FormInput = z.input<typeof expenseSchema>;
+type FormOutput = z.infer<typeof expenseSchema>;
 
 type Props = {
-  description: string;
-  amount: string;
+  form: UseFormReturn<FormInput, any, FormOutput>;
   groups: ExpenseGroup[];
-  groupId: string;
-  onDescriptionChange: (val: string) => void;
-  onAmountChange: (val: string) => void;
-  onGroupIdChange: (val: string) => void
-}
+};
 
-export function ExpenseForm({
-  description,
-  amount,
-  groups,
-  groupId,
-  onDescriptionChange,
-  onAmountChange,
-  onGroupIdChange
-}: Props) {
+export function ExpenseForm({form, groups}: Props) {
+  const {
+    register,
+    formState: {errors}
+  } = form
+
   return(
-    <Stack      
+    <Stack
       sx={{
-        gap:"12px",
-        minWidth:"480px",
-        padding:"10px"
-    }}>
+        gap: "12px",
+        minWidth: "480px",
+        padding: "10px",
+      }}
+    >
       <TextField
         label="Description"
-        value={description}
-        onChange={(e) => onDescriptionChange(e.target.value)}
-      />
-      <TextField
-        label="Amount"
-        value={amount}
-        onChange={(e) => onAmountChange(e.target.value)}
+        {...register("description")}
+        error={!!errors.description}
+        helperText={errors.description?.message}
       />
 
-      <FormControl>
+      <TextField
+        label="Amount"
+        {...register("amount")}
+        error={!!errors.amount}
+        helperText={errors.amount?.message}
+      />
+
+      <FormControl error={!!errors.groupId}>
         <InputLabel id="expense-group-label">
           Expense Group
         </InputLabel>
 
-        <Select
-          labelId="expense-group-label"
-          value={groupId}
-          label="Expense Group"
-          onChange={(e) => onGroupIdChange(e.target.value)}
-        >
-          {
-            groups.map((gr)=>(
+      <Controller
+        name="groupId"
+        control={form.control}
+        render={({ field }) => (
+          <Select
+            {...field}
+            labelId="expense-group-label"
+            label="Expense Group"
+          >
+            {groups.map((gr) => (
               <MenuItem key={gr.id} value={String(gr.id)}>
                 {gr.name}
               </MenuItem>
-            ))
-          }
-        </Select>
+            ))}
+          </Select>
+        )}
+      />
+        <FormHelperText>
+          {errors.groupId?.message}
+        </FormHelperText>
       </FormControl>
     </Stack>
   )

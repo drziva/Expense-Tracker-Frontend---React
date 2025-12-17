@@ -1,22 +1,21 @@
 import { Stack, TextField } from "@mui/material";
+import type { z } from "zod";
+import type { expenseGroupSchema } from "../../../schemas/expense-group.schema";
+import type { UseFormReturn } from "react-hook-form";
+
+type FormInput = z.input<typeof expenseGroupSchema>;
+type FormOutput = z.infer<typeof expenseGroupSchema>
 
 type Props = {
-  name: string;
-  description: string;
-  budgetCap?: string;
-  onNameChange: (val: string) => void
-  onDescriptionChange: (val: string) => void
-  onBudgetCapChange: (val: string) => void
+  form: UseFormReturn<FormInput, any, FormOutput>
 }
 
-export function ExpenseGroupForm({
-  name,
-  description,
-  budgetCap,
-  onNameChange,
-  onDescriptionChange,
-  onBudgetCapChange
-}: Props) {
+export function ExpenseGroupForm({form}: Props) {
+  const {
+    register,
+    formState:{errors}
+  } = form
+
   return(
     <Stack
       sx={{
@@ -27,23 +26,24 @@ export function ExpenseGroupForm({
     >
       <TextField
         label="Name"
-        value={name}
-        onChange={(e) => onNameChange(e.target.value)}
-        fullWidth
+        {...register("name")}
+        error={!!errors.name}
+        helperText={errors.name?.message}
         autoFocus
       />
       <TextField
         label="Description"
-        value={description}
-        onChange={(e) => onDescriptionChange(e.target.value)}
+        {...register("description")}
+        error={!!errors.description}
+        helperText={errors.description?.message}
         fullWidth
       />
       <TextField
         label="Budget Cap"
-        value={budgetCap}
-        onChange={(e) => onBudgetCapChange(e.target.value)}
+        {...register("budgetCap")}
+        error={!!errors.budgetCap}
+        helperText={errors.budgetCap?.message}
         fullWidth
-        inputMode="decimal"
       />
     </Stack>
   )
