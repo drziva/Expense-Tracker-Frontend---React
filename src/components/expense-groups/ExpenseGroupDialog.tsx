@@ -8,8 +8,8 @@ import { Alert } from "@mui/material";
 
 type Props = {
   open: boolean;
-  onClose: ()=> void;
-  group?: ExpenseGroup | null
+  onClose: () => void;
+  group?: ExpenseGroup | null;
 }
 
 export function ExpenseGroupDialog({open, onClose, group}: Props) {
@@ -32,24 +32,19 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
     "Create Expense Group";
 
   useEffect(() => {
-  if(!open) {
-    createExpenseGroup.reset();
-    updateExpenseGroup.reset();
-    resetForm();
-    return;
-  };
+    if(!open) {
+      createExpenseGroup.reset();
+      updateExpenseGroup.reset();
+      resetForm();
+      return;
+    };
 
-  if (isUpdate) {
-    setName(group.name);
-    setDescription(group.description);
-    setBudgetCap(group.budgetCap != null ? String(group.budgetCap) : "");
-  }
-
-  if(!isUpdate){
-    resetForm();
-  }
-
-},[open, group])
+    if (isUpdate && group) {
+      setName(group.name);
+      setDescription(group.description);
+      setBudgetCap(group.budgetCap != null ? String(group.budgetCap) : "");
+    }
+  },[open, group])
 
 
   async function handleSubmit() {
@@ -64,7 +59,6 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
         await createExpenseGroup.mutateAsync(payload);
       }
       if(isUpdate) {
-        if(!group) return;
         await updateExpenseGroup.mutateAsync({
           id: group.id,
           req: payload
@@ -97,12 +91,12 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
       onSubmit={handleSubmit}
       submitting={isSubmitting}
     > 
-        {
-          error && 
-            <Alert severity="error">
-              {error ?? `The has been an error ${isUpdate ? "updating" : "creating"} the expense group` }
-            </Alert>
-        }
+      {
+        error && 
+        <Alert severity="error">
+          {error ?? `The has been an error ${isUpdate ? "updating" : "creating"} the expense group` }
+        </Alert>
+      }
       <ExpenseGroupForm
         name={name}
         description={description}

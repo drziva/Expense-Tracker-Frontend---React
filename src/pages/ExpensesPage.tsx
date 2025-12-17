@@ -1,4 +1,4 @@
-import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
 import { useExpenses } from "../hooks/expenses/useExpenses";
 import { useDeleteExpense } from "../hooks/expenses/useDeleteExpense";
 import { useState } from "react";
@@ -6,18 +6,21 @@ import type { Transaction } from "../types/transaction";
 import { Table } from "../components/ui/Table";
 import type { Column } from "../components/ui/Table";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
+import EditIcon from '@mui/icons-material/Edit';
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { ExpenseDialog } from "../components/expenses/ExpenseDialog";
+import type { Expense } from "../types/expenses.requests";
 
 export default function ExpensesPage() { 
   const {data, isLoading, isError} = useExpenses();
 
-  const [ toDelete, setToDelete ] = useState<Transaction | null>(null);
-
   const deleteExpense = useDeleteExpense();
+  const [ toDelete, setToDelete ] = useState<Transaction | null>(null);
+  const [toCreate, setToCreate] = useState(false)
+  const [toUpdate, setToUpdate] = useState<Expense | null>(null);
 
   if(isLoading) return <CircularProgress/>;
-
   if(isError) return <Alert severity="error">Failed to load expenses.</Alert>;
 
   const columns: Column<Transaction>[] = [
@@ -48,24 +51,49 @@ export default function ExpensesPage() {
       header: "Actions",
       align: "center",
       render: tx => (
-        <IconButton
-          size="small"
-          onClick={e => {
-            e.stopPropagation();
-            setToDelete(tx);
-          }}
-        >
-          <DeleteIcon fontSize="small" />
+        <>
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setToDelete(tx);
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setToUpdate(tx);
+            }}
+          >
+          <EditIcon fontSize="small" />
         </IconButton>
+        </>
       ),
     },
   ];
 
   return (
     <>
-      <Typography variant="h5" sx={{mb:2, color: "text.primary"}}>
-        Expenses
-      </Typography>
+      <Box
+        sx={{
+          display:"flex",
+          gap:"10px",
+          mb: 1
+        }}
+      >      
+        <Typography variant="h5">
+          Expenses
+        </Typography>
+        <Button
+          onClick={() => setToCreate(true)}
+          variant="outlined"
+        >
+          <strong>Add Expense</strong>
+        </Button>
+      </Box>
 
       <Paper sx={{ p:2 }} >
         <Table
@@ -87,6 +115,17 @@ export default function ExpensesPage() {
           deleteExpense.mutate(toDelete.id);
           setToDelete(null)
         }}
+      />
+
+     <ExpenseDialog
+        open={toCreate}
+        onClose={() => setToCreate(false)}
+      />
+
+      <ExpenseDialog
+        open={!!toUpdate}
+        onClose={() => setToUpdate(null)}
+        expense={toUpdate}
       />
     </>
   );

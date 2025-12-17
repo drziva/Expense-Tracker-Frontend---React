@@ -89,7 +89,7 @@ export default function ExpenseGroupsPage() {
           onClick={() => setToCreate(true)}
           variant="outlined"
         >
-          <strong>Create Expense Group</strong>
+          <strong>Add Expense Group</strong>
         </Button>
       </Box>
       <Paper sx={{p:2}}>
