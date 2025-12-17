@@ -27,7 +27,7 @@ export function FormDialog({
       sx={{
         "& .MuiDialog-paper":{
           borderRadius:"10px",
-          padding: "15px",
+          padding: "25px",
         }
       }}
     >
@@ -43,7 +43,11 @@ export function FormDialog({
         >
           {action}
         </Button>
-        <Button onClick={onClose}>
+        <Button 
+          onClick={onClose}
+          variant="contained"
+          color="inherit"  
+        >
           Cancel
         </Button>
       </DialogActions>

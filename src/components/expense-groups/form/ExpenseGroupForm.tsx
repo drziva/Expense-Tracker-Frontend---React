@@ -20,8 +20,8 @@ export function ExpenseGroupForm({
   return(
     <Stack
       sx={{
-        gap:"5px",
-        minWidth:"450px",
+        gap:"12px",
+        minWidth:"480px",
         padding:"10px"
       }}
     >

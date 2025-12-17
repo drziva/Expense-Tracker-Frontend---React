@@ -11,8 +11,8 @@ const colors = {
   light: {
     bg: "#F8FAFC",
     paper: "#FFFFFF",
-    textPrimary: "#5c5b5bff",
-    textSecondary: "#475569",
+    textPrimary: "#414040ff",
+    textSecondary: "#262e3aff",
     divider: "rgba(0, 0, 0, 0.08)",
   },
   primary: "#7C3AED",

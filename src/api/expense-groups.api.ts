@@ -1,5 +1,5 @@
 import { api } from "./client";
-import type { CreateExpenseGroupRequest } from "../types/expenseGroup.requests";
+import type { ExpenseGroupRequest } from "../types/expenseGroup.requests";
 import type { GetExpenseGroupResponse } from "../types/expenseGroup.responses";
 
 
@@ -8,7 +8,7 @@ export async function getExpenseGroups() {
   return res.data;
 }
 
-export async function createExpenseGroup(req: CreateExpenseGroupRequest) {
+export async function createExpenseGroup(req: ExpenseGroupRequest) {
   const res = await api.post("/expense-groups", req);
   return res.data;
 }
@@ -18,3 +18,7 @@ export async function deleteExpenseGroup(id: number) {
   return res.data;
 }
 
+export async function updateExpenseGroup(id: number, req: ExpenseGroupRequest) {
+  const res = await api.put(`/expense-groups/${id}`, req);
+  return res.data;
+}

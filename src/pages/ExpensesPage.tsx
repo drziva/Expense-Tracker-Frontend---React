@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { Transaction } from "../types/transaction";
 import { Table } from "../components/ui/Table";
 import type { Column } from "../components/ui/Table";
-import DeleteIcon from "@mui/icons-material/Delete"
+import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 

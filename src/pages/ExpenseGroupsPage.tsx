@@ -3,17 +3,20 @@ import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
 import { Table, type Column } from "../components/ui/Table";
 import type { ExpenseGroup } from "../types/expenseGroup.responses";
 import { useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete"
+import DeleteIcon from "@mui/icons-material/DeleteOutline"
+import EditIcon from '@mui/icons-material/Edit';
 import { useDeleteExpenseGroup } from "../hooks/expense-groups/useDeleteExpenseGroups";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
-import { CreateExpenseGroupDialog } from "../components/expense-groups/CreateExpenseGroupDialog";
+import { ExpenseGroupDialog } from "../components/expense-groups/ExpenseGroupDialog";
 
 export default function ExpenseGroupsPage() {
   const {data, isError, isLoading} = useExpenseGroups();
 
   const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null)
   const deleteExpenseGroup = useDeleteExpenseGroup();
+
+  const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null)
 
   const [toCreate, setToCreate] = useState(false);
 
@@ -46,6 +49,7 @@ export default function ExpenseGroupsPage() {
       align:"center",
       header:"Actions",
       render: gr => (
+        <>
           <IconButton
             size="small"
             onClick={e => {
@@ -55,6 +59,16 @@ export default function ExpenseGroupsPage() {
           >
             <DeleteIcon fontSize="small"/>
           </IconButton>
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setToUpdate(gr)
+            }}
+          >
+            <EditIcon fontSize="small"/>
+          </IconButton>          
+        </>
       )
     }
   ];
@@ -73,6 +87,7 @@ export default function ExpenseGroupsPage() {
         </Typography>
         <Button
           onClick={() => setToCreate(true)}
+          variant="outlined"
         >
           <strong>Create Expense Group</strong>
         </Button>
@@ -97,9 +112,15 @@ export default function ExpenseGroupsPage() {
           setToDelete(null);
         }}
       />
-      <CreateExpenseGroupDialog 
+      <ExpenseGroupDialog 
         open={toCreate}
         onClose={() => setToCreate(false)}
+      />
+
+      <ExpenseGroupDialog 
+        open={!!toUpdate}
+        onClose={()=> setToUpdate(null)}
+        group={toUpdate}
       />
     </>
   )

@@ -1,6 +1,6 @@
 import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
 import { useIncomes } from "../hooks/incomes/useIncomes";
-import DeleteIcon from "@mui/icons-material/Delete"
+import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import { useState } from "react";
 import { useDeleteIncome } from "../hooks/incomes/useDeleteIncome";
 import type { Transaction } from "../types/transaction";

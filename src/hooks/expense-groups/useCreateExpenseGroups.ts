@@ -3,15 +3,15 @@ import { createExpenseGroup } from "../../api/expense-groups.api";
 import { QUERY_KEYS } from "../../constants/queryKeys";
 import type { ExpenseGroup } from "../../types/expenseGroup.responses";
 import type { AxiosError } from "axios";
-import type { CreateExpenseGroupRequest } from "../../types/expenseGroup.requests";
+import type { ExpenseGroupRequest } from "../../types/expenseGroup.requests";
 
 export function useCreateExpenseGroup() {
   const queryClient = useQueryClient();
 
   return useMutation<
     ExpenseGroup,
-    AxiosError<{ message?: string }>,
-    CreateExpenseGroupRequest
+    AxiosError<{ message?: string | string[] }>,
+    ExpenseGroupRequest
   >({
     mutationFn: createExpenseGroup,
     onSuccess: () => {
