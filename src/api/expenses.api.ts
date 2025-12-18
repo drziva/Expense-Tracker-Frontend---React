@@ -1,9 +1,9 @@
 import type { ExpenseRequest } from "../types/expenses.requests";
-import type { GetTransactionResponse } from "../types/transaction";
+import type { GetExpenseResponse } from "../types/expenses.responses";
 import { api } from "./client";
 
 export async function getExpenses() {
-  const res = await api.get<GetTransactionResponse>("/expenses");
+  const res = await api.get<GetExpenseResponse>("/expenses");
   return res.data;
 }
 

@@ -2,7 +2,6 @@ import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } f
 import { useExpenses } from "../hooks/expenses/useExpenses";
 import { useDeleteExpense } from "../hooks/expenses/useDeleteExpense";
 import { useState } from "react";
-import type { Transaction } from "../types/transaction";
 import { Table } from "../components/ui/Table";
 import type { Column } from "../components/ui/Table";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
@@ -16,14 +15,14 @@ export default function ExpensesPage() {
   const {data, isLoading, isError} = useExpenses();
 
   const deleteExpense = useDeleteExpense();
-  const [ toDelete, setToDelete ] = useState<Transaction | null>(null);
+  const [ toDelete, setToDelete ] = useState<Expense | null>(null);
   const [toCreate, setToCreate] = useState(false)
   const [toUpdate, setToUpdate] = useState<Expense | null>(null);
 
   if(isLoading) return <CircularProgress/>;
   if(isError) return <Alert severity="error">Failed to load expenses.</Alert>;
 
-  const columns: Column<Transaction>[] = [
+  const columns: Column<Expense>[] = [
     {
       key: "description",
       header: "Description",
