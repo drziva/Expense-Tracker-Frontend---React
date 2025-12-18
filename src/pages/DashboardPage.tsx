@@ -4,6 +4,7 @@ import type { Transaction } from "../types/transaction";
 import { Table, type Column } from "../components/ui/Table";
 import { DashboardTableSection } from "../components/dashboard/DashboardTableSection";
 import formatEuros from "../utils/formatMoney"
+import type { Expense } from "../types/expenses.requests";
 
 export default function DashboardPage() {
   const { data, isError, isLoading } = useDashboard();
@@ -11,7 +12,7 @@ export default function DashboardPage() {
   if(isError) return <Alert severity="error">There was an error loading the dashboard page.</Alert>
   if(isLoading) return <CircularProgress/>
 
-  const txColumns: Column<Transaction>[] = [
+  const txColumns: Column<Expense>[] = [
     {
       key:"description",
       header:"Description",

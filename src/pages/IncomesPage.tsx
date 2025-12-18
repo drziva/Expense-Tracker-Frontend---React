@@ -3,15 +3,16 @@ import { useIncomes } from "../hooks/incomes/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import { useState } from "react";
 import { useDeleteIncome } from "../hooks/incomes/useDeleteIncome";
-import type { Transaction } from "../types/transaction";
 import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import type { Income } from "../types/incomes.requests";
+import type { Expense } from "../types/expenses.requests";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();
 
-  const [toDelete, setToDelete] = useState<Transaction | null>(null);
+  const [toDelete, setToDelete] = useState<Expense | Income | null>(null);
 
   const deleteIncome = useDeleteIncome();
 
@@ -19,7 +20,7 @@ export default function IncomesPage() {
 
   if(isError) return <Alert severity="error">Failed to load incomes.</Alert>
 
-  const columns: Column<Transaction>[] = [
+  const columns: Column<Expense | Income>[] = [
     {
       key: "description",
       header: "Description",
