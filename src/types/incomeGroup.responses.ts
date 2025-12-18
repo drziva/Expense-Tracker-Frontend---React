@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from "./pagination";
+
 export type IncomeGroup = {
   id: number;
   userId: number;
@@ -6,10 +8,4 @@ export type IncomeGroup = {
   createdAt: string;
 }
 
-export type GetIncomeGroupResponse = {
-  data: IncomeGroup[];
-  page:number;
-  limit: number;
-  totalItems: number;
-  totalPages: number;
-}
+export type GetIncomeGroupResponse = PaginatedResponse<IncomeGroup>;

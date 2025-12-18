@@ -1,3 +1,5 @@
+import type { PaginatedResponse } from "./pagination";
+
 export type ExpenseGroup = {
   id: number;
   userId: number;
@@ -7,10 +9,4 @@ export type ExpenseGroup = {
   budgetCap?: number;
 }
 
-export type GetExpenseGroupResponse = {
-  data: ExpenseGroup[];
-  page:number;
-  limit: number;
-  totalItems: number;
-  totalPages: number;
-}
+export type GetExpenseGroupResponse = PaginatedResponse<ExpenseGroup>;

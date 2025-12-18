@@ -7,13 +7,16 @@ import { useDeleteIncome } from "../hooks/incomes/useDeleteIncome";
 import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
-import type { Income } from "../types/incomes.requests";
+import type { Income } from "../types/incomes.responses";
 import { IncomeDialog } from "../components/incomes/IncomeDialog";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();
    const deleteIncome = useDeleteIncome();
 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
@@ -80,6 +83,7 @@ export default function IncomesPage() {
         sx={{
           display:"flex",
           gap:"10px",
+          justifyContent:"space-between",
           mb: 1
         }}
       >      
@@ -88,7 +92,7 @@ export default function IncomesPage() {
         </Typography>
         <Button
           onClick={() => setToCreate(true)}
-          variant="outlined"
+          variant="contained"
         >
           <strong>Add Income</strong>
         </Button>

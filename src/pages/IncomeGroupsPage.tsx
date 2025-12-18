@@ -66,6 +66,7 @@ export default function IncomeGroupsPage() {
         sx={{
           display:"flex",
           gap:"10px",
+          justifyContent:"space-between",
           mb: 1
         }}
       >      
@@ -76,7 +77,7 @@ export default function IncomeGroupsPage() {
           onClick={() => {
             setToCreate(true);
           }}
-          variant="outlined"
+          variant="contained"
         >
           <strong>Add Income Group</strong>
         </Button>

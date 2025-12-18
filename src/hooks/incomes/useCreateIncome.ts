@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { QUERY_KEYS } from "../../constants/queryKeys";
-import type { Income, IncomeRequest } from "../../types/incomes.requests";
+import type { IncomeRequest } from "../../types/incomes.requests";
+import type { Income } from "../../types/incomes.responses";
 import { createIncome } from "../../api/incomes.api";
 
 export function useCreateIncome() {

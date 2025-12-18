@@ -3,7 +3,7 @@ import { useDashboard } from "../hooks/useDashboard";
 import { Table, type Column } from "../components/ui/Table";
 import { DashboardTableSection } from "../components/dashboard/DashboardTableSection";
 import formatEuros from "../utils/formatMoney"
-import type { Expense } from "../types/expenses.requests";
+import type { Expense } from "../types/expenses.responses";
 
 export default function DashboardPage() {
   const { data, isError, isLoading } = useDashboard();

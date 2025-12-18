@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import { ExpenseDialog } from "../components/expenses/ExpenseDialog";
-import type { Expense } from "../types/expenses.requests";
+import type { Expense } from "../types/expenses.responses";
 
 export default function ExpensesPage() { 
   const {data, isLoading, isError} = useExpenses();
@@ -79,6 +79,7 @@ export default function ExpensesPage() {
       <Box
         sx={{
           display:"flex",
+          justifyContent:"space-between",
           gap:"10px",
           mb: 1
         }}
@@ -88,7 +89,7 @@ export default function ExpensesPage() {
         </Typography>
         <Button
           onClick={() => setToCreate(true)}
-          variant="outlined"
+          variant="contained"
         >
           <strong>Add Expense</strong>
         </Button>

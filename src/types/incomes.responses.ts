@@ -1,9 +1,12 @@
-import type { Income } from "./incomes.requests"
+import type { PaginatedResponse } from "./pagination"
 
-export type GetIncomeResponse = {
-  data: Income[],
-  page: number,
-  limit: number,
-  totalItems: number,
-  totalPages: number
+export type Income = {
+  id: number;
+  description: string;
+  amount: number;
+  createdAt: string;
+  groupId: number;
+  groupName: string;
 }
+
+export type GetIncomeResponse = PaginatedResponse<Income>;

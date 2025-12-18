@@ -7,7 +7,7 @@ import { useUpdateExpense } from "../../hooks/expenses/useUpdateExpense";
 import { useExpenseGroups } from "../../hooks/expense-groups/useExpenseGroups";
 import { ExpenseForm } from "./form/ExpenseForm";
 import { FormDialog } from "../ui/FormDialog";
-import type { Expense } from "../../types/expenses.requests";
+import type { Expense } from "../../types/expenses.responses";
 import { expenseSchema } from "../../schemas/expense.schema";
 import type { z } from "zod";
 

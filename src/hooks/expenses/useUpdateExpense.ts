@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Expense, ExpenseRequest } from "../../types/expenses.requests";
+import type { ExpenseRequest } from "../../types/expenses.requests";
+import type { Expense } from "../../types/expenses.responses";
 import { AxiosError } from "axios";
 import { updateExpense } from "../../api/expenses.api";
 import { QUERY_KEYS } from "../../constants/queryKeys";

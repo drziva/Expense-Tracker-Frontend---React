@@ -79,6 +79,7 @@ export default function ExpenseGroupsPage() {
         sx={{
           display:"flex",
           gap:"10px",
+          justifyContent:"space-between",
           mb: 1
         }}
       >      
@@ -87,7 +88,7 @@ export default function ExpenseGroupsPage() {
         </Typography>
         <Button
           onClick={() => setToCreate(true)}
-          variant="outlined"
+          variant="contained"
         >
           <strong>Add Expense Group</strong>
         </Button>

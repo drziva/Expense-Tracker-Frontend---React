@@ -1,9 +1,12 @@
-import type { Expense } from "./expenses.requests"
+import type { PaginatedResponse } from "./pagination";
 
-export type GetExpenseResponse = {
-  data: Expense[],
-  page: number,
-  limit: number,
-  totalItems: number,
-  totalPages: number
+export type Expense = {
+  id: number;
+  description: string;
+  amount: number;
+  createdAt: string;
+  groupId: number;
+  groupName: string;
 }
+
+export type GetExpenseResponse = PaginatedResponse<Expense>;

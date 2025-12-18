@@ -9,7 +9,7 @@ import { useCreateIncome } from "../../hooks/incomes/useCreateIncome";
 import { useUpdateIncome } from "../../hooks/incomes/useUpdateIncome";
 import { useIncomeGroups } from "../../hooks/income-groups/useIncomeGroups";
 import { IncomeForm } from "./form/IncomeForm";
-import type { Income } from "../../types/incomes.requests";
+import type { Income } from "../../types/incomes.responses";
 
 type Props = {
   open: boolean;
