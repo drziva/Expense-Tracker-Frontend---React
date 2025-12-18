@@ -1,9 +1,10 @@
 import type { IncomeRequest } from "../types/incomes.requests";
 import type { GetIncomeResponse } from "../types/incomes.responses";
 import { api } from "./client";
+import type { IncomeQuery } from "../types/incomeGroup.requests";
 
-export async function getIncomes() {
-  const res = await api.get<GetIncomeResponse>("/incomes");
+export async function getIncomes(query: IncomeQuery) {
+  const res = await api.get<GetIncomeResponse>("/incomes", { params: query });
   return res.data;
 }
 

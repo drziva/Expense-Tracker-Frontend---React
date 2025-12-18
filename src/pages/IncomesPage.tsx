@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, FormControl, IconButton, InputLabel, Menu, MenuItem, Pagination, Paper, Select, TextField, Typography } from "@mui/material";
 import { useIncomes } from "../hooks/incomes/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
@@ -9,14 +9,18 @@ import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import type { Income } from "../types/incomes.responses";
 import { IncomeDialog } from "../components/incomes/IncomeDialog";
+import type { IncomeQuery } from "../types/incomeGroup.requests";
+import { IncomesFilters } from "../components/filters/IncomesFilters";
 
 export default function IncomesPage() {
-  const {data, isError, isLoading} = useIncomes();
+  const [query, setQuery] = useState<IncomeQuery>({
+    page:1,
+    limit: 10
+  })
+
+  const {data, isError, isLoading} = useIncomes(query);
    const deleteIncome = useDeleteIncome();
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
@@ -24,7 +28,7 @@ export default function IncomesPage() {
   if(isLoading) return <CircularProgress />
 
   if(isError) return <Alert severity="error">Failed to load incomes.</Alert>
-
+  
   const columns: Column<Income>[] = [
     {
       key: "description",
@@ -99,12 +103,36 @@ export default function IncomesPage() {
       </Box>
 
       <Paper sx={{ p:2 }}>
+        <IncomesFilters
+          onApply={(filters)=>{
+            setQuery(prev=>({
+              ...prev,
+              ...filters,
+              page: 1
+            }))
+          }}
+        />
         <Table
           rows={data?.data ?? []}
           columns={columns}
           getRowKey={income => income.id}
         />
       </Paper>
+      <Pagination
+        shape="rounded"
+        hideNextButton={query.page >= (data?.totalPages ?? 0)}
+        hidePrevButton={query.page >= (data?.totalPages ?? 0)}
+        color="primary"
+        sx={{
+          display:"flex",
+          justifyContent:"center",
+          mr: 2,
+          mt: 2
+        }}
+        page={query.page}
+        count={data?.totalPages}
+        onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+      />
 
       <ConfirmDialog
         open={!!toDelete}
