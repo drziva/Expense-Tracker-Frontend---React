@@ -1,19 +1,22 @@
-import { Alert, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
 import { useIncomes } from "../hooks/incomes/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
+import EditIcon from "@mui/icons-material/Edit"
 import { useState } from "react";
 import { useDeleteIncome } from "../hooks/incomes/useDeleteIncome";
 import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import type { Income } from "../types/incomes.requests";
+import { IncomeDialog } from "../components/incomes/IncomeDialog";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();
+   const deleteIncome = useDeleteIncome();
 
+  const [toCreate, setToCreate] = useState(false);
+  const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
-
-  const deleteIncome = useDeleteIncome();
 
   if(isLoading) return <CircularProgress />
 
@@ -23,54 +26,79 @@ export default function IncomesPage() {
     {
       key: "description",
       header: "Description",
-      render: tx => tx.description,
+      render: income => income.description,
     },
     {
       key: "amount",
       header: "Amount",
       align: "right",
-      render: tx => formatEuros(tx.amount),
+      render: income => formatEuros(income.amount),
     },
     {
       key: "date",
       header: "Date",
-      render: tx =>
-        new Date(tx.createdAt).toLocaleDateString(),
+      render: income =>
+        new Date(income.createdAt).toLocaleDateString(),
     },
     {
       key: "group",
       header: "Group",
-      render: tx => tx.groupName,
+      render: income => income.groupName,
     },
     {
       key: "actions",
       header: "Actions",
       align: "center",
-      render: tx => (
-        <IconButton
-          size="small"
-          onClick={e => {
-            e.stopPropagation();
-            setToDelete(tx);
-          }}
-        >
-          <DeleteIcon fontSize="small" />
-        </IconButton>
+      render: income => (
+        <>
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setToDelete(income);
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation();
+              setToUpdate(income);
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        </>
       ),
     },
   ];
 
   return(
     <>
-      <Typography variant="h5" sx={{mb:2}}>
-        Incomes
-      </Typography>
+      <Box
+        sx={{
+          display:"flex",
+          gap:"10px",
+          mb: 1
+        }}
+      >      
+        <Typography variant="h5">
+          Incomes
+        </Typography>
+        <Button
+          onClick={() => setToCreate(true)}
+          variant="outlined"
+        >
+          <strong>Add Income</strong>
+        </Button>
+      </Box>
 
       <Paper sx={{ p:2 }}>
         <Table
           rows={data?.data ?? []}
           columns={columns}
-          getRowKey={tx => tx.id}
+          getRowKey={income => income.id}
         />
       </Paper>
 
@@ -86,6 +114,17 @@ export default function IncomesPage() {
           deleteIncome.mutate(toDelete.id);
           setToDelete(null);
         }}
+      />
+
+      <IncomeDialog 
+        open={toCreate}
+        onClose={() => setToCreate(false)}
+      />
+      
+      <IncomeDialog 
+        open={!!toUpdate}
+        onClose={() => setToUpdate(null)}
+        income={toUpdate}
       />
     </>
   )

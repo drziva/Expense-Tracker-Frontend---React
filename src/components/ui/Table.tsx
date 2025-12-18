@@ -1,5 +1,4 @@
 import { Table as BasicTable, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { createPath } from "react-router-dom";
 
 export type Column<T> = {
   key: string;

@@ -70,7 +70,7 @@ export function IncomeGroupsPage() {
         }}
       >      
         <Typography variant="h5">
-          Expense Groups
+          Income Groups
         </Typography>
         <Button
           onClick={() => {

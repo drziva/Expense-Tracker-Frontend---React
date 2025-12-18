@@ -1,7 +1,6 @@
 import type { UseFormReturn } from "react-hook-form"
 import type z from "zod"
 import type { incomeGroupSchema } from "../../../schemas/income-group.schema"
-import { FormDialog } from "../../ui/FormDialog"
 import { Stack, TextField } from "@mui/material"
 
 type FormInput = z.input<typeof incomeGroupSchema>
