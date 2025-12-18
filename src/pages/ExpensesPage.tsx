@@ -106,7 +106,7 @@ export default function ExpensesPage() {
         open={!!toDelete}
         title="Delete expense"
         action="Delete"
-        description={`Are you sure you want to delete ${toDelete?.description}`}
+        description={`Are you sure you want to delete "${toDelete?.description}"?`}
         loading={deleteExpense.isPending}
         onCancel={() => setToDelete(null)}
         onConfirm={()=>{

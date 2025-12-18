@@ -15,6 +15,10 @@ const navItems = [
     to: "/app/expenses"
   },
   {
+    label: "Income Groups",
+    to: "/app/income-groups"
+  },
+  {
     label: "Expense Groups",
     to: "/app/expense-groups"
   }

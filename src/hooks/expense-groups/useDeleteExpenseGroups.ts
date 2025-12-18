@@ -10,7 +10,7 @@ export function useDeleteExpenseGroup() {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: QUERY_KEYS.DASHBOARD})
       queryClient.invalidateQueries({queryKey: QUERY_KEYS.EXPENSES})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.INCOMES})
+      queryClient.invalidateQueries({queryKey: QUERY_KEYS.EXPENSE_GROUPS})
     }
   })
 }

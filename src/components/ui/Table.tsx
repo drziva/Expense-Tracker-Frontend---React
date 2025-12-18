@@ -1,4 +1,5 @@
 import { Table as BasicTable, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { createPath } from "react-router-dom";
 
 export type Column<T> = {
   key: string;
@@ -29,7 +30,13 @@ export function Table<T>({
         },
       }}
     >
-      <BasicTable size="small">
+      <BasicTable   
+        sx={{
+          tableLayout: "fixed",
+          width: "100%",
+        }} 
+        size="small"
+      >
         <TableHead>
           <TableRow>
             {columns.map((col) => (
@@ -72,6 +79,7 @@ export function Table<T>({
                   sx={{
                     borderBottom: "none",
                     fontSize: "0.9rem",
+                    overflow: "hidden"
                   }}
                 >
                   {col.render(row)}

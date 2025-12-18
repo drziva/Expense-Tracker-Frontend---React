@@ -7,12 +7,11 @@ import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
 import type { Income } from "../types/incomes.requests";
-import type { Expense } from "../types/expenses.requests";
 
 export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes();
 
-  const [toDelete, setToDelete] = useState<Expense | Income | null>(null);
+  const [toDelete, setToDelete] = useState<Income | null>(null);
 
   const deleteIncome = useDeleteIncome();
 
@@ -20,7 +19,7 @@ export default function IncomesPage() {
 
   if(isError) return <Alert severity="error">Failed to load incomes.</Alert>
 
-  const columns: Column<Expense | Income>[] = [
+  const columns: Column<Income>[] = [
     {
       key: "description",
       header: "Description",
@@ -79,7 +78,7 @@ export default function IncomesPage() {
         open={!!toDelete}
         title="Delete income"
         action="Delete"
-        description={`Are you sure you want to delete ${toDelete?.description}`}
+        description={`Are you sure you want to delete "${toDelete?.description}"`}
         loading={deleteIncome.isPending}
         onCancel={()=>setToDelete(null)}
         onConfirm={()=>{
