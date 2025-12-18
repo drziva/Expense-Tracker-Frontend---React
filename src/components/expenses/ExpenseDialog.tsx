@@ -1,17 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Alert } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateExpense } from "../../hooks/expenses/useCreateExpense";
 import { useUpdateExpense } from "../../hooks/expenses/useUpdateExpense";
 import { useExpenseGroups } from "../../hooks/expense-groups/useExpenseGroups";
 import { ExpenseForm } from "./form/ExpenseForm";
 import { FormDialog } from "../ui/FormDialog";
 import type { Expense } from "../../types/expenses.requests";
+import { expenseSchema } from "../../schemas/expense.schema";
+import type { z } from "zod";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   expense?: Expense | null;
 };
+
+type FormInput = z.input<typeof expenseSchema>;
+type FormOutput = z.infer<typeof expenseSchema>;
 
 export function ExpenseDialog({ open, onClose, expense }: Props) {
   const createExpense = useCreateExpense();
@@ -20,68 +27,42 @@ export function ExpenseDialog({ open, onClose, expense }: Props) {
 
   const isUpdate = !!expense;
 
-  const title = isUpdate ? "Update Expense" : "Create Expense";
-  const isSubmitting = isUpdate
-    ? updateExpense.isPending
-    : createExpense.isPending;
+  const form = useForm<FormInput, any, FormOutput>({
+    resolver: zodResolver(expenseSchema),
+    defaultValues: {
+      description: "",
+      amount: "",
+      groupId: "",
+    },
+  });
 
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [groupId, setGroupId] = useState("");
-
-  function resetForm() {
-    setDescription("");
-    setAmount("");
-    setGroupId("");
-  }
+  const groups = data?.data ?? [];
 
   useEffect(() => {
     if (!open) {
+      form.reset();
       createExpense.reset();
       updateExpense.reset();
-      resetForm();
       return;
     }
 
     if (isUpdate && expense) {
-      setDescription(expense.description);
-      setAmount(String(expense.amount));
-      setGroupId(String(expense.groupId));
+      form.reset({
+        description: expense.description,
+        amount: String(expense.amount),
+        groupId: String(expense.groupId),
+      });
     }
   }, [open, isUpdate, expense]);
 
-  const groups = data?.data ?? [];
-
-  const amountNumber = Number(amount);
-  const groupIdNumber = Number(groupId);
-
-  const canSubmit =
-    !isPending &&
-    !isSubmitting &&
-    groups.length > 0 &&
-    description.trim() !== "" &&
-    amount.trim() !== "" &&
-    !Number.isNaN(amountNumber) &&
-    amountNumber > 0 &&
-    groupId.trim() !== "" &&
-    !Number.isNaN(groupIdNumber);
-
-  async function handleSubmit() {
-    if (!canSubmit) return;
-
-    const payload = {
-      description,
-      amount: amountNumber,
-      groupId: groupIdNumber,
-    };
-
+  async function onSubmit(data: FormOutput) {
     try {
       if (!isUpdate) {
-        await createExpense.mutateAsync(payload);
+        await createExpense.mutateAsync(data);
       } else if (expense) {
         await updateExpense.mutateAsync({
           id: expense.id,
-          req: payload,
+          req: data,
         });
       }
       onClose();
@@ -92,20 +73,20 @@ export function ExpenseDialog({ open, onClose, expense }: Props) {
     ? updateExpense.error?.response?.data.message
     : createExpense.error?.response?.data.message;
 
-  const error = Array.isArray(rawError) ? rawError[0] : rawError;
+  const apiError = Array.isArray(rawError) ? rawError[0] : rawError;
 
   return (
     <FormDialog
       open={open}
-      title={title}
+      title={isUpdate ? "Update Expense" : "Create Expense"}
       action={isUpdate ? "Update" : "Create"}
       onClose={onClose}
-      onSubmit={handleSubmit}
-      submitting={isSubmitting}
+      onSubmit={form.handleSubmit(onSubmit)}
+      submitting={createExpense.isPending || updateExpense.isPending}
     >
-      {error && (
+      {apiError && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {apiError}
         </Alert>
       )}
 
@@ -121,15 +102,7 @@ export function ExpenseDialog({ open, onClose, expense }: Props) {
         </Alert>
       )}
 
-      <ExpenseForm
-        description={description}
-        amount={amount}
-        groups={groups}
-        groupId={groupId}
-        onAmountChange={setAmount}
-        onDescriptionChange={setDescription}
-        onGroupIdChange={setGroupId}
-      />
+      <ExpenseForm form={form} groups={groups} />
     </FormDialog>
   );
 }
