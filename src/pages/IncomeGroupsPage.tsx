@@ -10,7 +10,7 @@ import ConfirmDialog from "../components/ui/ConfirmDialog";
 import { useDeleteIncomeGroup } from "../hooks/income-groups/useDeleteIncomeGroups";
 import { IncomeGroupDialog } from "../components/income-groups/IncomeGroupDialog";
 
-export function IncomeGroupsPage() {
+export default function IncomeGroupsPage() {
   const { data, isError, isPending } = useIncomeGroups();
   const deleteIncomeGroup = useDeleteIncomeGroup();
   const [toDelete, setToDelete] = useState<IncomeGroup | null>(null);

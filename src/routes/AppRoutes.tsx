@@ -1,12 +1,14 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import DashboardPage from "../pages/DashboardPage";
+import { lazy } from "react";
+import LoginPage from "../pages/LoginPage"; // eager (correct)
 import ProtectedRoute from "./ProtectedRoute";
 import AppLayout from "../layout/AppLayout";
-import ExpensesPage from "../pages/ExpensesPage";
-import IncomesPage from "../pages/IncomesPage";
-import ExpenseGroupsPage from "../pages/ExpenseGroupsPage";
-import { IncomeGroupsPage } from "../pages/IncomeGroupsPage";
+
+const DashboardPage = lazy(() => import("../pages/DashboardPage"));
+const ExpensesPage = lazy(() => import("../pages/ExpensesPage"));
+const IncomesPage = lazy(() => import("../pages/IncomesPage"));
+const ExpenseGroupsPage = lazy(() => import("../pages/ExpenseGroupsPage"));
+const IncomeGroupsPage = lazy(() => import("../pages/IncomeGroupsPage"))
 
 export default function AppRoutes() {
   return(
@@ -19,8 +21,8 @@ export default function AppRoutes() {
           <Route path="dashboard" element={<DashboardPage/>} />
           <Route path="expenses" element={<ExpensesPage/>} />
           <Route path="incomes" element={<IncomesPage/>}/>
-          <Route path="income-groups" element={<IncomeGroupsPage/>}/>          
-          <Route path="expense-groups" element={<ExpenseGroupsPage/>}/>     
+          <Route path="expense-groups" element={<ExpenseGroupsPage/>}/>
+          <Route path="income-groups" element={<IncomeGroupsPage/>}/>              
         </Route>
       </Route>
 
