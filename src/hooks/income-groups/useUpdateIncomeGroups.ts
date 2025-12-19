@@ -19,9 +19,9 @@ export function useUpdateIncomeGroup (){
     mutationFn: ({id, req}: {id: number, req: IncomeGroupRequest}) => 
       updateIncomeGroup(id, req),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INCOME_GROUPS });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.INCOMES });
-      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.DASHBOARD });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INCOME_GROUPS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INCOMES] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.DASHBOARD] });
     }
   })
 }

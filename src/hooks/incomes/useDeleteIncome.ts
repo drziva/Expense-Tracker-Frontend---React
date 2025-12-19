@@ -8,8 +8,8 @@ export function useDeleteIncome() {
   return useMutation({
     mutationFn: (id: number) => deleteIncome(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:QUERY_KEYS.INCOMES});
-      queryClient.invalidateQueries({queryKey:QUERY_KEYS.DASHBOARD});
+      queryClient.invalidateQueries({queryKey:[QUERY_KEYS.INCOMES]});
+      queryClient.invalidateQueries({queryKey:[QUERY_KEYS.DASHBOARD]});
     }
   })
 }

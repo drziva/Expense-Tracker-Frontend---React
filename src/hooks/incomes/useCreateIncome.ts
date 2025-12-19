@@ -15,8 +15,8 @@ export function useCreateIncome() {
   >({
     mutationFn: createIncome,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:QUERY_KEYS.INCOMES})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.DASHBOARD})
+      queryClient.invalidateQueries({queryKey:[QUERY_KEYS.INCOMES]})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]})
     }
   });
 }

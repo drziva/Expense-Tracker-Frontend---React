@@ -8,9 +8,9 @@ export function useDeleteExpenseGroup() {
   return useMutation({
     mutationFn: (id: number) => deleteExpenseGroup(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.DASHBOARD})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.EXPENSES})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.EXPENSE_GROUPS})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSES]})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSE_GROUPS]})
     }
   })
 }

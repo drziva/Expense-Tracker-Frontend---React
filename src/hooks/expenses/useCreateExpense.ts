@@ -15,8 +15,8 @@ export function useCreateExpense() {
   >({
     mutationFn: createExpense,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey:QUERY_KEYS.EXPENSES})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.DASHBOARD})
+      queryClient.invalidateQueries({queryKey:[QUERY_KEYS.EXPENSES]})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]})
     }
   });
 }

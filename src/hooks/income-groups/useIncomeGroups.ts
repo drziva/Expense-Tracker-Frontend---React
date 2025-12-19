@@ -4,7 +4,7 @@ import { getIncomeGroups } from "../../api/income-groups.api.ts";
 
 export function useIncomeGroups() {
   return useQuery({
-    queryKey: QUERY_KEYS.INCOME_GROUPS,
+    queryKey: [QUERY_KEYS.INCOME_GROUPS],
     queryFn: getIncomeGroups
   })
 }

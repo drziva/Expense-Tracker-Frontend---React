@@ -15,7 +15,7 @@ export function useCreateIncomeGroup() {
   >({
     mutationFn: createIncomeGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.INCOME_GROUPS});
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_GROUPS]});
     }
   })
 }

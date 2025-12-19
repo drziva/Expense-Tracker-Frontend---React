@@ -4,7 +4,7 @@ import { QUERY_KEYS } from "../../constants/queryKeys";
 
 export function useExpenses() {
   return useQuery({
-    queryKey: QUERY_KEYS.EXPENSES,
+    queryKey: [QUERY_KEYS.EXPENSES],
     queryFn:() => getExpenses(),
   });
 }

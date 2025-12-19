@@ -15,7 +15,7 @@ export function useCreateExpenseGroup() {
   >({
     mutationFn: createExpenseGroup,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.EXPENSE_GROUPS});
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSE_GROUPS]});
     }
   })
 }

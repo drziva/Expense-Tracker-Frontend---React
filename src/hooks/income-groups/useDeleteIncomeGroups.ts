@@ -8,9 +8,9 @@ export function useDeleteIncomeGroup() {
   return useMutation({
     mutationFn: (id: number) => deleteIncomeGroup(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.DASHBOARD})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.INCOME_GROUPS})
-      queryClient.invalidateQueries({queryKey: QUERY_KEYS.INCOMES})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_GROUPS]})
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOMES]})
     }
   })
 }

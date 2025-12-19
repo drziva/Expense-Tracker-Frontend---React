@@ -4,7 +4,7 @@ import { QUERY_KEYS } from "../../constants/queryKeys.ts";
 
 export function useExpenseGroups() {
   return useQuery({
-    queryKey: QUERY_KEYS.EXPENSE_GROUPS,
+    queryKey: [QUERY_KEYS.EXPENSE_GROUPS],
     queryFn: getExpenseGroups
   })
 }

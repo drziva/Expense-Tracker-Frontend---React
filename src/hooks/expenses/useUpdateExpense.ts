@@ -19,8 +19,8 @@ export function useUpdateExpense() {
         mutationFn: ({id, req}: {id: number, req: ExpenseRequest}) => 
           updateExpense(id, req),
         onSuccess: () => {
-          queryClient.invalidateQueries({queryKey: QUERY_KEYS.EXPENSES});
-          queryClient.invalidateQueries({queryKey: QUERY_KEYS.DASHBOARD});
+          queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSES]});
+          queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
         }
   })
 }
