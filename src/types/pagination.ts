@@ -11,3 +11,9 @@ export type SortOption =
   | "amount_desc"
   | "date_asc"
   | "date_desc";
+
+export type GroupSortOption =
+  | "name_asc"
+  | "name_desc"
+  | "date_asc"
+  | "date_desc";

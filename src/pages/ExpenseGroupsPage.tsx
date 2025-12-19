@@ -1,128 +1,239 @@
-import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Pagination,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
-import { Table, type Column } from "../components/ui/Table";
+import { type Column } from "../components/ui/Table";
+import { Table } from "../components/ui/Table";
 import type { ExpenseGroup } from "../types/expenseGroup.responses";
-import { useState } from "react";
-import DeleteIcon from "@mui/icons-material/DeleteOutline"
-import EditIcon from '@mui/icons-material/Edit';
-import { useDeleteExpenseGroup } from "../hooks/expense-groups/useDeleteExpenseGroups";
-import formatEuros from "../utils/formatMoney";
+import { useEffect, useState } from "react";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
+import { useDeleteExpenseGroup } from "../hooks/expense-groups/useDeleteExpenseGroups";
 import { ExpenseGroupDialog } from "../components/expense-groups/ExpenseGroupDialog";
+import type { ExpenseGroupQuery } from "../types/expenseGroup.requests";
+import { ExpenseGroupsFiltersDialog } from "../components/filters/expense-groups/ExpenseGroupsFiltersDialog";
+import FilterIcon from "@mui/icons-material/FilterAlt";
+import { RowLimitSelect } from "../components/ui/RowLimitSelect";
+import { ActiveExpenseGroupsFilters } from "../components/filters/expense-groups/ActiveExpenseGroupsFilters";
 
 export default function ExpenseGroupsPage() {
-  const {data, isError, isLoading} = useExpenseGroups();
+  const [query, setQuery] = useState<ExpenseGroupQuery>({
+    page: 1,
+    limit: 10,
+  });
 
-  const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null)
+  const { data, isError, isPending } = useExpenseGroups(query);
+
   const deleteExpenseGroup = useDeleteExpenseGroup();
-
-  const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null)
-
+  const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null);
   const [toCreate, setToCreate] = useState(false);
+  const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null);
+  const [toFilter, setToFilter] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-  if(isError) return <Alert severity="error">Failed to load expense groups.</Alert>
-  if(isLoading) return <CircularProgress />
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setQuery(prev => ({
+        ...prev,
+        search: searchText,
+        page: 1,
+      }));
+    }, 350);
 
-  const groupColumns: Column<ExpenseGroup>[] = [
+    return () => clearTimeout(timeout);
+  }, [searchText]);
+
+  useEffect(() => {
+    if (searchText !== "" && !query.search) {
+      setSearchText("");
+    }
+  }, [query.search]);
+
+  if (isError)
+    return (
+      <Alert severity="error">
+        There has been an error loading expense groups
+      </Alert>
+    );
+
+  if (isPending) return <CircularProgress />;
+
+  const columns: Column<ExpenseGroup>[] = [
     {
-      key:"name",
-      header:"Name",
-      render: gr => gr.name
+      key: "name",
+      header: "Name",
+      render: group => group.name,
     },
     {
-      key:"description",
-      header:"Description",
-      render: gr => (
+      key: "description",
+      header: "Description",
+      render: group => (
         <Typography variant="body2" color="text.secondary">
-          {gr.description}
+          {group.description}
         </Typography>
-      )
+      ),
     },
     {
-      key:"budget-cap",
-      header:"Budget Cap",
-      align: "right",
-      render: gr => gr.budgetCap ? formatEuros(gr.budgetCap) : "-"
+      key: "date",
+      header: "Date",
+      render: group =>
+        new Date(group.createdAt).toLocaleDateString(),
     },
     {
-      key:"actions",
-      align:"center",
-      header:"Actions",
+      key: "actions",
+      header: "Actions",
       render: gr => (
         <>
-          <IconButton
-            size="small"
-            onClick={e => {
-              e.stopPropagation();
-              setToDelete(gr);
-            }}
-          >
-            <DeleteIcon fontSize="small"/>
+          <IconButton onClick={() => setToDelete(gr)}>
+            <DeleteIcon fontSize="small" />
           </IconButton>
-          <IconButton
-            size="small"
-            onClick={e => {
-              e.stopPropagation();
-              setToUpdate(gr)
-            }}
-          >
-            <EditIcon fontSize="small"/>
-          </IconButton>          
+          <IconButton onClick={() => setToUpdate(gr)}>
+            <EditIcon fontSize="small" />
+          </IconButton>
         </>
-      )
-    }
+      ),
+    },
   ];
 
-  return(
-    <>  
+  return (
+    <>
       <Box
         sx={{
-          display:"flex",
-          gap:"10px",
-          justifyContent:"space-between",
-          mb: 1
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
         }}
-      >      
-        <Typography variant="h5">
-          Expense Groups
-        </Typography>
+      >
+        <Typography variant="h5">Expenses</Typography>
+
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
+          sx={{ height: 40 }}
         >
-          <strong>Add Expense Group</strong>
+          <strong>Add Expense</strong>
         </Button>
       </Box>
-      <Paper sx={{p:2}}>
-        <Table 
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <TextField
+          size="small"
+          label="Search"
+          color="primary"
+          value={searchText}
+          onChange={e => setSearchText(e.target.value)}
+          sx={{
+            height: 40,
+            minWidth: 450,
+          }}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            gap: "10px",
+          }}
+        >
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setToFilter(true)}
+            sx={{ height: 40 }}
+          >
+            <FilterIcon fontSize="small" />
+          </Button>
+
+          <RowLimitSelect
+            value={query.limit!}
+            onChange={limit =>
+              setQuery(prev => ({
+                ...prev,
+                limit,
+                page: 1,
+              }))
+            }
+          />
+        </Box>
+      </Box>
+
+      <Paper sx={{ p: 2 }}>
+        <ActiveExpenseGroupsFilters
+          query={query}
+          onChange={setQuery}
+        />
+
+        <Table
           rows={data?.data ?? []}
-          columns={groupColumns}
+          columns={columns}
           getRowKey={gr => gr.id}
         />
       </Paper>
 
+      <ExpenseGroupsFiltersDialog
+        open={toFilter}
+        query={query}
+        onClose={() => setToFilter(false)}
+        onApply={filters => {
+          setQuery(prev => ({
+            ...prev,
+            ...filters,
+            page: 1,
+          }));
+        }}
+      />
+
+      <Pagination
+        shape="rounded"
+        color="primary"
+        sx={{
+          display:"flex",
+          justifyContent:"center",
+          mr: 2,
+          mt: 2
+        }}
+        count={data?.totalPages}
+        onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+      />
+      
       <ConfirmDialog
-        open={!!toDelete}
-        title="Delete expense group"
+        title="Delete Expense Group"
         action="Delete"
         description={`Are you sure you want to delete the "${toDelete?.name}" group?`}
-        onCancel={()=>setToDelete(null)}
-        onConfirm={()=>{
-          if(!toDelete) return;
+        open={!!toDelete}
+        onConfirm={() => {
+          if (!toDelete) return;
           deleteExpenseGroup.mutate(toDelete.id);
           setToDelete(null);
         }}
+        onCancel={() => setToDelete(null)}
       />
-      <ExpenseGroupDialog 
+
+      <ExpenseGroupDialog
         open={toCreate}
         onClose={() => setToCreate(false)}
       />
 
-      <ExpenseGroupDialog 
+      <ExpenseGroupDialog
         open={!!toUpdate}
-        onClose={()=> setToUpdate(null)}
+        onClose={() => setToUpdate(null)}
         group={toUpdate}
       />
     </>
-  )
- }
+  );
+}

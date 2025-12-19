@@ -1,61 +1,99 @@
-import { Alert, Box, Button, CircularProgress, IconButton, Paper, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography } from "@mui/material";
 import { useExpenses } from "../hooks/expenses/useExpenses";
-import { useDeleteExpense } from "../hooks/expenses/useDeleteExpense";
-import { useState } from "react";
-import { Table } from "../components/ui/Table";
-import type { Column } from "../components/ui/Table";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit"
+import { useEffect, useState } from "react";
+import { useDeleteExpense } from "../hooks/expenses/useDeleteExpense";
+import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
-import { ExpenseDialog } from "../components/expenses/ExpenseDialog";
 import type { Expense } from "../types/expenses.responses";
+import { ExpenseDialog } from "../components/expenses/ExpenseDialog";
+import type { ExpenseQuery } from "../types/expenses.requests";
+import { ExpensesFiltersDialog } from "../components/filters/expenses/ExpensesFiltersDialog";
+import FilterIcon from '@mui/icons-material/FilterAlt';
+import { RowLimitSelect } from "../components/ui/RowLimitSelect";
+import { ActiveExpenseFilters } from "../components/filters/expenses/ActiveExpenseFilters";
+import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
 
-export default function ExpensesPage() { 
-  const {data, isLoading, isError} = useExpenses();
+export default function ExpensesPage() {
+  const [query, setQuery] = useState<ExpenseQuery>({
+    page:1,
+    limit: 10
+  })
 
+  const {data, isError, isLoading} = useExpenses(query);
   const deleteExpense = useDeleteExpense();
-  const [ toDelete, setToDelete ] = useState<Expense | null>(null);
-  const [toCreate, setToCreate] = useState(false)
+
+  const groupsData = useExpenseGroups({}).data;
+  const groups = groupsData?.data ?? [];
+  const groupNameById: Record<number, string> = {};
+  for (const g of groups) {
+    groupNameById[g.id] = g.name;
+  }
+
+  const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<Expense | null>(null);
+  const [toDelete, setToDelete] = useState<Expense | null>(null);
+  const [toFilter, setToFilter] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-  if(isLoading) return <CircularProgress/>;
-  if(isError) return <Alert severity="error">Failed to load expenses.</Alert>;
+  useEffect(()=>{
+    const timeout = setTimeout(() => {
+      setQuery(prev => ({
+        ...prev,
+        search: searchText,
+        page: 1
+      }))
+    }, 500)
 
+    return() => clearTimeout(timeout);
+  }, [searchText])
+
+  useEffect(() => {
+    if (!query.search && searchText !== "") {
+      setSearchText("");
+    }
+  }, [query]);
+
+  if(isLoading) return <CircularProgress />
+
+  if(isError) return <Alert severity="error">Failed to load expenses.</Alert>
+  
   const columns: Column<Expense>[] = [
     {
       key: "description",
       header: "Description",
-      render: tx => tx.description,
+      render: expense => expense.description,
     },
     {
       key: "amount",
       header: "Amount",
       align: "right",
-      render: tx => formatEuros(tx.amount),
+      render: expense => formatEuros(expense.amount),
     },
     {
       key: "date",
       header: "Date",
-      render: tx =>
-        new Date(tx.createdAt).toLocaleDateString(),
+      render: expense =>
+        new Date(expense.createdAt).toLocaleDateString(),
     },
     {
       key: "group",
       header: "Group",
-      render: tx => tx.groupName,
+      render: expense => expense.groupName,
     },
     {
       key: "actions",
       header: "Actions",
       align: "center",
-      render: tx => (
+      render: expense => (
         <>
           <IconButton
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setToDelete(tx);
+              setToDelete(expense);
             }}
           >
             <DeleteIcon fontSize="small" />
@@ -64,68 +102,133 @@ export default function ExpensesPage() {
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setToUpdate(tx);
+              setToUpdate(expense);
             }}
           >
-          <EditIcon fontSize="small" />
-        </IconButton>
+            <EditIcon fontSize="small" />
+          </IconButton>
         </>
       ),
     },
   ];
 
-  return (
+  return(
     <>
       <Box
         sx={{
           display:"flex",
           justifyContent:"space-between",
-          gap:"10px",
-          mb: 1
+          alignItems:"center",
+          mb: 2,
         }}
-      >      
+      > 
+
         <Typography variant="h5">
           Expenses
         </Typography>
+
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
+          sx={{height: 40}}
         >
           <strong>Add Expense</strong>
         </Button>
       </Box>
-      <Paper sx={{ p:2 }} >
+
+      <Box sx={{
+        display:"flex",
+        justifyContent:"space-between",
+        mb: 2
+      }}>
+          <TextField
+            size="small"
+            label="Search"
+            color="primary"              
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            sx={{ 
+              height: 40,
+              minWidth: 450,
+            }}
+          />
+          <Box 
+            sx={{
+              display: "flex",
+              gap: "10px"
+            }}
+          >
+            <Button 
+              variant="outlined"
+              color="primary"
+              onClick={()=>setToFilter(true)}
+              sx={{height: 40}}
+            >
+              <FilterIcon fontSize="small"/>
+            </Button>
+
+            <RowLimitSelect value={query.limit} onChange={(limit)=>setQuery(prev => ({...prev,limit,page:1}))}/>
+        </Box>
+      </Box>
+      <Paper sx={{ p:2 }}>
+        <ActiveExpenseFilters groups={groupNameById} query={query} onChange={setQuery}/>
         <Table
           rows={data?.data ?? []}
           columns={columns}
-          getRowKey={tx => tx.id}
+          getRowKey={expense => expense.id}
         />
       </Paper>
 
-      <ConfirmDialog 
-        open={!!toDelete}
-        title="Delete expense"
-        action="Delete"
-        description={`Are you sure you want to delete "${toDelete?.description}"?`}
-        loading={deleteExpense.isPending}
-        onCancel={() => setToDelete(null)}
-        onConfirm={()=>{
-          if(!toDelete) return;
-          deleteExpense.mutate(toDelete.id);
-          setToDelete(null)
+      <Pagination
+        shape="rounded"
+        color="primary"
+        sx={{
+          display:"flex",
+          justifyContent:"center",
+          mr: 2,
+          mt: 2
+        }}
+        count={data?.totalPages}
+        onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+      />
+
+      <ExpensesFiltersDialog 
+        query={query}
+        open={toFilter}
+        onClose={()=>setToFilter(false)}
+        onApply={(filters)=>{
+          setQuery((prev)=>({
+            ...prev,
+            ...filters,
+            page: 1
+          }))
         }}
       />
 
-     <ExpenseDialog
+      <ConfirmDialog
+        open={!!toDelete}
+        title="Delete expense"
+        action="Delete"
+        description={`Are you sure you want to delete "${toDelete?.description}"`}
+        loading={deleteExpense.isPending}
+        onCancel={()=>setToDelete(null)}
+        onConfirm={()=>{
+          if(!toDelete) return;
+          deleteExpense.mutate(toDelete.id);
+          setToDelete(null);
+        }}
+      />
+
+      <ExpenseDialog 
         open={toCreate}
         onClose={() => setToCreate(false)}
       />
-
-      <ExpenseDialog
+      
+      <ExpenseDialog 
         open={!!toUpdate}
         onClose={() => setToUpdate(null)}
         expense={toUpdate}
       />
     </>
-  );
+  )
 }

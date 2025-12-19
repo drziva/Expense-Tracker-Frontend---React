@@ -1,10 +1,10 @@
 import { api } from "./client";
-import type { ExpenseGroupRequest } from "../types/expenseGroup.requests";
+import type { ExpenseGroupQuery, ExpenseGroupRequest } from "../types/expenseGroup.requests";
 import type { GetExpenseGroupResponse } from "../types/expenseGroup.responses";
 
 
-export async function getExpenseGroups() {
-  const res = await api.get<GetExpenseGroupResponse>("/expense-groups");
+export async function getExpenseGroups(query: ExpenseGroupQuery) {
+  const res = await api.get<GetExpenseGroupResponse>("/expense-groups", {params: query});
   return res.data;
 }
 

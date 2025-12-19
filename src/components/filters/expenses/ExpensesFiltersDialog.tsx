@@ -16,10 +16,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import type { SortOption } from "../../../types/pagination";
-import { useIncomeGroups } from "../../../hooks/income-groups/useIncomeGroups";
-import type { IncomeQuery } from "../../../types/incomeGroup.requests";
+import { useExpenseGroups } from "../../../hooks/expense-groups/useExpenseGroups";
+import type { ExpenseQuery } from "../../../types/expenses.requests";
 
-export type IncomeFilterValues = {
+export type ExpenseFilterValues = {
   from?: string;
   to?: string;
   min?: number;
@@ -30,13 +30,13 @@ export type IncomeFilterValues = {
 
 type Props = {
   open: boolean;
-  query: IncomeQuery;
+  query: ExpenseQuery;
   onClose: () => void;
-  onApply: (values: IncomeFilterValues) => void;
+  onApply: (values: ExpenseFilterValues) => void;
 };
 
-export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
-  const { data } = useIncomeGroups({});
+export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) {
+  const { data } = useExpenseGroups({});
   const [minValue, setMinValue] = useState("");
   const [maxValue, setMaxValue] = useState("");
   const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
@@ -55,12 +55,12 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Filter incomes</DialogTitle>
+      <DialogTitle>Filter expenses</DialogTitle>
 
       <DialogContent>
         <Box
           component="form"
-          id="income-filters-form"
+          id="expense-filters-form"
           onSubmit={(e) => {
             e.preventDefault();
 
@@ -181,7 +181,7 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
       </DialogContent>
 
       <DialogActions>
-        <Button form="income-filters-form" type="submit" variant="contained">
+        <Button form="expense-filters-form" type="submit" variant="contained">
           Apply
         </Button>
         <Button onClick={onClose}>Cancel</Button>

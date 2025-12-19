@@ -1,9 +1,9 @@
 import { api } from "./client";
-import type { IncomeGroupRequest } from "../types/incomeGroup.requests";
+import type { IncomeGroupQuery, IncomeGroupRequest } from "../types/incomeGroup.requests";
 import type { GetIncomeGroupResponse } from "../types/incomeGroup.responses";
 
-export async function getIncomeGroups() {
-  const res = await api.get<GetIncomeGroupResponse>("/income-groups");
+export async function getIncomeGroups(query: IncomeGroupQuery) {
+  const res = await api.get<GetIncomeGroupResponse>("/income-groups", {params: query});
   return res.data;
 }
 

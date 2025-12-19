@@ -25,7 +25,7 @@ export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes(query);
   const deleteIncome = useDeleteIncome();
 
-  const groupsData = useIncomeGroups().data;
+  const groupsData = useIncomeGroups({}).data;
   const groups = groupsData?.data ?? [];
   const groupNameById: Record<number, string> = {};
   for (const g of groups) {
@@ -188,7 +188,6 @@ export default function IncomesPage() {
           mr: 2,
           mt: 2
         }}
-        page={query.page}
         count={data?.totalPages}
         onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
       />
