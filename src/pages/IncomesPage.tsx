@@ -1,8 +1,8 @@
-import { Alert, Box, Button, CircularProgress, FormControl, IconButton, InputLabel, Menu, MenuItem, Pagination, Paper, Select, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography } from "@mui/material";
 import { useIncomes } from "../hooks/incomes/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDeleteIncome } from "../hooks/incomes/useDeleteIncome";
 import { Table, type Column } from "../components/ui/Table";
 import formatEuros from "../utils/formatMoney";
@@ -10,7 +10,11 @@ import ConfirmDialog from "../components/ui/ConfirmDialog";
 import type { Income } from "../types/incomes.responses";
 import { IncomeDialog } from "../components/incomes/IncomeDialog";
 import type { IncomeQuery } from "../types/incomeGroup.requests";
-import { IncomesFilters } from "../components/filters/IncomesFilters";
+import { IncomesFiltersDialog } from "../components/filters/incomes/IncomesFiltersDialog";
+import FilterIcon from '@mui/icons-material/FilterAlt';
+import { RowLimitSelect } from "../components/ui/RowLimitSelect";
+import { ActiveIncomeFilters } from "../components/filters/incomes/ActiveIncomeFilters";
+import { useIncomeGroups } from "../hooks/income-groups/useIncomeGroups";
 
 export default function IncomesPage() {
   const [query, setQuery] = useState<IncomeQuery>({
@@ -19,11 +23,38 @@ export default function IncomesPage() {
   })
 
   const {data, isError, isLoading} = useIncomes(query);
-   const deleteIncome = useDeleteIncome();
+  const deleteIncome = useDeleteIncome();
+
+  const groupsData = useIncomeGroups().data;
+  const groups = groupsData?.data ?? [];
+  const groupNameById: Record<number, string> = {};
+  for (const g of groups) {
+    groupNameById[g.id] = g.name;
+  }
 
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
+  const [toFilter, setToFilter] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(()=>{
+    const timeout = setTimeout(() => {
+      setQuery(prev => ({
+        ...prev,
+        search: searchText,
+        page: 1
+      }))
+    }, 500)
+
+    return() => clearTimeout(timeout);
+  }, [searchText])
+
+  useEffect(() => {
+    if (!query.search && searchText !== "") {
+      setSearchText("");
+    }
+  }, [query]);
 
   if(isLoading) return <CircularProgress />
 
@@ -86,42 +117,70 @@ export default function IncomesPage() {
       <Box
         sx={{
           display:"flex",
-          gap:"10px",
           justifyContent:"space-between",
-          mb: 1
+          alignItems:"center",
+          mb: 2,
         }}
-      >      
+      > 
+
         <Typography variant="h5">
           Incomes
         </Typography>
+
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
+          sx={{height: 40}}
         >
           <strong>Add Income</strong>
         </Button>
       </Box>
 
+      <Box sx={{
+        display:"flex",
+        justifyContent:"space-between",
+        mb: 2
+      }}>
+          <TextField
+            size="small"
+            label="Search"
+            color="primary"              
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            sx={{ 
+              height: 40,
+              minWidth: 450,
+            }}
+          />
+          <Box 
+            sx={{
+              display: "flex",
+              gap: "10px"
+            }}
+          >
+            <Button 
+              variant="outlined"
+              color="primary"
+              onClick={()=>setToFilter(true)}
+              sx={{height: 40}}
+            >
+              <FilterIcon fontSize="small"/>
+            </Button>
+
+            <RowLimitSelect value={query.limit} onChange={(limit)=>setQuery(prev => ({...prev,limit,page:1}))}/>
+        </Box>
+      </Box>
       <Paper sx={{ p:2 }}>
-        <IncomesFilters
-          onApply={(filters)=>{
-            setQuery(prev=>({
-              ...prev,
-              ...filters,
-              page: 1
-            }))
-          }}
-        />
+        <ActiveIncomeFilters groups={groupNameById} query={query} onChange={setQuery}/>
         <Table
           rows={data?.data ?? []}
           columns={columns}
           getRowKey={income => income.id}
         />
       </Paper>
+
       <Pagination
         shape="rounded"
-        hideNextButton={query.page >= (data?.totalPages ?? 0)}
-        hidePrevButton={query.page >= (data?.totalPages ?? 0)}
         color="primary"
         sx={{
           display:"flex",
@@ -132,6 +191,19 @@ export default function IncomesPage() {
         page={query.page}
         count={data?.totalPages}
         onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+      />
+
+      <IncomesFiltersDialog 
+        query={query}
+        open={toFilter}
+        onClose={()=>setToFilter(false)}
+        onApply={(filters)=>{
+          setQuery((prev)=>({
+            ...prev,
+            ...filters,
+            page: 1
+          }))
+        }}
       />
 
       <ConfirmDialog

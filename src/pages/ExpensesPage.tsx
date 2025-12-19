@@ -94,7 +94,6 @@ export default function ExpensesPage() {
           <strong>Add Expense</strong>
         </Button>
       </Box>
-
       <Paper sx={{ p:2 }} >
         <Table
           rows={data?.data ?? []}

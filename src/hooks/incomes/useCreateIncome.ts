@@ -7,7 +7,7 @@ import { createIncome } from "../../api/incomes.api";
 
 export function useCreateIncome() {
   const queryClient = useQueryClient();
-  
+
   return useMutation<
     Income,
     AxiosError<{ message?: string | string[] }>,

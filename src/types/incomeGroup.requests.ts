@@ -10,7 +10,7 @@ export type IncomeQuery = {
   max?: number;
   from?: string;
   to?: string;
-  groupId?: number;
+  group_id?: number;
   search?: string;
   page: number;
   limit: number;
