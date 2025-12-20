@@ -92,7 +92,7 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
       {
         apiError && 
         <Alert severity="error">
-          {apiError ?? `The has been an error ${isUpdate ? "updating" : "creating"} the expense group` }
+          {`The has been an error ${isUpdate ? "updating" : "creating"} the expense group` }
         </Alert>
       }
       <ExpenseGroupForm

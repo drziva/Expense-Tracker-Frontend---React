@@ -1,30 +1,19 @@
 import { Box, List, ListItemButton, ListItemText } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const navItems = [
-  {
-    label: "Dashboard",
-    to: "/app/dashboard"
-  },
-  {
-    label: "Incomes",
-    to: "/app/incomes"
-  },
-  {
-    label: "Expenses",
-    to: "/app/expenses"
-  },
-  {
-    label: "Income Groups",
-    to: "/app/income-groups"
-  },
-  {
-    label: "Expense Groups",
-    to: "/app/expense-groups"
-  }
-]
+  { label: "Dashboard", to: "/app/dashboard" },
+  { label: "Incomes", to: "/app/incomes" },
+  { label: "Expenses", to: "/app/expenses" },
+  { label: "Income Groups", to: "/app/income-groups" },
+  { label: "Expense Groups", to: "/app/expense-groups" },
+];
 
-export default function Sidebar() {
+type Props = {
+  hideSidebar?: () => void
+}
+
+export default function Sidebar({hideSidebar}: Props) {
   return(
     <Box
       sx={{
@@ -45,6 +34,7 @@ export default function Sidebar() {
               color: "primary.main",
             },
           }}
+          onClick={hideSidebar}
         >
           <ListItemText primary={item.label}/>
         </ListItemButton>

@@ -15,7 +15,8 @@ const colors = {
     textSecondary: "#262e3aff",
     divider: "rgba(0, 0, 0, 0.08)",
   },
-  primary: "#7C3AED",
+  //violet: 9157f5ff
+  primary: "#9157f5ff",
   success: "#5bcc84ff",
   error: "#da5c5cff",
 };

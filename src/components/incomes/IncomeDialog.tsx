@@ -23,7 +23,7 @@ type FormOutput = z.infer<typeof incomeSchema>;
 export function IncomeDialog({ open, onClose, income }: Props) {
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
-  const { data, isError, isPending } = useIncomeGroups();
+  const { data, isError, isPending } = useIncomeGroups({});
 
   const isUpdate = !!income;
 

@@ -103,7 +103,7 @@ export default function IncomeGroupsPage() {
       > 
 
         <Typography variant="h5">
-          Incomes
+          Income Groups
         </Typography>
 
         <Button

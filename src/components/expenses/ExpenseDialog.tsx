@@ -23,7 +23,7 @@ type FormOutput = z.infer<typeof expenseSchema>;
 export function ExpenseDialog({ open, onClose, expense }: Props) {
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
-  const { data, isError, isPending } = useExpenseGroups();
+  const { data, isError, isPending } = useExpenseGroups({});
 
   const isUpdate = !!expense;
 
