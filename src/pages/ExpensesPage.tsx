@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography, useMediaQuery } from "@mui/material";
 import { useExpenses } from "../hooks/expenses/useExpenses";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
@@ -15,8 +15,11 @@ import FilterIcon from '@mui/icons-material/FilterAlt';
 import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveExpenseFilters } from "../components/filters/expenses/ActiveExpenseFilters";
 import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
+import { MobileTransactionTable } from "../components/mobile/MobileTransactionTable";
 
 export default function ExpensesPage() {
+  const isMobile = useMediaQuery("(max-width: 600px)");
+
   const [query, setQuery] = useState<ExpenseQuery>({
     page:1,
     limit: 10
@@ -93,19 +96,19 @@ export default function ExpensesPage() {
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setToDelete(expense);
+              setToUpdate(expense);
             }}
           >
-            <DeleteIcon fontSize="small" />
+            <EditIcon color="primary" fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setToUpdate(expense);
+              setToDelete(expense);
             }}
           >
-            <EditIcon fontSize="small" />
+            <DeleteIcon color="error" fontSize="small" />
           </IconButton>
         </>
       ),
@@ -139,6 +142,7 @@ export default function ExpensesPage() {
       <Box sx={{
         display:"flex",
         justifyContent:"space-between",
+        gap: 1,
         mb: 2
       }}>
           <TextField
@@ -149,7 +153,7 @@ export default function ExpensesPage() {
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ 
               height: 40,
-              minWidth: 450,
+              minWidth: isMobile ? 200 : 450,
             }}
           />
           <Box 
@@ -172,11 +176,29 @@ export default function ExpensesPage() {
       </Box>
       <Paper sx={{ p:2 }}>
         <ActiveExpenseFilters groups={groupNameById} query={query} onChange={setQuery}/>
-        <Table
-          rows={data?.data ?? []}
-          columns={columns}
-          getRowKey={expense => expense.id}
-        />
+
+        {
+          //DESKTOP TABLE
+          !isMobile && (
+            <Table
+              rows={data?.data ?? []}
+              columns={columns}
+              getRowKey={income => income.id}
+            />
+          )
+        }
+
+        {
+          //MOBILE TABLE
+          isMobile && (
+            <MobileTransactionTable
+              data={data?.data}
+              onDelete={setToDelete}
+              onEdit={setToUpdate}
+            />
+          )
+        }
+
       </Paper>
 
       <Pagination

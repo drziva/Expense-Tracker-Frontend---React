@@ -26,7 +26,18 @@ export function ActiveExpenseFilters({ query, onChange, groups }: Props) {
   if (!hasFilters) return null;
 
   return (
-    <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: "wrap"}}>
+   <Stack  
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1}
+      sx={{ 
+        mb: 2,
+        flexWrap: "wrap",
+        "& .MuiChip-root": {
+          width: { xs: "100%", sm: "auto" },
+          justifyContent: "space-between",
+        },
+      }}
+    >
       {query.search && (
         <Chip
           label={`Search: "${query.search}"`}

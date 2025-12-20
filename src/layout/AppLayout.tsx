@@ -18,7 +18,11 @@ export default function AppLayout() {
         onMenuClick={() => setMobileNavOpen(true)}
       />
 
-      <Box sx={{ display: "flex", flex: 1 }}>
+      <Box sx={{ 
+        display: "flex", 
+        flex: 1, 
+        bgcolor: "background.default", 
+      }}>
 
         {!isMobile && <Sidebar/>}
 

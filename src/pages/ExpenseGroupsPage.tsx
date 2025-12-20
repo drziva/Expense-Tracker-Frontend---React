@@ -8,6 +8,7 @@ import {
   Paper,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
 import { type Column } from "../components/ui/Table";
@@ -24,8 +25,11 @@ import { ExpenseGroupsFiltersDialog } from "../components/filters/expense-groups
 import FilterIcon from "@mui/icons-material/FilterAlt";
 import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveExpenseGroupsFilters } from "../components/filters/expense-groups/ActiveExpenseGroupsFilters";
+import { MobileExpenseGroupTable } from "../components/mobile/MobileExpenseGroupTable";
 
 export default function ExpenseGroupsPage() {
+  const isMobile = useMediaQuery("(max-width: 600px)")
+
   const [query, setQuery] = useState<ExpenseGroupQuery>({
     page: 1,
     limit: 10,
@@ -91,13 +95,24 @@ export default function ExpenseGroupsPage() {
     {
       key: "actions",
       header: "Actions",
+      align: "center",
       render: gr => (
         <>
-          <IconButton onClick={() => setToDelete(gr)}>
-            <DeleteIcon fontSize="small" />
+          <IconButton 
+            onClick={(e) => {
+              e.stopPropagation();
+              setToUpdate(gr)
+            }}
+          >
+            <EditIcon color="primary" fontSize="small" />
           </IconButton>
-          <IconButton onClick={() => setToUpdate(gr)}>
-            <EditIcon fontSize="small" />
+          <IconButton 
+            onClick={(e) => {
+              e.stopPropagation();
+              setToDelete(gr)
+            }}
+          >
+            <DeleteIcon color="error" fontSize="small" />
           </IconButton>
         </>
       ),
@@ -114,14 +129,14 @@ export default function ExpenseGroupsPage() {
           mb: 2,
         }}
       >
-        <Typography variant="h5">Expenses</Typography>
+        <Typography variant="h5">Expense Groups</Typography>
 
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
           sx={{ height: 40 }}
         >
-          <strong>Add Expense</strong>
+          <strong>Add Group</strong>
         </Button>
       </Box>
 
@@ -140,7 +155,7 @@ export default function ExpenseGroupsPage() {
           onChange={e => setSearchText(e.target.value)}
           sx={{
             height: 40,
-            minWidth: 450,
+            minWidth: isMobile ? 200 : 450,
           }}
         />
 
@@ -177,12 +192,29 @@ export default function ExpenseGroupsPage() {
           query={query}
           onChange={setQuery}
         />
-
-        <Table
-          rows={data?.data ?? []}
-          columns={columns}
-          getRowKey={gr => gr.id}
-        />
+{
+          // DESKTOP TABLE 
+        }
+        {!isMobile && (
+            <Table 
+              rows={data?.data ?? []}
+              columns={columns}
+              getRowKey={gr => gr.id}
+            />
+          )
+        }
+        {
+          // MOBILE TABLE 
+        }
+        {
+          isMobile && (
+            <MobileExpenseGroupTable
+              data={data?.data}
+              onDelete={setToDelete}
+              onEdit={setToUpdate}
+            />
+          )
+        }
       </Paper>
 
       <ExpenseGroupsFiltersDialog

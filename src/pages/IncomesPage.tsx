@@ -96,19 +96,19 @@ export default function IncomesPage() {
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setToDelete(income);
+              setToUpdate(income);
             }}
           >
-            <DeleteIcon fontSize="small" />
+            <EditIcon color="primary" fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
             onClick={e => {
               e.stopPropagation();
-              setToUpdate(income);
+              setToDelete(income);
             }}
           >
-            <EditIcon fontSize="small" />
+            <DeleteIcon color="error" fontSize="small" />
           </IconButton>
         </>
       ),

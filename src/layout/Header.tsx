@@ -40,13 +40,13 @@ export default function Header({onMenuClick, showMenuButton}: Props) {
           src="/vega-it-logo-2.png"
           alt="VegaIT"
           sx={{
-            height:102,
+            height: showMenuButton ? 70 : 102,
             filter: isDark ? "invert(1)": "none",
             transition: "filter 0.2s ease"
           }}
         />
       </Box>
-      <Typography variant={showMenuButton ? "h5" :"h4"}>
+      <Typography variant={showMenuButton ? "h6" :"h4"}>
         Expense Tracker
       </Typography>
     </Box>

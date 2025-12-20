@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography, useMediaQuery } from "@mui/material";
 import { useIncomeGroups } from "../hooks/income-groups/useIncomeGroups";
 import { type Column } from "../components/ui/Table";
 import { Table } from "../components/ui/Table"
@@ -14,8 +14,11 @@ import { IncomeGroupsFiltersDialog } from "../components/filters/income-groups/I
 import FilterIcon from '@mui/icons-material/FilterAlt';
 import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveIncomeGroupsFilters } from "../components/filters/income-groups/ActiveIncomeGroupsFilters";
+import { MobileIncomeGroupTable } from "../components/mobile/MobileIncomeGroupTable";
 
 export default function IncomeGroupsPage() {
+  const isMobile = useMediaQuery("(max-width: 600px)");
+
   const [query, setQuery] = useState<IncomeGroupQuery>({
     page:1,
     limit:10
@@ -74,17 +77,24 @@ export default function IncomeGroupsPage() {
     {
       key:"actions",
       header:"Actions",
+      align:"center",
       render: (gr) => (
         <>
-          <IconButton
-            onClick={()=>setToDelete(gr)}
+          <IconButton 
+            onClick={(e) => {
+              e.stopPropagation();
+              setToUpdate(gr)
+            }}
           >
-            <DeleteIcon fontSize="small"/>
+            <EditIcon color="primary" fontSize="small" />
           </IconButton>
-          <IconButton
-            onClick={()=>setToUpdate(gr)}
+          <IconButton 
+            onClick={(e) => {
+              e.stopPropagation();
+              setToDelete(gr)
+            }}
           >
-            <EditIcon fontSize="small"/>
+            <DeleteIcon color="error" fontSize="small" />
           </IconButton>
         </>
       )
@@ -111,7 +121,7 @@ export default function IncomeGroupsPage() {
           variant="contained"
           sx={{height: 40}}
         >
-          <strong>Add Income</strong>
+          <strong>Add Group</strong>
         </Button>
       </Box>
 
@@ -128,7 +138,7 @@ export default function IncomeGroupsPage() {
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ 
               height: 40,
-              minWidth: 450,
+              minWidth: isMobile ? 200 : 450,
             }}
           />
           <Box 
@@ -155,11 +165,29 @@ export default function IncomeGroupsPage() {
           query={query}
           onChange={setQuery}
         />
-        <Table 
-          rows={data?.data ?? []}
-          columns={columns}
-          getRowKey={gr => gr.id}
-        />
+        {
+          // DESKTOP TABLE 
+        }
+        {!isMobile && (
+            <Table 
+              rows={data?.data ?? []}
+              columns={columns}
+              getRowKey={gr => gr.id}
+            />
+          )
+        }
+        {
+          // MOBILE TABLE 
+        }
+        {
+          isMobile && (
+            <MobileIncomeGroupTable
+              data={data?.data}
+              onDelete={setToDelete}
+              onEdit={setToUpdate}
+            />
+          )
+        }
       </Paper>
 
       <IncomeGroupsFiltersDialog
