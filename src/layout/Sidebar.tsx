@@ -1,5 +1,5 @@
 import { Box, List, ListItemButton, ListItemText } from "@mui/material";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const navItems = [
   { label: "Dashboard", to: "/app/dashboard" },

@@ -1,17 +1,21 @@
-import { Alert, Box, CircularProgress, Paper, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Paper, Typography, useMediaQuery } from "@mui/material";
 import { useDashboard } from "../hooks/useDashboard";
 import { Table, type Column } from "../components/ui/Table";
 import { DashboardTableSection } from "../components/dashboard/DashboardTableSection";
 import formatEuros from "../utils/formatMoney"
 import type { Expense } from "../types/expenses.responses";
+import type { Income } from "../types/incomes.responses";
+import { MobileTransactionCard } from "../components/mobile/MobileTransactionCard";
 
 export default function DashboardPage() {
+  const isMobile = useMediaQuery("(max-width: 600px)")
+
   const { data, isError, isLoading } = useDashboard();
 
   if(isError) return <Alert severity="error">There was an error loading the dashboard page.</Alert>
   if(isLoading) return <CircularProgress/>
 
-  const txColumns: Column<Expense>[] = [
+  const txColumns: Column<Expense | Income>[] = [
     {
       key:"description",
       header:"Description",
@@ -56,7 +60,7 @@ export default function DashboardPage() {
           <Typography variant="subtitle1" color="text.secondary">
             Current balance:
           </Typography>
-          <Typography variant="h3" fontWeight={700}>
+          <Typography variant={isMobile ? "h4" :"h3"} fontWeight={700}>
             {formatEuros(data?.balance ?? 0)}
           </Typography>
         </Box>
@@ -69,31 +73,62 @@ export default function DashboardPage() {
           gap: 3
         }}
       >   
-        <DashboardTableSection
-          title="Total Incomes"
-          total={data!.totalIncomes}
-          color="success.main"
-          sign="+"
-        >
-          <Table
-            rows={data?.incomes ?? []}
-            columns={txColumns}
-            getRowKey={tx=> tx.id}
-          />
-        </DashboardTableSection>
+        {!isMobile && (
+          <>
+            <DashboardTableSection
+            title="Total Incomes"
+            total={data!.totalIncomes}
+            color="success.main"
+            sign="+"
+            >
+              <Table
+                rows={data?.incomes ?? []}
+                columns={txColumns}
+                getRowKey={tx=> tx.id}/>
 
-        <DashboardTableSection
-          title="Total Expenses"
-          total={data!.totalExpenses}
-          color="error.main"
-          sign="-"
-        >
-          <Table
-            rows={data?.expenses ?? []}
-            columns={txColumns}
-            getRowKey={tx=> tx.id}
-          />
-        </DashboardTableSection>
+            </DashboardTableSection>
+            <DashboardTableSection
+              title="Total Expenses"
+              total={data!.totalExpenses}
+              color="error.main"
+              sign="-"
+            >
+              <Table
+                rows={data?.expenses ?? []}
+                columns={txColumns}
+                getRowKey={tx=> tx.id}
+              />
+            </DashboardTableSection>
+          </>
+        )}
+        
+        {isMobile && (
+          <>
+            <DashboardTableSection
+              title="Total Incomes"
+              total={data!.totalIncomes}
+              color="success.main"
+              sign="+"
+            >
+              <MobileTransactionCard
+                data={data?.incomes}
+                color="success.main"
+              />
+            </DashboardTableSection>
+
+            <DashboardTableSection
+              title="Total Expenses"
+              total={data!.totalExpenses}
+              color="error.main"
+              sign="-"
+            >
+              <MobileTransactionCard
+                data={data?.expenses}
+                color="error.main"
+              />  
+            </DashboardTableSection>
+          </>
+        )}
       </Box>
     </Box>
   )
