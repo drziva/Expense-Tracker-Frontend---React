@@ -1,6 +1,6 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { ExpenseGroup } from "../../../types/expenseGroup.responses";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
 import { expenseSchema } from "../../../schemas/expense.schema";
 import type { z } from "zod";
 
@@ -17,12 +17,13 @@ export function ExpenseForm({form, groups}: Props) {
     register,
     formState: {errors}
   } = form
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   return(
     <Stack
       sx={{
         gap: "12px",
-        minWidth: "480px",
+        minWidth: isMobile ? "150px" :"480px",
         padding: "10px",
       }}
     >

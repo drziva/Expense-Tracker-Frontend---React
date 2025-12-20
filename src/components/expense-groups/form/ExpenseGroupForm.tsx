@@ -1,4 +1,4 @@
-import { Stack, TextField } from "@mui/material";
+import { Stack, TextField, useMediaQuery } from "@mui/material";
 import type { z } from "zod";
 import type { expenseGroupSchema } from "../../../schemas/expense-group.schema";
 import type { UseFormReturn } from "react-hook-form";
@@ -15,12 +15,13 @@ export function ExpenseGroupForm({form}: Props) {
     register,
     formState:{errors}
   } = form
-
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  
   return(
     <Stack
       sx={{
         gap:"12px",
-        minWidth:"480px",
+        minWidth: isMobile ? "150px" :"480px",
         padding:"10px"
       }}
     >

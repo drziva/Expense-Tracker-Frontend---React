@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, Pagination, Paper, TextField, Typography, useMediaQuery } from "@mui/material";
 import { useIncomes } from "../hooks/incomes/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
@@ -15,8 +15,11 @@ import FilterIcon from '@mui/icons-material/FilterAlt';
 import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveIncomeFilters } from "../components/filters/incomes/ActiveIncomeFilters";
 import { useIncomeGroups } from "../hooks/income-groups/useIncomeGroups";
+import { MobileTransactionTable } from "../components/mobile/MobileTransactionTable";
 
 export default function IncomesPage() {
+  const isMobile = useMediaQuery("(max-width: 600px)");
+
   const [query, setQuery] = useState<IncomeQuery>({
     page:1,
     limit: 10
@@ -116,9 +119,8 @@ export default function IncomesPage() {
     <>
       <Box
         sx={{
-          display:"flex",
-          justifyContent:"space-between",
-          alignItems:"center",
+          display: "flex",
+          justifyContent: "space-between",
           mb: 2,
         }}
       > 
@@ -139,6 +141,7 @@ export default function IncomesPage() {
       <Box sx={{
         display:"flex",
         justifyContent:"space-between",
+        gap: 1,
         mb: 2
       }}>
           <TextField
@@ -149,7 +152,7 @@ export default function IncomesPage() {
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ 
               height: 40,
-              minWidth: 450,
+              minWidth: isMobile ? 150 : 450,
             }}
           />
           <Box 
@@ -171,12 +174,31 @@ export default function IncomesPage() {
         </Box>
       </Box>
       <Paper sx={{ p:2 }}>
-        <ActiveIncomeFilters groups={groupNameById} query={query} onChange={setQuery}/>
-        <Table
-          rows={data?.data ?? []}
-          columns={columns}
-          getRowKey={income => income.id}
-        />
+        <ActiveIncomeFilters groups={groupNameById} query={query} 
+        onChange={setQuery}/>
+
+        {
+          //DESKTOP TABLE
+          !isMobile && (
+            <Table
+              rows={data?.data ?? []}
+              columns={columns}
+              getRowKey={income => income.id}
+            />
+          )
+        }
+
+        {
+          //MOBILE TABLE
+          isMobile && (
+            <MobileTransactionTable
+              data={data?.data}
+              onDelete={setToDelete}
+              onEdit={setToUpdate}
+            />
+          )
+        }
+
       </Paper>
 
       <Pagination

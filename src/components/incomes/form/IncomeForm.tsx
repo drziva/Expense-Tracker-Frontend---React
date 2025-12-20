@@ -1,7 +1,7 @@
 import type z from "zod"
 import type { incomeSchema } from "../../../schemas/income.schema"
 import { Controller, type UseFormReturn } from "react-hook-form";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
 import type { IncomeGroup } from "../../../types/incomeGroup.responses";
 
 type FormInput = z.input<typeof incomeSchema>;
@@ -18,12 +18,14 @@ export function IncomeForm({form, groups}: Props) {
     register,
     formState: {errors}
   } = form;
-
+  
+  const isMobile = useMediaQuery("(max-width: 600px)")
+  
   return(
     <Stack      
       sx={{
         gap: "12px",
-        minWidth: "480px",
+        minWidth: isMobile ? "150px" :"480px",
         padding: "10px",
       }}
     >
