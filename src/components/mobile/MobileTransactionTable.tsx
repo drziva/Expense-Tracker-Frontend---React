@@ -9,9 +9,10 @@ type Props = {
   data?: Income[] | Expense[];
   onEdit: (tx: Income | Expense) => void;
   onDelete: (tx: Income | Expense) => void;
+  color: string;
 }
 
-export function MobileTransactionTable({data, onEdit, onDelete}: Props) {
+export function MobileTransactionTable({data, onEdit, onDelete, color}: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={1}>
       {data?.map(tx => (
@@ -27,7 +28,7 @@ export function MobileTransactionTable({data, onEdit, onDelete}: Props) {
               {tx.description}
             </Typography>
 
-            <Typography fontWeight={700}>
+            <Typography fontWeight={700} color={color}>
               {formatEuros(tx.amount)}
             </Typography>
 

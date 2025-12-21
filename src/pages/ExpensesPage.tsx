@@ -195,6 +195,7 @@ export default function ExpensesPage() {
               data={data?.data}
               onDelete={setToDelete}
               onEdit={setToUpdate}
+              color="error"
             />
           )
         }

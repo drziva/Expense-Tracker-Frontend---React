@@ -1,7 +1,6 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/DeleteOutline"
-import EditIcon from "@mui/icons-material/Edit"
-import type { IncomeGroup } from "../../types/incomeGroup.responses";
+import DeleteIcon from "@mui/icons-material/DeleteOutline";
+import EditIcon from "@mui/icons-material/Edit";
 import type { ExpenseGroup } from "../../types/expenseGroup.responses";
 
 type Props = {

@@ -195,6 +195,7 @@ export default function IncomesPage() {
               data={data?.data}
               onDelete={setToDelete}
               onEdit={setToUpdate}
+              color="success"
             />
           )
         }

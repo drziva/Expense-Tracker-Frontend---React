@@ -74,6 +74,19 @@ const sharedComponents = {
       }),
     },
   },
+  MuiButtonBase: {
+    styleOverrides: {
+      root: {
+        "&:focus": {
+          outline: "none",
+        },
+        "&:focus-visible": {
+          outline: "none",
+          boxShadow: "0 0 0 2px rgba(25, 118, 210, 0.4)",
+        },
+      },
+    },
+  },
 };
 
 export const darkTheme = createTheme({
@@ -116,7 +129,7 @@ export const lightTheme = createTheme({
       paper: colors.light.paper,
     },
     primary: {
-      main: "#0A59CE",
+      main: "#9157f5ff",
     },
     secondary: {
       main: colors.success,

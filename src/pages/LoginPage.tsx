@@ -1,9 +1,22 @@
-import { useState } from "react"
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Button, TextField, Typography, Alert } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Alert,
+  Paper,
+  CircularProgress,
+  useTheme,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useLogin } from "../hooks/useLogin";
 
 export default function LoginPage() {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   const navigate = useNavigate();
   const loginMutation = useLogin();
 
@@ -14,51 +27,121 @@ export default function LoginPage() {
     e.preventDefault();
 
     loginMutation.mutate(
-      {email, password},
+      { email, password },
       {
         onSuccess: () => {
-          navigate("/app",{ replace: true });
-        }
-      },
+          navigate("/app", { replace: true });
+        },
+      }
     );
   };
 
   return (
-    <Box 
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ maxWidth: 660, mx: "auto", mt: 10, display: "flex", flexDirection: "column", gap: 2 }}
-    >
-      <Typography variant="h5">Login</Typography>
-      {loginMutation.isError && (
-          <Alert severity="error">
-            Login failed. Check your credentials and try again.
-          </Alert>
-      )}
-
-      <TextField
-        label="Email"
-        value={email}
-        onChange={(e)=> setEmail(e.target.value)}
-        autoComplete="email"
-      />
-
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e)=> setPassword(e.target.value)}
-        autoComplete="current-password"
-      />
-
-      <Button
-        type="submit"
-        variant="contained"
-        disabled = {loginMutation.isPending}
+    <>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          placeItems: "center",
+          background: theme =>
+            `radial-gradient(circle at top, ${theme.palette.grey[900]} 0%, ${theme.palette.background.default} 40%)`,
+        }}
       >
-        {loginMutation.isPending ? "Logging in..." : "Login"}
-      </Button>
-    </Box>
-  )
+        <Box
+          component="img"
+          src="/vega-it-logo-2.png"
+          alt="VegaIT"
+          sx={{
+            height: 132,
+            filter: isDark ? "invert(1)": "none",
+            transition: "filter 0.2s ease"
+          }}
+        />
+        <Paper
+          elevation={10}
+          sx={{
+            width: "100%",
+            maxWidth: 420,
+            p: 4,
+            borderRadius: 3,
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
+          >
+            <Box sx={{ textAlign: "center", mb: 1 }}>
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  mx: "auto",
+                  mb: 1.5,
+                  borderRadius: "50%",
+                  display: "grid",
+                  placeItems: "center",
+                  backgroundColor: "primary.main",
+                  color: "primary.contrastText",
+                }}
+              >
+                <LockOutlinedIcon />
+              </Box>
 
+              <Typography variant="h5" fontWeight={600}>
+                Welcome back
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Log in to continue
+              </Typography>
+            </Box>
+
+            {loginMutation.isError && (
+              <Alert severity="error">
+                Login failed. Check your credentials and try again.
+              </Alert>
+            )}
+
+            <TextField
+              label="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              autoComplete="email"
+              fullWidth
+            />
+
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              autoComplete="current-password"
+              fullWidth
+            />
+
+            <Button
+              type="submit"
+              size="large"
+              variant="contained"
+              disabled={loginMutation.isPending}
+              sx={{
+                mt: 1,
+                py: 1.2,
+                fontWeight: 600,
+              }}
+            >
+              {loginMutation.isPending ? (
+                <CircularProgress size={22} color="inherit" />
+              ) : (
+                "Login"
+              )}
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+    </>
+  );
 }

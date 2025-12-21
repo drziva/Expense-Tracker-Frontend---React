@@ -68,8 +68,8 @@ export default function DashboardPage() {
       </Paper>
       <Box
         sx={{
-          display:"grid",
-          gridTemplateColumns: { xs:"1fr", md:"1fr 1fr"},
+          display:"flex",
+          flexDirection:"column",
           gap: 3
         }}
       >   
