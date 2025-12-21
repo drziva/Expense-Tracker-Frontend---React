@@ -4,9 +4,11 @@ import type { Expense } from "../../types/expenses.responses";
 import { AxiosError } from "axios";
 import { updateExpense } from "../../api/expenses.api";
 import { QUERY_KEYS } from "../../constants/queryKeys";
+import { useToast } from "../../toast/ToastProvider";
 
 export function useUpdateExpense() {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   return useMutation<
     Expense,
@@ -16,11 +18,15 @@ export function useUpdateExpense() {
       req: ExpenseRequest
     }
     >({
-        mutationFn: ({id, req}: {id: number, req: ExpenseRequest}) => 
-          updateExpense(id, req),
-        onSuccess: () => {
-          queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSES]});
-          queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
-        }
+      mutationFn: ({id, req}: {id: number, req: ExpenseRequest}) => 
+        updateExpense(id, req),
+      onSuccess: () => {
+        showToast("Expense updated sucessfully!");
+        queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSES]});
+        queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
+      },
+    onError: () => {
+      showToast("There has been an error updating the expense, please try again", "error");
+    }
   })
 }

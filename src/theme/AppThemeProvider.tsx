@@ -20,9 +20,9 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
 
   const stored = localStorage.getItem("theme") as ThemeMode | null;
   
-  const [mode, setMode] = useState<ThemeMode>(() => {
-    return stored ?? (prefersDark ? "dark" : "light");
-  });
+  const [mode, setMode] = useState<ThemeMode>(() => 
+    stored ?? (prefersDark ? "dark" : "light")
+  );
 
   const toggleTheme = () => {
     setMode(prev => {
