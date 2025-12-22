@@ -60,7 +60,7 @@ export default function DashboardPage() {
           <Typography variant="subtitle1" color="text.secondary">
             Current balance:
           </Typography>
-          <Typography variant={isMobile ? "h4" :"h3"} fontWeight={700}>
+          <Typography variant={isMobile ? "h5" :"h3"} fontWeight={700}>
             {formatEuros(data?.balance ?? 0)}
           </Typography>
         </Box>

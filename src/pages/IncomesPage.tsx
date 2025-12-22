@@ -132,7 +132,10 @@ export default function IncomesPage() {
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
-          sx={{height: 40}}
+          sx={{ height: 40,
+            fontSize: "0.8rem",
+            lineHeight: "1.3"
+           }}
         >
           <strong>Add Income</strong>
         </Button>
@@ -141,7 +144,8 @@ export default function IncomesPage() {
       <Box sx={{
         display:"flex",
         justifyContent:"space-between",
-        gap: 1,
+        flexDirection: isMobile ? "column" : "row",
+        gap: "10px",
         mb: 2
       }}>
           <TextField
@@ -152,13 +156,14 @@ export default function IncomesPage() {
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ 
               height: 40,
-              minWidth: isMobile ? 150 : 450,
+              minWidth: isMobile ? null : 450,
             }}
           />
           <Box 
             sx={{
               display: "flex",
-              gap: "10px"
+              gap: "10px",
+              justifyContent:"right"
             }}
           >
             <Button 

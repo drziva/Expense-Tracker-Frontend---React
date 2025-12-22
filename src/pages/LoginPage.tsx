@@ -8,15 +8,11 @@ import {
   Alert,
   Paper,
   CircularProgress,
-  useTheme,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { useLogin } from "../hooks/useLogin";
+import { useLogin } from "../hooks/auth/useLogin";
 
 export default function LoginPage() {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
-
   const navigate = useNavigate();
   const loginMutation = useLogin();
 
@@ -45,7 +41,7 @@ export default function LoginPage() {
           flexDirection: "column",
           placeItems: "center",
           background: theme =>
-            `radial-gradient(circle at top, ${theme.palette.grey[900]} 0%, ${theme.palette.background.default} 40%)`,
+            `radial-gradient(circle at top, ${theme.palette.primary.main} 0%, ${theme.palette.background.default} 100%)`,
         }}
       >
         <Box
@@ -54,14 +50,14 @@ export default function LoginPage() {
           alt="VegaIT"
           sx={{
             height: 132,
-            filter: isDark ? "invert(1)": "none",
+            filter: "invert(1)",
             transition: "filter 0.2s ease"
           }}
         />
         <Paper
           elevation={10}
           sx={{
-            width: "100%",
+            width: "90%",
             maxWidth: 420,
             p: 4,
             borderRadius: 3,
@@ -136,7 +132,7 @@ export default function LoginPage() {
               {loginMutation.isPending ? (
                 <CircularProgress size={22} color="inherit" />
               ) : (
-                "Login"
+                "Log in"
               )}
             </Button>
           </Box>

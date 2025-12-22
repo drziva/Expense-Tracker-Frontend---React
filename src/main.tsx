@@ -7,19 +7,22 @@ import { AppThemeProvider } from './theme/AppThemeProvider.tsx';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ToastProvider } from './toast/ToastProvider.tsx';
+import { AuthProvider } from './auth/AuthProvider.tsx';
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(    
   <StrictMode>
-    <AppThemeProvider>
-      <ToastProvider>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <QueryClientProvider client={queryClient}>
-            <App />
-          </QueryClientProvider>
-        </LocalizationProvider>
-      </ToastProvider>
-    </AppThemeProvider>
+      <AppThemeProvider>
+        <ToastProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <QueryClientProvider client={queryClient}>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </QueryClientProvider>
+          </LocalizationProvider>
+        </ToastProvider>
+      </AppThemeProvider>
   </StrictMode>
 );

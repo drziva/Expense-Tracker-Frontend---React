@@ -112,14 +112,17 @@ export default function IncomeGroupsPage() {
         }}
       > 
 
-        <Typography variant="h5">
+        <Typography variant={isMobile ? "h6" : "h5"}>
           Income Groups
         </Typography>
 
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
-          sx={{height: 40}}
+          sx={{ height: 40,
+            fontSize: isMobile ? "0.7rem" : "0.8rem",
+            lineHeight: "1.3"
+           }}
         >
           <strong>Add Group</strong>
         </Button>
@@ -128,6 +131,8 @@ export default function IncomeGroupsPage() {
       <Box sx={{
         display:"flex",
         justifyContent:"space-between",
+        flexDirection: isMobile ? "column" : "row",
+        gap: "10px",
         mb: 2
       }}>
           <TextField
@@ -138,13 +143,14 @@ export default function IncomeGroupsPage() {
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ 
               height: 40,
-              minWidth: isMobile ? 200 : 450,
+              minWidth: isMobile ? null : 450,
             }}
           />
-          <Box 
+          <Box
             sx={{
               display: "flex",
-              gap: "10px"
+              gap: "10px",
+              justifyContent:"right"
             }}
           >
             <Button 

@@ -26,6 +26,7 @@ import FilterIcon from "@mui/icons-material/FilterAlt";
 import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveExpenseGroupsFilters } from "../components/filters/expense-groups/ActiveExpenseGroupsFilters";
 import { MobileExpenseGroupTable } from "../components/mobile/MobileExpenseGroupTable";
+import formatEuros from "../utils/formatMoney";
 
 export default function ExpenseGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
@@ -93,6 +94,13 @@ export default function ExpenseGroupsPage() {
         new Date(group.createdAt).toLocaleDateString(),
     },
     {
+      key: "budget-cap",
+      header: "Budget Cap",
+      render: group => (
+        group.budgetCap ? formatEuros(group.budgetCap) : "-"
+      )
+    },
+    {
       key: "actions",
       header: "Actions",
       align: "center",
@@ -129,12 +137,15 @@ export default function ExpenseGroupsPage() {
           mb: 2,
         }}
       >
-        <Typography variant="h5">Expense Groups</Typography>
+        <Typography variant={isMobile ? "h6" : "h5"}>Expense Groups</Typography>
 
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
-          sx={{ height: 40 }}
+          sx={{ height: 40,
+            fontSize: isMobile ? "0.7rem" : "0.8rem",
+            lineHeight: "1.3"
+           }}
         >
           <strong>Add Group</strong>
         </Button>
@@ -144,6 +155,8 @@ export default function ExpenseGroupsPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          flexDirection: isMobile ? "column" : "row",
+          gap: 1,
           mb: 2,
         }}
       >
@@ -155,7 +168,7 @@ export default function ExpenseGroupsPage() {
           onChange={e => setSearchText(e.target.value)}
           sx={{
             height: 40,
-            minWidth: isMobile ? 200 : 450,
+            minWidth: isMobile ? null : 450,
           }}
         />
 
@@ -163,6 +176,7 @@ export default function ExpenseGroupsPage() {
           sx={{
             display: "flex",
             gap: "10px",
+            justifyContent:"right"
           }}
         >
           <Button

@@ -13,7 +13,7 @@ export function MobileIncomeGroupTable({data, onEdit, onDelete}: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={1}>
       {data?.map(gr => (
-        <Paper key={gr.id} sx={{ p: 2, pr: 0 }}>
+        <Paper key={gr.id} sx={{ p: 0.7, pr: 0, pl:1}}>
         <Box
           sx={{
             display: "flex",

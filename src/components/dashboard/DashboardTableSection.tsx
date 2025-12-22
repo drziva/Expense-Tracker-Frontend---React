@@ -28,7 +28,7 @@ export function DashboardTableSection({
         }}
       >
         <Typography
-          variant="h6"
+          variant="subtitle2"
           sx={{
             fontWeight: 600,
             color,

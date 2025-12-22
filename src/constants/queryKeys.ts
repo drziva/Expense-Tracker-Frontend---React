@@ -4,5 +4,6 @@ export const QUERY_KEYS = {
   INCOMES: "incomes",
   EXPENSE_GROUPS: "expense-groups",
   INCOME_GROUPS: "income-groups",
-  REPORTS: "reports"
+  REPORTS: "reports",
+  ME: "me"
 } as const;

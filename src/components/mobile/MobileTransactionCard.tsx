@@ -13,7 +13,7 @@ export function MobileTransactionCard({color, data}: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       {data?.map(tx => (
-        <Paper key={tx.id} sx={{ p: 2 }}>
+        <Paper key={tx.id} sx={{ p: 0.7, pr: 0, pl:1}}>
           <Typography fontWeight={600}>
             {tx.description}
           </Typography>

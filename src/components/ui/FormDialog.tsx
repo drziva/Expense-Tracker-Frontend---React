@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import type { ReactNode } from "react";
 
 type Props = {
@@ -20,6 +20,8 @@ export function FormDialog({
   submitting,
   children
 }: Props) {
+  const isMobile = useMediaQuery("(max-width: 600px)")
+
   return (
     <Dialog
       open={open}
@@ -27,7 +29,7 @@ export function FormDialog({
       sx={{
         "& .MuiDialog-paper":{
           borderRadius:"10px",
-          padding: "25px",
+          padding: isMobile ? "0px" : "25px",
         }
       }}
     >

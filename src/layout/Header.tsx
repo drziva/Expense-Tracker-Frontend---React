@@ -13,6 +13,7 @@ import { NavLink } from "react-router-dom";
 import { useThemeMode } from "../theme/AppThemeProvider";
 import { useState } from "react";
 import ProfileIcon from '@mui/icons-material/PermIdentity';
+import { useAuth } from "../auth/AuthProvider";
 
 type Props = {
   onMenuClick?: () => void;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export default function Header({ onMenuClick, showMenuButton }: Props) {
+  const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -87,8 +89,7 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
         >
           <MenuItem onClick={()=>{
             setAnchorEl(null);
-            localStorage.removeItem("token");
-            window.location.href = "/login";
+            logout();
           }}>Log out</MenuItem>
         </Menu>
       </Box>

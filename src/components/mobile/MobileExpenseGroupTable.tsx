@@ -2,6 +2,7 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import type { ExpenseGroup } from "../../types/expenseGroup.responses";
+import formatEuros from "../../utils/formatMoney";
 
 type Props = {
   data?: ExpenseGroup[];
@@ -13,7 +14,7 @@ export function MobileExpenseGroupTable({data, onEdit, onDelete}: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={1}>
       {data?.map(gr => (
-        <Paper key={gr.id} sx={{ p: 2, pr: 0 }}>
+        <Paper key={gr.id} sx={{ p: 0.7, pr: 0, pl:1}}>
         <Box
           sx={{
             display: "flex",
@@ -29,8 +30,8 @@ export function MobileExpenseGroupTable({data, onEdit, onDelete}: Props) {
               {gr.description}
             </Typography>
 
-            <Typography color="text.secondary">
-              {gr.budgetCap ? `Budget cap: ${gr.budgetCap}` : ""}
+            <Typography color="text.secondary" variant="subtitle2">
+              {gr.budgetCap ? `Budget cap: ${formatEuros(gr.budgetCap)}` : ""}
             </Typography>
 
             <Typography variant="caption" color="text.secondary">

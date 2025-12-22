@@ -1,5 +1,6 @@
 import { Box, List, ListItemButton, ListItemText, useMediaQuery, useTheme } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider";
 
 const navItems = [
   { label: "Dashboard", to: "/app/dashboard" },
@@ -7,7 +8,7 @@ const navItems = [
   { label: "Expenses", to: "/app/expenses" },
   { label: "Income Groups", to: "/app/income-groups" },
   { label: "Expense Groups", to: "/app/expense-groups" },
-  { label: "Reports", to:"/app/reports" },
+  { label: "Reports", to:"/app/reports", premium: true },
 ];
 
 type Props = {
@@ -16,8 +17,11 @@ type Props = {
 
 export default function Sidebar({hideSidebar}: Props) {
   const theme = useTheme(); 
-  const isMobile = useMediaQuery("(max-width: 600px)")
+  const isMobile = useMediaQuery("(max-width: 600px)");
   const isDark = theme.palette.mode === "dark";
+
+  const isPremium = useAuth().user?.premium
+
   return(
     <Box
       sx={{
@@ -39,7 +43,7 @@ export default function Sidebar({hideSidebar}: Props) {
         />
       )}
       <List>
-       {navItems.map((item)=>(
+       {navItems.map((item)=>(       
         <ListItemButton
           key={item.to}
           component={NavLink}

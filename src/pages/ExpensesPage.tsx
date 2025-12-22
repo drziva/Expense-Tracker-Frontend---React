@@ -133,7 +133,10 @@ export default function ExpensesPage() {
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
-          sx={{height: 40}}
+          sx={{ height: 40,
+            fontSize: "0.8rem",
+            lineHeight: "1.3"
+           }}
         >
           <strong>Add Expense</strong>
         </Button>
@@ -142,7 +145,8 @@ export default function ExpensesPage() {
       <Box sx={{
         display:"flex",
         justifyContent:"space-between",
-        gap: 1,
+        flexDirection: isMobile ? "column" : "row",
+        gap: "10px",
         mb: 2
       }}>
           <TextField
@@ -153,13 +157,14 @@ export default function ExpensesPage() {
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ 
               height: 40,
-              minWidth: isMobile ? 200 : 450,
+              minWidth: isMobile ? null : 450,
             }}
           />
           <Box 
             sx={{
               display: "flex",
-              gap: "10px"
+              gap: "10px",
+              justifyContent: "right"
             }}
           >
             <Button 
