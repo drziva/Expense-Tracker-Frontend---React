@@ -91,44 +91,49 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
             <Typography variant="subtitle2" gutterBottom>
               Amount
             </Typography>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <TextField
-                size="small"
-                label="Min"
-                type="number"
-                value={minValue}
-                onChange={(e) => setMinValue(e.target.value)}
-                fullWidth
-              />
-              <TextField
-                size="small"
-                label="Max"
-                type="number"
-                value={maxValue}
-                onChange={(e) => setMaxValue(e.target.value)}
-                fullWidth
-              />
-            </Box>
+
+            <TextField
+              size="small"
+              label="Min"
+              type="number"
+              value={minValue}
+              onChange={(e) => setMinValue(e.target.value)}
+              fullWidth
+              sx={{
+                mb:2
+              }}
+            />
+            <TextField
+              size="small"
+              label="Max"
+              type="number"
+              value={maxValue}
+              onChange={(e) => setMaxValue(e.target.value)}
+              fullWidth
+            />
           </Box>
 
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               Date range
             </Typography>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <DatePicker
-                label="From"
-                value={fromDate}
-                onChange={setFromDate}
-                slotProps={{ textField: { size: "small", fullWidth: true } }}
-              />
-              <DatePicker
-                label="To"
-                value={toDate}
-                onChange={setToDate}
-                slotProps={{ textField: { size: "small", fullWidth: true } }}
-              />
-            </Box>
+
+            <DatePicker
+              label="From"
+              value={fromDate}
+              onChange={setFromDate}
+              slotProps={{ textField: { size: "small", fullWidth: true } }}
+              sx={{
+                mb:2
+              }}
+            />
+            <DatePicker
+              label="To"
+              value={toDate}
+              onChange={setToDate}
+              slotProps={{ textField: { size: "small", fullWidth: true } }}
+            />
+
           </Box>
 
           <Box>

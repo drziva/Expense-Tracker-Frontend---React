@@ -65,7 +65,6 @@ export function Table<T>({
               sx={{
                 cursor: onRowClick ? "pointer" : "default",
                 backgroundColor: "background.paper",
-                transition: "background-color 120ms ease",
                 "&:hover": {
                   backgroundColor: "action.hover",
                 },
