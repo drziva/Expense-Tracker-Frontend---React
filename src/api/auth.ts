@@ -13,9 +13,14 @@ export type LoginResponse = {
     email: string,
     premium: boolean
   }
-}; //refresh jwt token, http only cookie
+};
 
 export async function login(dto: LoginRequest): Promise<LoginResponse> {
   const res = await api.post<LoginResponse>("/auth/login", dto);
   return res.data;
 }
+
+export async function getMe() {
+  const res = await api.get("/auth/me");
+  return res.data;
+} 

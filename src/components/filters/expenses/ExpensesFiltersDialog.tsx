@@ -1,0 +1,191 @@
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import type { SortOption } from "../../../types/pagination";
+import { useExpenseGroups } from "../../../hooks/expense-groups/useExpenseGroups";
+import type { ExpenseQuery } from "../../../types/expenses.requests";
+
+export type ExpenseFilterValues = {
+  from?: string;
+  to?: string;
+  min?: number;
+  max?: number;
+  group_id?: number;
+  sort?: SortOption;
+};
+
+type Props = {
+  open: boolean;
+  query: ExpenseQuery;
+  onClose: () => void;
+  onApply: (values: ExpenseFilterValues) => void;
+};
+
+export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) {
+  const { data } = useExpenseGroups({});
+  const [minValue, setMinValue] = useState("");
+  const [maxValue, setMaxValue] = useState("");
+  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
+  const [toDate, setToDate] = useState<dayjs.Dayjs | null>(null);
+  const [sort, setSort] = useState<SortOption | "">("");
+  const [groupId, setGroupId] = useState<number | "">("");
+
+  useEffect(() => {
+    setMinValue(query.min?.toString() ?? "");
+    setMaxValue(query.max?.toString() ?? "");
+    setFromDate(query.from ? dayjs(query.from) : null);
+    setToDate(query.to ? dayjs(query.to) : null);
+    setGroupId(query.group_id ?? "");
+    setSort(query.sort ?? "");
+  }, [query]);
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>Filter expenses</DialogTitle>
+
+      <DialogContent>
+        <Box
+          component="form"
+          id="expense-filters-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            const min = minValue !== "" ? Number(minValue) : undefined;
+            const max = maxValue !== "" ? Number(maxValue) : undefined;
+            const group = groupId !== "" ? Number(groupId) : undefined;
+
+            onApply({
+              from: fromDate ? fromDate.format("YYYY-MM-DD") : undefined,
+              to: toDate ? toDate.format("YYYY-MM-DD") : undefined,
+              min,
+              max,
+              sort: sort || undefined,
+              group_id: group,
+            });
+
+            onClose();
+          }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+            mt: 1,
+          }}
+        >
+
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Amount
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                size="small"
+                label="Min"
+                type="number"
+                value={minValue}
+                onChange={(e) => setMinValue(e.target.value)}
+                fullWidth
+              />
+              <TextField
+                size="small"
+                label="Max"
+                type="number"
+                value={maxValue}
+                onChange={(e) => setMaxValue(e.target.value)}
+                fullWidth
+              />
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Date range
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <DatePicker
+                label="From"
+                value={fromDate}
+                onChange={setFromDate}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+              />
+              <DatePicker
+                label="To"
+                value={toDate}
+                onChange={setToDate}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+              />
+            </Box>
+          </Box>
+
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Sorting
+            </Typography>
+            <FormControl size="small" fullWidth>
+              <InputLabel id="sort-label">Sort by</InputLabel>
+              <Select
+                labelId="sort-label"
+                label="Sort by"
+                value={sort}
+                onChange={(e) => setSort(e.target.value as SortOption)}
+              >
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                <MenuItem value="date_desc">Date ↓</MenuItem>
+                <MenuItem value="date_asc">Date ↑</MenuItem>
+                <MenuItem value="amount_desc">Amount ↓</MenuItem>
+                <MenuItem value="amount_asc">Amount ↑</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          <Box>
+            <Typography variant="subtitle2" gutterBottom>
+              Group
+            </Typography>
+            <FormControl size="small" fullWidth>
+              <InputLabel id="group-label">Group</InputLabel>
+              <Select
+                labelId="group-label"
+                label="Group"
+                value={groupId}
+                onChange={(e) => setGroupId(e.target.value as number | "")}
+              >
+                <MenuItem value="">
+                  <em>All</em>
+                </MenuItem>
+                {data?.data?.map((gr) => (
+                  <MenuItem key={gr.id} value={gr.id}>
+                    {gr.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </Box>
+      </DialogContent>
+
+      <DialogActions>
+        <Button form="expense-filters-form" type="submit" variant="contained">
+          Apply
+        </Button>
+        <Button onClick={onClose}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}

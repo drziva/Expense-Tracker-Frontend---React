@@ -4,7 +4,7 @@ import { QUERY_KEYS } from "../constants/queryKeys";
 
 export function useDashboard() {
   return useQuery({
-    queryKey: QUERY_KEYS.DASHBOARD,
+    queryKey: [QUERY_KEYS.DASHBOARD],
     queryFn: getDashboard
   })
 }

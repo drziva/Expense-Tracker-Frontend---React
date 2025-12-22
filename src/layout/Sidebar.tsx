@@ -1,26 +1,27 @@
-import { Box, List, ListItemButton, ListItemText } from "@mui/material";
+import { Box, List, ListItemButton, ListItemText, useMediaQuery, useTheme } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider";
 
 const navItems = [
-  {
-    label: "Dashboard",
-    to: "/app/dashboard"
-  },
-  {
-    label: "Incomes",
-    to: "/app/incomes"
-  },
-  {
-    label: "Expenses",
-    to: "/app/expenses"
-  },
-  {
-    label: "Expense Groups",
-    to: "/app/expense-groups"
-  }
-]
+  { label: "Dashboard", to: "/app/dashboard" },
+  { label: "Incomes", to: "/app/incomes" },
+  { label: "Expenses", to: "/app/expenses" },
+  { label: "Income Groups", to: "/app/income-groups" },
+  { label: "Expense Groups", to: "/app/expense-groups" },
+  { label: "Reports", to:"/app/reports", premium: true },
+];
 
-export default function Sidebar() {
+type Props = {
+  hideSidebar?: () => void
+}
+
+export default function Sidebar({hideSidebar}: Props) {
+  const theme = useTheme(); 
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isDark = theme.palette.mode === "dark";
+
+  const isPremium = useAuth().user?.premium
+
   return(
     <Box
       sx={{
@@ -29,8 +30,20 @@ export default function Sidebar() {
         borderColor: "divider",
         py: 2, 
     }}>
+      {isMobile && (
+         <Box
+          component="img"
+          src="/vega-it-logo-2.png"
+          alt="VegaIT"
+          sx={{
+            height: 70,
+            filter: isDark ? "invert(1)" : "none",
+            transition: "filter 0.2s ease",
+          }}
+        />
+      )}
       <List>
-       {navItems.map((item)=>(
+       {navItems.map((item)=>(       
         <ListItemButton
           key={item.to}
           component={NavLink}
@@ -41,6 +54,7 @@ export default function Sidebar() {
               color: "primary.main",
             },
           }}
+          onClick={hideSidebar}
         >
           <ListItemText primary={item.label}/>
         </ListItemButton>

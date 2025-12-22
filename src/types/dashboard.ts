@@ -1,9 +1,10 @@
-import type { Transaction } from "./transaction";
+import type { Expense } from "./expenses.responses";
+import type { Income } from "./incomes.responses";
 
 export type GetDashboardResponse = {
   balance: number;
   totalExpenses: number;
   totalIncomes: number;
-  expenses: Transaction[];
-  incomes: Transaction[];
+  expenses: Expense[];
+  incomes: Income[];
 }
