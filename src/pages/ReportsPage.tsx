@@ -119,7 +119,7 @@ export function ReportsPage() {
 
             <Button
               type="submit"
-              variant="contained"
+              variant="outlined"
               name="email"
               sx={{
                 height: 56,
