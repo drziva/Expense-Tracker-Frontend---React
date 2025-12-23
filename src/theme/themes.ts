@@ -16,6 +16,7 @@ const colors = {
     divider: "rgba(0, 0, 0, 0.08)",
   },
   //violet: 9157f5ff
+  //green : "b3d80cff"
   primary: "#9157f5ff",
   success: "#5bcc84ff",
   error: "#da5c5cff",

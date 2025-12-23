@@ -6,5 +6,6 @@ export const QUERY_KEYS = {
   INCOME_GROUPS: "income-groups",
   REPORTS: "reports",
   ME: "me",
-  SCHEDULED: "scheduled-transactions"
+  SCHEDULED: "scheduled-transactions",
+  REMINDERS: "reminders"
 } as const;

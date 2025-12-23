@@ -16,6 +16,7 @@ import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveIncomeFilters } from "../components/filters/incomes/ActiveIncomeFilters";
 import { useIncomeGroups } from "../hooks/income-groups/useIncomeGroups";
 import { MobileTransactionTable } from "../components/mobile/MobileTransactionTable";
+import { EmptyState } from "../components/ui/EmptyState";
 
 export default function IncomesPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -62,6 +63,8 @@ export default function IncomesPage() {
   if(isLoading) return <CircularProgress />
 
   if(isError) return <Alert severity="error">Failed to load incomes.</Alert>
+
+  const isEmpty = data?.data.length === 0;
   
   const columns: Column<Income>[] = [
     {
@@ -181,27 +184,41 @@ export default function IncomesPage() {
       <Paper sx={{ p:2 }}>
         <ActiveIncomeFilters groups={groupNameById} query={query} 
         onChange={setQuery}/>
-
+          
         {
           //DESKTOP TABLE
           !isMobile && (
-            <Table
-              rows={data?.data ?? []}
-              columns={columns}
-              getRowKey={income => income.id}
-            />
+            isEmpty ? 
+            (
+              <EmptyState name="incomes"/>
+            ) 
+            :   
+            (
+              <Table
+                rows={data?.data ?? []}
+                columns={columns}
+                getRowKey={income => income.id}
+              />
+            )
           )
         }
 
         {
           //MOBILE TABLE
           isMobile && (
-            <MobileTransactionTable
-              data={data?.data}
-              onDelete={setToDelete}
-              onEdit={setToUpdate}
-              color="success"
-            />
+            isEmpty ?
+            (
+              <EmptyState name="incomes"/>
+            )
+            :
+            (
+              <MobileTransactionTable
+                data={data?.data}
+                onDelete={setToDelete}
+                onEdit={setToUpdate}
+                color="success"
+              />
+            )
           )
         }
 
@@ -218,6 +235,8 @@ export default function IncomesPage() {
         }}
         count={data?.totalPages}
         onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+        hideNextButton={isEmpty}
+        hidePrevButton={isEmpty}
       />
 
       <IncomesFiltersDialog 

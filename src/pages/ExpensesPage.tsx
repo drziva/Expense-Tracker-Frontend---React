@@ -16,6 +16,7 @@ import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveExpenseFilters } from "../components/filters/expenses/ActiveExpenseFilters";
 import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
 import { MobileTransactionTable } from "../components/mobile/MobileTransactionTable";
+import { EmptyState } from "../components/ui/EmptyState";
 
 export default function ExpensesPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -62,6 +63,8 @@ export default function ExpensesPage() {
   if(isLoading) return <CircularProgress />
 
   if(isError) return <Alert severity="error">Failed to load expenses.</Alert>
+
+  const isEmpty = data?.data.length === 0;
   
   const columns: Column<Expense>[] = [
     {
@@ -182,26 +185,40 @@ export default function ExpensesPage() {
       <Paper sx={{ p:2 }}>
         <ActiveExpenseFilters groups={groupNameById} query={query} onChange={setQuery}/>
 
-        {
+{
           //DESKTOP TABLE
           !isMobile && (
-            <Table
-              rows={data?.data ?? []}
-              columns={columns}
-              getRowKey={income => income.id}
-            />
+            isEmpty ? 
+            (
+              <EmptyState name="expenses"/>
+            ) 
+            :   
+            (
+              <Table
+                rows={data?.data ?? []}
+                columns={columns}
+                getRowKey={income => income.id}
+              />
+            )
           )
         }
 
         {
           //MOBILE TABLE
           isMobile && (
-            <MobileTransactionTable
-              data={data?.data}
-              onDelete={setToDelete}
-              onEdit={setToUpdate}
-              color="error"
-            />
+            isEmpty ?
+            (
+              <EmptyState name="expenses"/>
+            )
+            :
+            (
+              <MobileTransactionTable
+                data={data?.data}
+                onDelete={setToDelete}
+                onEdit={setToUpdate}
+                color="success"
+              />
+            )
           )
         }
 
@@ -218,6 +235,8 @@ export default function ExpensesPage() {
         }}
         count={data?.totalPages}
         onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+        hideNextButton={isEmpty}
+        hidePrevButton={isEmpty}
       />
 
       <ExpensesFiltersDialog 

@@ -27,6 +27,7 @@ import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveExpenseGroupsFilters } from "../components/filters/expense-groups/ActiveExpenseGroupsFilters";
 import { MobileExpenseGroupTable } from "../components/mobile/MobileExpenseGroupTable";
 import formatEuros from "../utils/formatMoney";
+import { EmptyState } from "../components/ui/EmptyState";
 
 export default function ExpenseGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
@@ -71,6 +72,8 @@ export default function ExpenseGroupsPage() {
     );
 
   if (isPending) return <CircularProgress />;
+
+  const isEmpty = data?.data.length === 0;
 
   const columns: Column<ExpenseGroup>[] = [
     {
@@ -206,27 +209,39 @@ export default function ExpenseGroupsPage() {
           query={query}
           onChange={setQuery}
         />
-{
-          // DESKTOP TABLE 
-        }
-        {!isMobile && (
-            <Table 
-              rows={data?.data ?? []}
-              columns={columns}
-              getRowKey={gr => gr.id}
-            />
+        {
+          //DESKTOP TABLE
+          !isMobile && (
+            isEmpty ? 
+            (
+              <EmptyState name="expense groups"/>
+            ) 
+            :   
+            (
+              <Table
+                rows={data.data}
+                columns={columns}
+                getRowKey={gr => gr.id}
+              />
+            )
           )
         }
+
         {
-          // MOBILE TABLE 
-        }
-        {
+          //MOBILE TABLE
           isMobile && (
-            <MobileExpenseGroupTable
-              data={data?.data}
-              onDelete={setToDelete}
-              onEdit={setToUpdate}
-            />
+            isEmpty ?
+            (
+              <EmptyState name="expense groups"/>
+            )
+            :
+            (
+              <MobileExpenseGroupTable
+                data={data.data}
+                onDelete={setToDelete}
+                onEdit={setToUpdate}
+              />
+            )
           )
         }
       </Paper>
@@ -255,6 +270,8 @@ export default function ExpenseGroupsPage() {
         }}
         count={data?.totalPages}
         onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+        hideNextButton={isEmpty}
+        hidePrevButton={isEmpty}
       />
       
       <ConfirmDialog

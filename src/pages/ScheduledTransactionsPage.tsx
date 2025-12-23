@@ -5,6 +5,7 @@ import {
   CircularProgress,
   IconButton,
   Paper,
+  Switch,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -24,27 +25,39 @@ import { MobileSchedTransactionsTable } from "../components/mobile/MobileSchedTr
 
 import formatEuros from "../utils/formatMoney";
 import { capitalizeFirst } from "../utils/capitalizeFirst";
-import { useAuth } from "../auth/AuthProvider";
 import { PremiumRequiredPage } from "./PremiumRequiredPage";
+import { AxiosError } from "axios";
 
 export default function ScheduledTransactionsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const isPremium = useAuth().isPremium;
 
-  const { data, isPending, isError } = useSchedTransactions();
+  const { data, isLoading, isError, error } = useSchedTransactions();
   const deleteTransaction = useDeleteSchedTransaction();
 
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<SchedTransaction | null>(null);
   const [toDelete, setToDelete] = useState<SchedTransaction | null>(null);
 
-  if (isPending) return <CircularProgress />;
-  if (isError)
+  const isPremiumError =
+    isError &&
+    error instanceof AxiosError &&
+    error.response?.status === 403;
+
+  if (isLoading) {
+    return <CircularProgress />;
+  }
+
+  if (isPremiumError) {
+    return <PremiumRequiredPage />;
+  }
+
+  if (isError) {
     return (
       <Alert severity="error">
-        Failed to load scheduled transactions.
+        There has been an error loading the transactions
       </Alert>
     );
+  }
 
   const columns: Column<SchedTransaction>[] = [
     {
@@ -110,80 +123,73 @@ export default function ScheduledTransactionsPage() {
 
   return (
     <>
-      {!isPremium &&
-        <PremiumRequiredPage/>
-      }
-      {isPremium && (
-        <>
-          <Box
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+        >
+        <Typography variant="h5">
+          Scheduled Transactions
+        </Typography>
+
+        <Button
+          variant="contained"
+          onClick={() => setToCreate(true)}
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
+            height: 40,
+            fontSize: "0.75rem",
+            lineHeight: "1.1",
           }}
         >
-          <Typography variant="h5">
-            Scheduled Transactions
-          </Typography>
+          <strong>Add Transaction</strong>
+        </Button>
+      </Box>
 
-          <Button
-            variant="contained"
-            onClick={() => setToCreate(true)}
-            sx={{
-              height: 40,
-              fontSize: "0.75rem",
-              lineHeight: "1.1",
-            }}
-          >
-            <strong>Add Transaction</strong>
-          </Button>
-        </Box>
+      <Paper sx={{ p: 2 }}>
+        {!isMobile && (
+          <Table
+            rows={data ?? []}
+            columns={columns}
+            getRowKey={tx => tx.id}
+          />
+        )}
 
-        <Paper sx={{ p: 2 }}>
-          {!isMobile && (
-            <Table
-              rows={data ?? []}
-              columns={columns}
-              getRowKey={tx => tx.id}
-            />
-          )}
+        {isMobile && (
+          <MobileSchedTransactionsTable
+            data={data ?? []}
+            onEdit={setToUpdate}
+            onDelete={setToDelete}
+          />
+        )}
+      </Paper>
 
-          {isMobile && (
-            <MobileSchedTransactionsTable
-              data={data ?? []}
-              onEdit={setToUpdate}
-              onDelete={setToDelete}
-            />
-          )}
-        </Paper>
+      <ConfirmDialog
+        open={!!toDelete}
+        title="Delete scheduled transaction"
+        action="Delete"
+        description={`Are you sure you want to delete "${toDelete?.description}"?`}
+        loading={deleteTransaction.isPending}
+        onCancel={() => setToDelete(null)}
+        onConfirm={() => {
+          if (!toDelete) return;
+          deleteTransaction.mutate(toDelete.id);
+          setToDelete(null);
+        }}
+      />
 
-        <ConfirmDialog
-          open={!!toDelete}
-          title="Delete scheduled transaction"
-          action="Delete"
-          description={`Are you sure you want to delete "${toDelete?.description}"?`}
-          loading={deleteTransaction.isPending}
-          onCancel={() => setToDelete(null)}
-          onConfirm={() => {
-            if (!toDelete) return;
-            deleteTransaction.mutate(toDelete.id);
-            setToDelete(null);
-          }}
-        />
+      <ScheduledTransactionDialog
+        open={toCreate}
+        onClose={() => setToCreate(false)}
+      />
 
-        <ScheduledTransactionDialog
-          open={toCreate}
-          onClose={() => setToCreate(false)}
-        />
-
-        <ScheduledTransactionDialog
-          open={!!toUpdate}
-          transaction={toUpdate}
-          onClose={() => setToUpdate(null)}
-        />
-      </>
-      )}
+      <ScheduledTransactionDialog
+        open={!!toUpdate}
+        transaction={toUpdate}
+        onClose={() => setToUpdate(null)}
+      />
     </>
   );
 }

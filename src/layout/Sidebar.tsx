@@ -9,6 +9,7 @@ const navItems = [
   { label: "Expense Groups", to: "/app/expense-groups" },
   { label: "Reports", to:"/app/reports"},
   { label: "Scheduled Transactions", to:"/app/scheduled-transactions"},
+  { label: "Reminders", to:"/app/reminders"},
 ];
 
 type Props = {

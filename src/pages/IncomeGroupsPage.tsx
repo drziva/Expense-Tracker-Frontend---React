@@ -15,6 +15,7 @@ import FilterIcon from '@mui/icons-material/FilterAlt';
 import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveIncomeGroupsFilters } from "../components/filters/income-groups/ActiveIncomeGroupsFilters";
 import { MobileIncomeGroupTable } from "../components/mobile/MobileIncomeGroupTable";
+import { EmptyState } from "../components/ui/EmptyState";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -53,6 +54,8 @@ export default function IncomeGroupsPage() {
 
   if(isError) return <Alert severity="error">There has been an error loading income groups</Alert>
   if(isPending) return <CircularProgress/>
+
+  const isEmpty = data?.data.length === 0;
 
   const columns: Column<IncomeGroup>[] = [
     {
@@ -172,26 +175,38 @@ export default function IncomeGroupsPage() {
           onChange={setQuery}
         />
         {
-          // DESKTOP TABLE 
-        }
-        {!isMobile && (
-            <Table 
-              rows={data?.data ?? []}
-              columns={columns}
-              getRowKey={gr => gr.id}
-            />
+          //DESKTOP TABLE
+          !isMobile && (
+            isEmpty ? 
+            (
+              <EmptyState name="income groups"/>
+            ) 
+            :   
+            (
+              <Table
+                rows={data.data}
+                columns={columns}
+                getRowKey={gr => gr.id}
+              />
+            )
           )
         }
+
         {
-          // MOBILE TABLE 
-        }
-        {
+          //MOBILE TABLE
           isMobile && (
-            <MobileIncomeGroupTable
-              data={data?.data}
-              onDelete={setToDelete}
-              onEdit={setToUpdate}
-            />
+            isEmpty ?
+            (
+              <EmptyState name="income groups"/>
+            )
+            :
+            (
+              <MobileIncomeGroupTable
+                data={data.data}
+                onDelete={setToDelete}
+                onEdit={setToUpdate}
+              />
+            )
           )
         }
       </Paper>
@@ -220,6 +235,8 @@ export default function IncomeGroupsPage() {
         }}
         count={data?.totalPages}
         onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+        hideNextButton={isEmpty}
+        hidePrevButton={isEmpty}
       />
 
       <ConfirmDialog

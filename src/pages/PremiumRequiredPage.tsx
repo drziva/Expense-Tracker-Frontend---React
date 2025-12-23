@@ -44,7 +44,7 @@ export function PremiumRequiredPage({
           </Typography>
 
           <Typography variant="body2" color="text.secondary">
-            Upgrade to premium to unlock scheduled transactions, automation,
+            Upgrade to premium to unlock scheduled transactions, automated reminders,
             and advanced financial tools.
           </Typography>
 
@@ -52,10 +52,6 @@ export function PremiumRequiredPage({
             variant="contained"
             size="large"
             sx={{ mt: 2 }}
-            onClick={() => {
-              // navigate to upgrade page or open modal
-              // navigate("/premium");
-            }}
           >
             Upgrade to Premium
           </Button>
