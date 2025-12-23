@@ -59,8 +59,7 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
           alt="VegaIT"
           sx={{
             height: showMenuButton ? 70 : 102,
-            filter: isDark ? "invert(1)" : "none",
-            transition: "filter 0.2s ease",
+            filter: isDark ? "invert(1)" : "none"
           }}
         />
         {!showMenuButton &&(

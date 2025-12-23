@@ -4,7 +4,7 @@ import LoginPage from "../pages/LoginPage"; // eager (correct)
 import ProtectedRoute from "./ProtectedRoute";
 import AppLayout from "../layout/AppLayout";
 import { ReportsPage } from "../pages/ReportsPage";
-import { ScheduledTransactionsPage } from "../pages/ScheduledTransactionsPage";
+import ScheduledTransactionsPage from "../pages/ScheduledTransactionsPage";
 
 const DashboardPage = lazy(() => import("../pages/DashboardPage"));
 const ExpensesPage = lazy(() => import("../pages/ExpensesPage"));
@@ -25,8 +25,8 @@ export default function AppRoutes() {
           <Route path="incomes" element={<IncomesPage/>}/>
           <Route path="expense-groups" element={<ExpenseGroupsPage/>}/>
           <Route path="income-groups" element={<IncomeGroupsPage/>}/> 
-          <Route path="reports" element={<ReportsPage/>}/>   
-          <Route path="scheduled-transactions" element={<ScheduledTransactionsPage/>}/>           
+          <Route path="reports" element={<ReportsPage/>}/>       
+          <Route path="scheduled-transactions" element={<ScheduledTransactionsPage/>}/>         
         </Route>
       </Route>
 
