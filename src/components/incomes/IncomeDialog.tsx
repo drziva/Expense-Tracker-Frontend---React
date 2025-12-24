@@ -26,7 +26,6 @@ export function IncomeDialog({ open, onClose, income }: Props) {
   const { data, isError, isPending } = useIncomeGroups({});
 
   const isUpdate = !!income;
-
   const form = useForm<FormInput, any, FormOutput>({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
@@ -35,6 +34,10 @@ export function IncomeDialog({ open, onClose, income }: Props) {
       groupId: "",
     },
   });
+
+  const {
+    formState: {isDirty}
+  } = form
 
   const groups = data?.data ?? [];
 
@@ -56,6 +59,10 @@ export function IncomeDialog({ open, onClose, income }: Props) {
   }, [open, isUpdate, income]);
 
   async function onSubmit(data: FormOutput) {
+    if(isUpdate && !isDirty){
+      onClose();
+      return;
+    }
     try {
       if (!isUpdate) {
         await createIncome.mutateAsync(data);

@@ -69,7 +69,7 @@ export function ScheduledTransactionForm({ form }: Props) {
       <TextField
         label="Amount"
         type="number"
-        {...register("amount", { valueAsNumber: true })}
+        {...register("amount")}
         error={!!errors.amount}
         helperText={errors.amount?.message}
         fullWidth
@@ -129,6 +129,7 @@ export function ScheduledTransactionForm({ form }: Props) {
                 labelId="expense-group-label"
                 label="Expense Group"
                 value={field.value ?? ""}
+                error={!!errors.type}
               >
                 {expenseGroups.map(group => (
                   <MenuItem key={group.id} value={group.id}>

@@ -43,6 +43,8 @@ export function ScheduledTransactionDialog({
     },
   });
 
+  const {formState: {isDirty}} = form;
+
   useEffect(() => {
     if (!open) {
       form.reset();
@@ -54,7 +56,7 @@ export function ScheduledTransactionDialog({
     if (isUpdate && transaction) {
       form.reset({
         description: transaction.description,
-        amount: transaction.amount,
+        amount: String(transaction.amount),
         date: transaction.date,
         type: transaction.type,
         incomeGroupId: transaction.incomeGroupId,
@@ -64,6 +66,10 @@ export function ScheduledTransactionDialog({
   }, [open, transaction]);
 
   async function onSubmit(data: FormOutput) {
+    if(isUpdate && !isDirty){
+      onClose();
+      return;
+    }
     try {
       if (isUpdate && transaction) {
         await updateTx.mutateAsync({
