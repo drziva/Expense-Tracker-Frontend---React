@@ -32,6 +32,8 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
     }
   })
 
+  const { formState: {isDirty}} = form;
+
   const isUpdate = !!group;
 
   useEffect(() => {
@@ -50,6 +52,10 @@ export function ExpenseGroupDialog({open, onClose, group}: Props) {
   }, [open, group])
 
   async function onSubmit(data: FormOutput) {
+    if(isUpdate && !isDirty){
+      onClose();
+      return;
+    }
     try{
       if(isUpdate && group) {
         await updateExpenseGroup.mutateAsync({

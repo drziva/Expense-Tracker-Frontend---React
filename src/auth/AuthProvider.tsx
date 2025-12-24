@@ -6,6 +6,7 @@ export type AuthUser = {
   username: string;
   email: string;
   premium: boolean;
+  notifications: boolean;
 };
 
 type AuthContextValue = {

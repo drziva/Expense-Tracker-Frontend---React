@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { useReportEmail } from "../hooks/reports/useReportEmail";
-import { useAuth } from "../auth/AuthProvider";
 
 export function ReportsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -16,7 +15,7 @@ export function ReportsPage() {
   const emailReport = useReportEmail();
   
   const [formError, setFormError] = useState("");
-
+  
   useEffect(()=>{
     setFormError("");
   },[fromDate,toDate])
@@ -119,7 +118,7 @@ export function ReportsPage() {
 
             <Button
               type="submit"
-              variant="contained"
+              variant="outlined"
               name="email"
               sx={{
                 height: 56,

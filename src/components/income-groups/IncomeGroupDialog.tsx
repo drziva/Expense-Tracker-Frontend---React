@@ -33,6 +33,8 @@ export function IncomeGroupDialog({open, onClose, group}: Props) {
     }
   })
 
+  const { formState: {isDirty}} = form;
+
   useEffect(()=>{
     if(!open){
       form.reset();
@@ -48,6 +50,10 @@ export function IncomeGroupDialog({open, onClose, group}: Props) {
   },[open, group])
 
   async function onSubmit(data: FormOutput) {
+    if(isUpdate && !isDirty){
+      onClose();
+      return;
+    }
     try{
       if(!isUpdate) {
         await createIncomeGroup.mutateAsync(data);
