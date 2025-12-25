@@ -27,7 +27,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         open={open}
         autoHideDuration={2500}
         onClose={() => setOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         sx={{
           mt: 10
         }}

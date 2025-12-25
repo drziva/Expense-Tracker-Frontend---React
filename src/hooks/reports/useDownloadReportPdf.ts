@@ -20,8 +20,9 @@ export function useDownloadReportPdf() {
 
       URL.revokeObjectURL(url);
     },
-    onError: () => {
-      showToast("PDF Generation failed, please try again", "error");
+    onError: (error) => {
+
+      showToast(error.message, "error");
     }
   });
 }

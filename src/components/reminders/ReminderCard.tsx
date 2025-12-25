@@ -44,18 +44,21 @@ export function ReminderCard({ type, rem, onSave }: Props) {
     setDayOfMonth(rem.dayOfMonth ?? 1);
   }, [rem]);
 
-  const handleToggle = (_: unknown, checked: boolean) => {
-    setActive(checked);
+  useEffect(() => {
+    const timeout = setTimeout(()=>{
+      onSave({
+        type,
+        active,
+        ...(type === "weekly"
+          ? { weekday }
+          : { dayOfMonth }),
+      });
+    },2000)
+    return() => clearTimeout(timeout);
+  },[active])
 
-    onSave({
-      type,
-      active: checked,
-      ...(type === "weekly"
-        ? { weekday }
-        : { dayOfMonth }),
-    });
-  };
 
+  
   return (
     <Box display="flex" flexDirection="column" gap={1}>
       <Paper sx={{ p: 2 }}>
@@ -65,7 +68,6 @@ export function ReminderCard({ type, rem, onSave }: Props) {
           justifyContent="space-between"
           gap={2}
         >
-          {/* Configuration */}
           <Box display="flex" flexDirection="column" gap={0.5}>
             <Typography variant="subtitle2">
               {type === "weekly" ? "Weekday" : "Day of month"}
@@ -107,7 +109,7 @@ export function ReminderCard({ type, rem, onSave }: Props) {
 
           <Switch
             checked={active}
-            onChange={handleToggle}
+            onChange={() => {setActive(prev=>!prev);}}
           />
         </Box>
       </Paper>

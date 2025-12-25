@@ -1,23 +1,41 @@
+import { AxiosError } from "axios";
 import type { ReportQuery } from "../types/reports.requests";
 import type { ReportPdfResponse } from "../types/reports.responses";
 import { api } from "./client";
 
 export async function getReportPdf(
   query: ReportQuery
-): Promise<ReportPdfResponse> {
-  const res = await api.get("/reports/pdf", {
-    params: query,
-    responseType: "blob",
-  });
+): Promise<ReportPdfResponse>{
+  try {
+      const res = await api.get("/reports/pdf", {
+      params: query,
+      responseType: "blob",
+      });
 
-  const disposition = res.headers["content-disposition"];
-  const filename =
-    extractFilename(disposition) ?? "report.pdf";
+      const disposition = res.headers["content-disposition"];
+      const filename = extractFilename(disposition) ?? "report.pdf";
 
-  return {
-    blob: res.data,
-    filename,
-  };
+      return {
+        blob: res.data,
+        filename,
+      }
+    } catch (error) {
+      if ( error instanceof AxiosError && error.response?.data instanceof Blob ) {
+        const text = await error.response.data.text();
+
+        let message = "Unknown error";
+
+        try {
+          const json = JSON.parse(text);
+          message = json.message ?? message;
+        } catch {
+          message = text;
+        }
+        throw new Error(message);
+      }
+
+      throw error;
+    }
 }
 
 export async function getReportEmail(query: ReportQuery) {
@@ -28,13 +46,11 @@ export async function getReportEmail(query: ReportQuery) {
 function extractFilename(disposition?: string): string | null {
   if (!disposition) return null;
 
-  // RFC 5987 format: filename*=UTF-8''file.pdf
   const utf8Match = disposition.match(/filename\*\=UTF-8''(.+)/i);
   if (utf8Match?.[1]) {
     return decodeURIComponent(utf8Match[1]);
   }
 
-  // Basic format: filename="file.pdf"
   const asciiMatch = disposition.match(/filename="?([^"]+)"?/i);
   if (asciiMatch?.[1]) {
     return asciiMatch[1];
