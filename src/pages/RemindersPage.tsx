@@ -21,7 +21,7 @@ export default function RemindersPage() {
   const updateReminder = useUpdateReminder();
   const user = useAuth().user;
   const { data, isError, isLoading, error } = useReminders();
-
+  
   const isPremiumError =
       isError &&
       error instanceof AxiosError &&
@@ -60,7 +60,6 @@ export default function RemindersPage() {
 
   return (
     <Stack spacing={3} sx={{ maxWidth: 680 }}>
-      {/* ================= Notifications ================= */}
       <Paper sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" sx={{ mb: 0.5 }}>
           Budget cap notifications
@@ -90,7 +89,6 @@ export default function RemindersPage() {
         </Box>
       </Paper>
 
-      {/* ================= Reminders ================= */}
       <Paper sx={{ p: 3, borderRadius: 2 }}>
         <Typography variant="h6" sx={{ mb: 1 }}>
           Scheduled spending reports
@@ -102,7 +100,6 @@ export default function RemindersPage() {
         </Typography>
 
         <Stack spacing={3}>
-          {/* Weekly */}
           <Box>
             <Typography variant="subtitle1" fontWeight={600}>
               Weekly report
@@ -126,7 +123,6 @@ export default function RemindersPage() {
 
           <Divider />
 
-          {/* Monthly */}
           <Box>
             <Typography variant="subtitle1" fontWeight={600}>
               Monthly report
