@@ -12,10 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
 import type { GroupSortOption } from "../../../types/pagination";
-import type { IncomeGroupQuery } from "../../../types/incomeGroup.requests";
+import { useSearchParams } from "react-router-dom";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 
 export type IncomeFilterValues = {
   from?: string;
@@ -25,21 +25,35 @@ export type IncomeFilterValues = {
 
 type Props = {
   open: boolean;
-  query: IncomeGroupQuery;
   onClose: () => void;
-  onApply: (values: IncomeFilterValues) => void;
+  onApply: () => void;
 };
 
-export function IncomeGroupsFiltersDialog({ open, onClose, onApply, query }: Props) {
-  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
-  const [toDate, setToDate] = useState<dayjs.Dayjs | null>(null);
-  const [sort, setSort] = useState<GroupSortOption | "">("");
+export function IncomeGroupsFiltersDialog({ open, onClose, onApply }: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const fromParam = searchParams.get("from");
+  const fromDate = 
+    fromParam && dayjs(fromParam,"YYYY-MM-DD").isValid()
+      ? dayjs(fromParam, "YYYY-MM-DD")
+      : null;
 
-  useEffect(() => {
-    setFromDate(query.from ? dayjs(query.from) : null);
-    setToDate(query.to ? dayjs(query.to) : null);
-    setSort(query.sort ?? "");
-  }, [query]);
+  const toParam = searchParams.get("to");
+  const toDate = 
+    toParam && dayjs(toParam,"YYYY-MM-DD").isValid()
+      ? dayjs(toParam, "YYYY-MM-DD")
+      : null;
+
+  const sort = searchParams.get("sort") ?? null;
+
+  const [draftFrom, setDraftFrom] = useState<dayjs.Dayjs | null>(fromDate || null);
+  const [draftTo, setDraftTo] = useState<dayjs.Dayjs | null>(toDate || null);
+  const [draftSort, setDraftSort] = useState(sort);
+
+  useEffect(()=>{
+    setDraftFrom(fromDate || null);
+    setDraftTo(toDate || null);
+    setDraftSort(sort);
+  },[searchParams])
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -51,12 +65,28 @@ export function IncomeGroupsFiltersDialog({ open, onClose, onApply, query }: Pro
           onSubmit={(e) => {
             e.preventDefault();
 
-            onApply({
-              from: fromDate ? fromDate.format("YYYY-MM-DD") : undefined,
-              to: toDate ? toDate.format("YYYY-MM-DD") : undefined,
-              sort: sort || undefined
-            });
+            setSearchParams(prev => {
+              const params = new URLSearchParams(prev);
+              if(draftFrom){
+                params.set("from", draftFrom.format("YYYY-MM-DD"))
+              } else {
+                params.delete("from")
+              }
+              if(draftTo){
+                params.set("to", draftTo.format("YYYY-MM-DD"))
+              } else {
+                params.delete("to")
+              }
+              if(draftSort){
+                params.set("sort", draftSort)
+              } else {
+                params.delete("to")
+              }
 
+              return params;
+            })
+
+            onApply();
             onClose();
           }}
           sx={{
@@ -74,8 +104,10 @@ export function IncomeGroupsFiltersDialog({ open, onClose, onApply, query }: Pro
 
             <DatePicker
               label="From"
-              value={fromDate}
-              onChange={setFromDate}
+              value={draftFrom}
+              onChange={(val)=>{
+                setDraftFrom(val)
+              }}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
               sx={{
                 mb:2
@@ -84,8 +116,10 @@ export function IncomeGroupsFiltersDialog({ open, onClose, onApply, query }: Pro
 
             <DatePicker
               label="To"
-              value={toDate}
-              onChange={setToDate}
+              value={draftTo}
+              onChange={(val)=>{
+                setDraftTo(val)
+              }}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
             />
           </Box>
@@ -99,8 +133,10 @@ export function IncomeGroupsFiltersDialog({ open, onClose, onApply, query }: Pro
               <Select
                 labelId="sort-label"
                 label="Sort by"
-                value={sort}
-                onChange={(e) => setSort(e.target.value as GroupSortOption)}
+                value = {draftSort}
+                onChange={(e)=>{
+                  setDraftSort(e.target.value)
+                }}
               >
                 <MenuItem value="">
                   <em>None</em>

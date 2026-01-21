@@ -26,6 +26,7 @@ export default function AppRoutes() {
           <Route path="incomes" element={<IncomesPage/>}/>
           <Route path="expense-groups" element={<ExpenseGroupsPage/>}/>
           <Route path="income-groups" element={<IncomeGroupsPage/>}/> 
+          <Route path="income-groups" element={<IncomeGroupsPage/>}/> 
           <Route path="reports" element={<ReportsPage/>}/>       
           <Route path="scheduled-transactions" element={<ScheduledTransactionsPage/>}/> 
           <Route path="reminders" element={<RemindersPage/>}/>              

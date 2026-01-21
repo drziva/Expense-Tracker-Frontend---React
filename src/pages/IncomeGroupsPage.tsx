@@ -16,15 +16,28 @@ import { RowLimitSelect } from "../components/ui/RowLimitSelect";
 import { ActiveIncomeGroupsFilters } from "../components/filters/income-groups/ActiveIncomeGroupsFilters";
 import { MobileIncomeGroupTable } from "../components/mobile/MobileIncomeGroupTable";
 import { EmptyState } from "../components/ui/EmptyState";
+import { useSearchParams } from "react-router-dom";
+import type { GroupSortOption } from "../types/pagination";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
-
   const [query, setQuery] = useState<IncomeGroupQuery>({
     page:1,
     limit:10
   })
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const from = searchParams.get("from") ?? undefined;
+  const to = searchParams.get("to") ?? undefined;
+  const sortParam = searchParams.get("sort") ?? undefined;
+  const sort: GroupSortOption | undefined = 
+    sortParam === "date_desc" || 
+    sortParam === "date_asc" ||
+    sortParam === "name_desc" || 
+    sortParam === "name_asc"
+      ? sortParam
+      : undefined;
+  const search = searchParams.get("search") ?? "";
   const { data, isError, isPending } = useIncomeGroups(query);
 
   const deleteIncomeGroup = useDeleteIncomeGroup();
@@ -32,25 +45,18 @@ export default function IncomeGroupsPage() {
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<IncomeGroup | null>(null)
   const [toFilter, setToFilter] = useState(false);
-  const [searchText, setSearchText] = useState("");
 
   useEffect(()=>{
     const timeout = setTimeout(()=>{
       setQuery(prev => ({
         ...prev,
-        search: searchText,
+        search,
         page:1
       }))
     },350)
     return() => clearTimeout(timeout);
-  },[searchText])
+  },[search])
 
-  useEffect(()=>{
-    if(searchText !== "" && !query.search)
-    {
-      setSearchText("")
-    }
-  },[query.search])
 
   if(isError) return <Alert severity="error">There has been an error loading income groups</Alert>
   if(isPending) return <CircularProgress/>
@@ -142,8 +148,14 @@ export default function IncomeGroupsPage() {
             size="small"
             label="Search"
             color="primary"              
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            value={search}
+            onChange={(e) => {
+              setSearchParams(prev => {
+                const params = new URLSearchParams(prev);
+                params.set("search", e.target.value);
+                return params;
+              })
+            }}
             sx={{ 
               height: 40,
               minWidth: isMobile ? null : 450,
@@ -170,10 +182,11 @@ export default function IncomeGroupsPage() {
       </Box>
       
       <Paper sx={{p:2}}>
+        {
         <ActiveIncomeGroupsFilters
-          query={query}
           onChange={setQuery}
         />
+        }
         {
           //DESKTOP TABLE
           !isMobile && (
@@ -213,13 +226,13 @@ export default function IncomeGroupsPage() {
 
       <IncomeGroupsFiltersDialog
         open={toFilter}
-        query={query}
         onClose={()=> setToFilter(false)}
-        onApply={(filters) => {
-          setQuery(prev => ({
+        onApply={()=>{
+          setQuery(prev=>({
             ...prev,
-            ...filters,
-            page:1
+            from,
+            to,
+            sort
           }))
         }}
       />
