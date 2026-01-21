@@ -26,10 +26,9 @@ export type IncomeFilterValues = {
 type Props = {
   open: boolean;
   onClose: () => void;
-  onApply: () => void;
 };
 
-export function IncomeGroupsFiltersDialog({ open, onClose, onApply }: Props) {
+export function IncomeGroupsFiltersDialog({ open, onClose }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
   const fromParam = searchParams.get("from");
   const fromDate = 
@@ -80,13 +79,11 @@ export function IncomeGroupsFiltersDialog({ open, onClose, onApply }: Props) {
               if(draftSort){
                 params.set("sort", draftSort)
               } else {
-                params.delete("to")
+                params.delete("sort")
               }
 
               return params;
             })
-
-            onApply();
             onClose();
           }}
           sx={{

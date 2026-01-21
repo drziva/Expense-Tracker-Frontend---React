@@ -28,6 +28,7 @@ export default function IncomeGroupsPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const from = searchParams.get("from") ?? undefined;
+  console.log(from);
   const to = searchParams.get("to") ?? undefined;
   const sortParam = searchParams.get("sort") ?? undefined;
   const sort: GroupSortOption | undefined = 
@@ -36,8 +37,8 @@ export default function IncomeGroupsPage() {
     sortParam === "name_desc" || 
     sortParam === "name_asc"
       ? sortParam
-      : undefined;
-  const search = searchParams.get("search") ?? "";
+      : "date_desc";
+  const search = searchParams.get("search") ?? undefined;
   const { data, isError, isPending } = useIncomeGroups(query);
 
   const deleteIncomeGroup = useDeleteIncomeGroup();
@@ -57,6 +58,15 @@ export default function IncomeGroupsPage() {
     return() => clearTimeout(timeout);
   },[search])
 
+
+  useEffect(()=>{
+    setQuery(prev=>({
+      ...prev,
+      from,
+      to,
+      sort
+    }))
+  },[searchParams])
 
   if(isError) return <Alert severity="error">There has been an error loading income groups</Alert>
   if(isPending) return <CircularProgress/>
@@ -227,14 +237,6 @@ export default function IncomeGroupsPage() {
       <IncomeGroupsFiltersDialog
         open={toFilter}
         onClose={()=> setToFilter(false)}
-        onApply={()=>{
-          setQuery(prev=>({
-            ...prev,
-            from,
-            to,
-            sort
-          }))
-        }}
       />
 
       <Pagination
