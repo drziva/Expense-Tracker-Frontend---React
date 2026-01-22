@@ -1,17 +1,13 @@
 import { Chip, Stack } from "@mui/material";
-import type { IncomeGroupQuery } from "../../../types/incomeGroup.requests";
 import { useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
 
-type Props = {
-  onChange: (updater: (prev: IncomeGroupQuery) => IncomeGroupQuery) => void;
-};
 function capitalizeFirst(str: string) {
   if (!str) return str;
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export function ActiveIncomeGroupsFilters({ onChange }: Props) {
+export function ActiveIncomeGroupsFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
   const hasFilters = Boolean(
     searchParams.get("from") ||
@@ -60,11 +56,6 @@ export function ActiveIncomeGroupsFilters({ onChange }: Props) {
                 params.delete("search");
                 return params;
               })
-              onChange(prev => ({
-               ...prev,
-               search: undefined,
-               page: 1,
-              }))
             }
            }
          />
@@ -82,12 +73,6 @@ export function ActiveIncomeGroupsFilters({ onChange }: Props) {
                 
                 return params;
               })
-              onChange(prev => ({
-                ...prev,
-                from: undefined,
-                to: undefined,
-                page: 1,
-              }))
             }
           }
         />
@@ -103,12 +88,6 @@ export function ActiveIncomeGroupsFilters({ onChange }: Props) {
 
                 return params;
               })
-              onChange(prev => ({
-                ...prev,
-                sort: undefined,
-                page: 1,
-                
-              }))
             }
           }
         />
@@ -119,11 +98,6 @@ export function ActiveIncomeGroupsFilters({ onChange }: Props) {
         label="Clear all"
         onDelete={() => {
             setSearchParams({});
-            onChange(prev => ({
-              page: 1,
-              limit: prev.limit,
-              search: "",
-            }))
           }
         }
       />

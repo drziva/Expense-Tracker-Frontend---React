@@ -12,10 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import dayjs from "dayjs";
 import type { GroupSortOption } from "../../../types/pagination";
-import type { ExpenseGroupQuery } from "../../../types/expenseGroup.requests";
+import { useSearchParams } from "react-router-dom";
 
 export type ExpenseGroupFilterValues = {
   from?: string;
@@ -25,21 +25,14 @@ export type ExpenseGroupFilterValues = {
 
 type Props = {
   open: boolean;
-  query: ExpenseGroupQuery;
   onClose: () => void;
-  onApply: (values: ExpenseGroupFilterValues) => void;
 };
 
-export function ExpenseGroupsFiltersDialog({ open, onClose, onApply, query }: Props) {
-  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
-  const [toDate, setToDate] = useState<dayjs.Dayjs | null>(null);
-  const [sort, setSort] = useState<GroupSortOption | "">("");
-
-  useEffect(() => {
-    setFromDate(query.from ? dayjs(query.from) : null);
-    setToDate(query.to ? dayjs(query.to) : null);
-    setSort(query.sort ?? "");
-  }, [query]);
+export function ExpenseGroupsFiltersDialog({ open, onClose}: Props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [draftFromDate, setDraftFromDate] = useState<dayjs.Dayjs | null>(null);
+  const [draftToDate, setDraftToDate] = useState<dayjs.Dayjs | null>(null);
+  const [draftSort, setDraftSort] = useState<GroupSortOption | undefined>(undefined);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -51,11 +44,28 @@ export function ExpenseGroupsFiltersDialog({ open, onClose, onApply, query }: Pr
           onSubmit={(e) => {
             e.preventDefault();
 
-            onApply({
-              from: fromDate ? fromDate.format("YYYY-MM-DD") : undefined,
-              to: toDate ? toDate.format("YYYY-MM-DD") : undefined,
-              sort: sort || undefined
-            });
+            setSearchParams(prev => {
+              const params = new URLSearchParams(prev);
+
+              if(draftFromDate){
+                params.set("from", draftFromDate.format("YYYY-MM-DD"));
+              } else {
+                params.delete("from");
+              }
+
+              if(draftToDate){
+                params.set("to", draftToDate.format("YYYY-MM-DD"));
+              } else {
+                params.delete("to");
+              }
+              if(draftSort){
+                params.set("sort", draftSort);
+              } else {
+                params.delete("sort");
+              }
+
+              return params;
+            })
 
             onClose();
           }}
@@ -74,8 +84,8 @@ export function ExpenseGroupsFiltersDialog({ open, onClose, onApply, query }: Pr
 
             <DatePicker
               label="From"
-              value={fromDate}
-              onChange={setFromDate}
+              value={draftFromDate}
+              onChange={setDraftFromDate}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
               sx={{
                 mb:2
@@ -84,8 +94,8 @@ export function ExpenseGroupsFiltersDialog({ open, onClose, onApply, query }: Pr
 
             <DatePicker
               label="To"
-              value={toDate}
-              onChange={setToDate}
+              value={draftToDate}
+              onChange={setDraftToDate}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
             />
           </Box>
@@ -99,8 +109,8 @@ export function ExpenseGroupsFiltersDialog({ open, onClose, onApply, query }: Pr
               <Select
                 labelId="sort-label"
                 label="Sort by"
-                value={sort}
-                onChange={(e) => setSort(e.target.value as GroupSortOption)}
+                value={draftSort}
+                onChange={(e) => setDraftSort(e.target.value as GroupSortOption)}
               >
                 <MenuItem value="">
                   <em>None</em>

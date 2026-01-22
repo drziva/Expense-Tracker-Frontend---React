@@ -6,7 +6,6 @@ import {
   IconButton,
   Pagination,
   Paper,
-  TextField,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -28,41 +27,69 @@ import { ActiveExpenseGroupsFilters } from "../components/filters/expense-groups
 import { MobileExpenseGroupTable } from "../components/mobile/MobileExpenseGroupTable";
 import formatEuros from "../utils/formatMoney";
 import { EmptyState } from "../components/ui/EmptyState";
+import { useSearchParams } from "react-router-dom";
+import dayjs from "dayjs";
+import type { GroupSortOption } from "../types/pagination";
+import SearchBox from "../components/common/SearchBox";
 
 export default function ExpenseGroupsPage() {
-  const isMobile = useMediaQuery("(max-width: 600px)")
-
-  const [query, setQuery] = useState<ExpenseGroupQuery>({
-    page: 1,
-    limit: 10,
-  });
-
-  const { data, isError, isPending } = useExpenseGroups(query);
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   const deleteExpenseGroup = useDeleteExpenseGroup();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null);
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null);
   const [toFilter, setToFilter] = useState(false);
-  const [searchText, setSearchText] = useState("");
+
+  const fromParam = searchParams.get("from");
+  const from = 
+    fromParam && 
+    dayjs(fromParam,"YYYY-MM-DD",true).isValid()
+    ? fromParam 
+    : undefined;
+  const toParam = searchParams.get("to");
+  const to = 
+    toParam && 
+    dayjs(toParam,"YYYY-MM-DD",true).isValid()
+    ? toParam 
+    : undefined;  
+
+  const sortParam = searchParams.get("sort");
+  const sort: GroupSortOption | undefined = 
+    sortParam === "date_asc" ||
+    sortParam === "date_desc" ||
+    sortParam === "name_asc" ||
+    sortParam === "name_desc"
+    ? sortParam 
+    : undefined;
+  
+  const search = searchParams.get("search") ?? undefined;
+  const limit = Number(searchParams.get("limit")) === 0 ? 10 : Number(searchParams.get("limit"));
+  const page = Number(searchParams.get("page")) ?? 1;
+
+  const [query, setQuery] = useState<ExpenseGroupQuery>({
+    page,
+    limit,
+    search,
+    from,
+    to,
+    sort
+  });
+  
+  const { data, isError, isPending } = useExpenseGroups(query);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setQuery(prev => ({
-        ...prev,
-        search: searchText,
-        page: 1,
-      }));
-    }, 350);
-
-    return () => clearTimeout(timeout);
-  }, [searchText]);
-
-  useEffect(() => {
-    if (searchText !== "" && !query.search) {
-      setSearchText("");
-    }
-  }, [query.search]);
+    setQuery(prev => ({
+      ...prev,
+      from,
+      to,
+      sort,
+      search,
+      limit,
+      page
+    }))
+  },[searchParams])
 
   if (isError)
     return (
@@ -163,17 +190,7 @@ export default function ExpenseGroupsPage() {
           mb: 2,
         }}
       >
-        <TextField
-          size="small"
-          label="Search"
-          color="primary"
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-          sx={{
-            height: 40,
-            minWidth: isMobile ? null : 450,
-          }}
-        />
+       <SearchBox/>
 
         <Box
           sx={{
@@ -191,23 +208,13 @@ export default function ExpenseGroupsPage() {
             <FilterIcon fontSize="small" />
           </Button>
 
-          <RowLimitSelect
-            value={query.limit!}
-            onChange={limit =>
-              setQuery(prev => ({
-                ...prev,
-                limit,
-                page: 1,
-              }))
-            }
-          />
+          <RowLimitSelect/>
+          
         </Box>
       </Box>
 
       <Paper sx={{ p: 2 }}>
         <ActiveExpenseGroupsFilters
-          query={query}
-          onChange={setQuery}
         />
         {
           //DESKTOP TABLE
@@ -248,15 +255,7 @@ export default function ExpenseGroupsPage() {
 
       <ExpenseGroupsFiltersDialog
         open={toFilter}
-        query={query}
         onClose={() => setToFilter(false)}
-        onApply={filters => {
-          setQuery(prev => ({
-            ...prev,
-            ...filters,
-            page: 1,
-          }));
-        }}
       />
 
       <Pagination

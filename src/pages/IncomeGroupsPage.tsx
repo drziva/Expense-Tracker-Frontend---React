@@ -18,17 +18,12 @@ import { MobileIncomeGroupTable } from "../components/mobile/MobileIncomeGroupTa
 import { EmptyState } from "../components/ui/EmptyState";
 import { useSearchParams } from "react-router-dom";
 import type { GroupSortOption } from "../types/pagination";
+import SearchBox from "../components/common/SearchBox";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const [query, setQuery] = useState<IncomeGroupQuery>({
-    page:1,
-    limit:10
-  })
-
   const [searchParams, setSearchParams] = useSearchParams();
   const from = searchParams.get("from") ?? undefined;
-  console.log(from);
   const to = searchParams.get("to") ?? undefined;
   const sortParam = searchParams.get("sort") ?? undefined;
   const sort: GroupSortOption | undefined = 
@@ -37,8 +32,17 @@ export default function IncomeGroupsPage() {
     sortParam === "name_desc" || 
     sortParam === "name_asc"
       ? sortParam
-      : "date_desc";
+      : undefined;
   const search = searchParams.get("search") ?? undefined;
+  const limit = Number(searchParams.get("limit")) === 0 ? 10 : Number(searchParams.get("limit"));
+  const page = Number(searchParams.get("page")) ?? 1; 
+  const [query, setQuery] = useState<IncomeGroupQuery>({
+    page,
+    limit,
+    from,
+    to,
+    search
+  })
   const { data, isError, isPending } = useIncomeGroups(query);
 
   const deleteIncomeGroup = useDeleteIncomeGroup();
@@ -48,23 +52,14 @@ export default function IncomeGroupsPage() {
   const [toFilter, setToFilter] = useState(false);
 
   useEffect(()=>{
-    const timeout = setTimeout(()=>{
-      setQuery(prev => ({
-        ...prev,
-        search,
-        page:1
-      }))
-    },350)
-    return() => clearTimeout(timeout);
-  },[search])
-
-
-  useEffect(()=>{
     setQuery(prev=>({
       ...prev,
+      search,
       from,
       to,
-      sort
+      sort,
+      limit,
+      page
     }))
   },[searchParams])
 
@@ -154,21 +149,18 @@ export default function IncomeGroupsPage() {
         gap: "10px",
         mb: 2
       }}>
-          <TextField
-            size="small"
-            label="Search"
-            color="primary"              
-            value={search}
-            onChange={(e) => {
+          <SearchBox
+            value={search || ""}
+            onChange={(val)=>{
               setSearchParams(prev => {
-                const params = new URLSearchParams(prev);
-                params.set("search", e.target.value);
-                return params;
-              })
-            }}
-            sx={{ 
-              height: 40,
-              minWidth: isMobile ? null : 450,
+              const params = new URLSearchParams(prev);
+              if(val){
+                params.set("search", val);
+              } else {
+                params.delete("search");
+              }
+              return params;
+            })
             }}
           />
           <Box
@@ -187,7 +179,7 @@ export default function IncomeGroupsPage() {
               <FilterIcon fontSize="small"/>
             </Button>
 
-            <RowLimitSelect value={query.limit!} onChange={(limit)=>setQuery(prev => ({...prev,limit,page:1}))}/>
+            <RowLimitSelect/>
         </Box>
       </Box>
       
@@ -277,6 +269,7 @@ export default function IncomeGroupsPage() {
         onClose={() => setToUpdate(null)}
         group={toUpdate}
       />
+
     </>
   )
 }
