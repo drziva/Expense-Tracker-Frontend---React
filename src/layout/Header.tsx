@@ -40,6 +40,12 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
         borderBottom: "1px solid",
         borderColor: "divider",
         gap: 1,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: theme.zIndex.appBar,
+        bgcolor: "background.paper",
       }}
     >
       {showMenuButton && (
@@ -78,6 +84,7 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
         <IconButton 
           color="primary"
           onClick={e => setAnchorEl(e.currentTarget)}
+          data-cy="user-button"
         >
           <ProfileIcon fontSize="small"/>
         </IconButton>
@@ -86,9 +93,11 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
           onClose={() => setAnchorEl(null)}
           anchorEl={anchorEl}
         >
-          <MenuItem onClick={()=>{
-            setAnchorEl(null);
-            logout();
+          <MenuItem
+            data-cy="logout-button"
+            onClick={()=>{
+              setAnchorEl(null);
+              logout();
           }}>Log out</MenuItem>
         </Menu>
       </Box>

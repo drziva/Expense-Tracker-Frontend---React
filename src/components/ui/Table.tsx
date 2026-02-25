@@ -69,6 +69,7 @@ export function Table<T>({
                   backgroundColor: "action.hover",
                 },
               }}
+              data-cy="table-row"
             >
               {columns.map((col) => (
                 <TableCell

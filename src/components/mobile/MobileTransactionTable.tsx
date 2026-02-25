@@ -47,6 +47,7 @@ export function MobileTransactionTable({data, onEdit, onDelete, color}: Props) {
               size="small"
               color="error"
               onClick={() => onDelete(tx)}
+              data-cy={`delete-mobile-expense-button-${tx.id}`}
             >
               <DeleteIcon fontSize="small"/>
             </Button>

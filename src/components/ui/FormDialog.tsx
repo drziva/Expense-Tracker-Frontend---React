@@ -39,9 +39,11 @@ export function FormDialog({
 
       <DialogActions>
         <Button
+          type="submit"
           onClick={onSubmit}
           variant="contained"
           disabled={submitting}
+          data-cy="create-button"
         >
           {action}
         </Button>
@@ -49,6 +51,7 @@ export function FormDialog({
           onClick={onClose}
           variant="contained"
           color="inherit"  
+          data-cy="cancel-button"
         >
           Cancel
         </Button>

@@ -102,23 +102,36 @@ export default function LoginPage() {
             )}
 
             <TextField
+              name="email"
               label="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               autoComplete="email"
               fullWidth
+              slotProps={{
+                htmlInput: {
+                  "data-cy": "login-email",
+                },
+              }}
             />
 
             <TextField
+              name="password"
               label="Password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               autoComplete="current-password"
               fullWidth
+              slotProps={{
+                htmlInput: {
+                  "data-cy": "login-password",
+                },
+              }}
             />
 
             <Button
+              name="submit"
               type="submit"
               size="large"
               variant="contained"
@@ -128,6 +141,7 @@ export default function LoginPage() {
                 py: 1.2,
                 fontWeight: 600,
               }}
+              data-cy="login-submit"
             >
               {loginMutation.isPending ? (
                 <CircularProgress size={22} color="inherit" />

@@ -1,47 +1,51 @@
-import { TextField, useMediaQuery } from "@mui/material";
-import { useEffect, useState } from "react";
+import { debounce, TextField, useMediaQuery } from "@mui/material";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 
 export default function SearchBox() {
+    const inputRef = useRef(null);
+
     const isMobile = useMediaQuery("(max-width: 600px)");
     
-    const [searchParams,setSearchParams] = useSearchParams();
-    const [draftSearch, setDraftSearch] = useState(searchParams.get("search") || "");
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    useEffect(()=>{
-        const timeout = setTimeout(()=>{
+    console.log("render");
+
+    const debouncedUpdateRef = useRef(
+        debounce((value) => {
             setSearchParams(prev => {
-                const params = new URLSearchParams(prev);
-                if(draftSearch){
-                    params.set("search", draftSearch);
-                } else { 
-                    params.delete("search");
+                const newParams = new URLSearchParams(prev);
+
+                if(value) {
+                    newParams.set("search", value);
+                } else {
+                    newParams.delete("search");
                 }
-
-                return params;
+                return newParams;
             })
-        },350)
+        }, 500)
+    );
 
-        return () => clearTimeout(timeout);
-    },[draftSearch])
-
-    useEffect(()=>{
-        setDraftSearch(searchParams.get("search") || "");
-    },[searchParams])
+    useEffect(() => {
+        const search = searchParams.get("search") || "";
+        if (inputRef.current) {
+            (inputRef.current as HTMLInputElement).value = search;
+        }
+    }, [searchParams])
 
     return (
         <TextField
-        size="small"
-        label="Search"
-        color="primary"              
-        value={draftSearch}
-        onChange={(e) => {
-            setDraftSearch(e.target.value);
-        }}
-        sx={{ 
-            height: 40,
-            minWidth: isMobile ? null : 450,
-        }}
+            inputRef={inputRef}
+            size="small"
+            label="Search"
+            color="primary"      
+            onChange={(e) => {
+                debouncedUpdateRef.current(e.target.value);
+            }}
+            sx={{ 
+                height: 40,
+                minWidth: isMobile ? null : 450,
+            }}
         />
     )
 }

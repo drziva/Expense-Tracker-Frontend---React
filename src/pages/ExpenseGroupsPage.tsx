@@ -13,7 +13,7 @@ import { useExpenseGroups } from "../hooks/expense-groups/useExpenseGroups";
 import { type Column } from "../components/ui/Table";
 import { Table } from "../components/ui/Table";
 import type { ExpenseGroup } from "../types/expenseGroup.responses";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import ConfirmDialog from "../components/ui/ConfirmDialog";
@@ -31,16 +31,74 @@ import { useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
 import type { GroupSortOption } from "../types/pagination";
 import SearchBox from "../components/common/SearchBox";
+import z from "zod";
 
 export default function ExpenseGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
-
   const deleteExpenseGroup = useDeleteExpenseGroup();
   const [searchParams, setSearchParams] = useSearchParams();
   const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null);
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null);
   const [toFilter, setToFilter] = useState(false);
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEMP - NATIVE ACTION FORM - So much worse than RHF
+
+  const validationSchema = z.object({
+    email: z.email("Field must contain a valid email"),
+    password: z.string().min(8, "Password must be 8 characters or longer."),
+
+    number: z.coerce.number("Field must include a valid number."),
+
+    //step2
+    email2: z.email("Field must contain a valid email"),
+    password2: z.string().min(8, "Password must be 8 characters or longer."),
+  });
+
+  type FormInput = z.input<typeof validationSchema>;
+  type FormOutput = z.output<typeof validationSchema>;
+
+  type State = {
+    ok: boolean,
+    errors: Partial<Record<keyof FormOutput, string>>,
+    values: Partial<Record<keyof FormOutput, string>>,
+  };
+
+  const initialState: State = {ok: false, errors: {}, values: {}}
+
+  const action = async(_prev: State, fd: FormData): Promise<State> => {
+    const raw = {
+      email: String(fd.get("email") ?? ""),
+      password: String(fd.get("password") ?? ""),
+      number: String(fd.get("number") ?? ""),
+    };
+
+    const parsed = validationSchema.safeParse(raw);
+
+    if(!parsed.success) {
+      const errors: State["errors"] = {}
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0] as keyof FormOutput;
+        errors[key] = issue.message;
+      }
+      return {ok: false, errors, values: raw};
+    }
+
+    const data: FormOutput = parsed.data;
+    console.log("SUBMIT: ", data);
+    
+    return {ok:true, errors: {}, values: {}};
+  }
+
+  const [state, formAction] = useActionState(action, initialState);
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   const fromParam = searchParams.get("from");
   const from = 
@@ -296,6 +354,25 @@ export default function ExpenseGroupsPage() {
         onClose={() => setToUpdate(null)}
         group={toUpdate}
       />
+      {
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        <form action={formAction}>
+          <input name="email" type="email"></input>
+          <input name="password" type="password"></input>
+          <input name="number"></input>
+          <input name="email2" type="email"></input>
+          <input name="password2" type="password"></input>
+          <button>Send</button>
+        </form>
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////
+      }
     </>
   );
 }

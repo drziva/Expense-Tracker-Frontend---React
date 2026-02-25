@@ -50,6 +50,7 @@ export default function ConfirmDialog({
           variant="contained"
           onClick={onConfirm}
           disabled={loading}
+          data-cy="confirm-delete-button"
         >
           {action}
         </Button>

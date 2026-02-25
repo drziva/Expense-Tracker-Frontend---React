@@ -19,8 +19,69 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { useSearchParams } from "react-router-dom";
 import type { GroupSortOption } from "../types/pagination";
 import SearchBox from "../components/common/SearchBox";
+import z from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export default function IncomeGroupsPage() {
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //TEMP - LEARNING
+
+  const [step, setStep] = useState(0);
+
+  const stepFields = [
+    ["email", "password"],
+    ["number"],
+    ["email2", "password2"]
+  ];
+
+  const next = async() => {
+    const fields = stepFields[step];
+    const ok = await rhForm.trigger(fields as any, { shouldFocus: true});
+    if(!ok) return;
+    setStep((s) => s+1);
+  };
+
+  const back = () => setStep((s) => Math.max(0,s-1));
+
+  const onFinalSubmit = (values: FormOutput) => {
+    console.log("stepForm: ", values);
+  }
+
+  const validationSchema = z.object({
+    email: z.email("Field must contain a valid email"),
+    password: z.string().min(8, "Password must be 8 characters or longer."),
+
+    number: z.coerce.number("Field must include a valid number."),
+
+    //step2
+    email2: z.email("Field must contain a valid email"),
+    password2: z.string().min(8, "Password must be 8 characters or longer."),
+  });
+
+  type FormInput = z.input<typeof validationSchema>;
+  type FormOutput = z.infer<typeof validationSchema>;
+
+  const rhForm = useForm<FormInput, any, FormOutput>({
+    resolver: zodResolver(validationSchema),
+    mode: "onSubmit",
+    shouldUnregister: false
+  })
+
+  const {
+    register,
+    formState: {errors, isValid, isSubmitting},
+    handleSubmit
+  } = rhForm
+
+  const onSubmit = (formValues: FormOutput) => {
+    setTimeout(() => {
+      alert(`${formValues.email} + ${formValues.password} + Number: ${formValues.number} + ${formValues.email2}`)
+    }, 300)
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////
   const isMobile = useMediaQuery("(max-width: 600px)");
   const [searchParams, setSearchParams] = useSearchParams();
   const from = searchParams.get("from") ?? undefined;
@@ -149,20 +210,7 @@ export default function IncomeGroupsPage() {
         gap: "10px",
         mb: 2
       }}>
-          <SearchBox
-            value={search || ""}
-            onChange={(val)=>{
-              setSearchParams(prev => {
-              const params = new URLSearchParams(prev);
-              if(val){
-                params.set("search", val);
-              } else {
-                params.delete("search");
-              }
-              return params;
-            })
-            }}
-          />
+          <SearchBox/>
           <Box
             sx={{
               display: "flex",
@@ -185,9 +233,7 @@ export default function IncomeGroupsPage() {
       
       <Paper sx={{p:2}}>
         {
-        <ActiveIncomeGroupsFilters
-          onChange={setQuery}
-        />
+        <ActiveIncomeGroupsFilters />
         }
         {
           //DESKTOP TABLE
@@ -269,7 +315,64 @@ export default function IncomeGroupsPage() {
         onClose={() => setToUpdate(null)}
         group={toUpdate}
       />
-
+      {
+        /////////////////////////
+        /// TEMP FORM - POC
+      } 
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            width: "300px",
+            minHeight: "400px",
+            gap: "10px"
+          }}
+        >
+        {step === 0 &&<input
+          type="email"
+          placeholder="Email"
+          {...register("email")}
+        ></input>}
+        {errors.email?.message}
+        {step === 0 && <input
+          type="password"
+          placeholder="Password"
+          {...register("password")}
+        ></input>}
+        {errors.password?.message}
+        {step === 1 && <input
+          placeholder="Number"
+          {...register("number")}
+        ></input>}
+        {errors.number?.message}
+        {step === 2 && <input
+          type="email2"
+          placeholder="Email"
+          {...register("email2")}
+        ></input>}
+        {errors.email2?.message}
+        {step === 2 &&<input
+          type="password"
+          placeholder="Password"
+          {...register("password2")}
+        ></input>}
+        {errors.password2?.message}
+        <button onClick={(e) => {
+          e.preventDefault(); 
+          back();
+        }}>Back</button>
+        {step < 2 && <button onClick={(e) => {
+          e.preventDefault();
+          next();
+        }}>Next</button>}
+        { step === 2 && <button type="submit">Send</button>}
+        <div>{step}</div>
+        </Box>
+      </form>
+      {
+        ////////////////////////
+      }
     </>
   )
 }

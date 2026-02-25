@@ -101,6 +101,8 @@ export default function ExpensesPage() {
               e.stopPropagation();
               setToUpdate(expense);
             }}
+            data-cy={'update-expense-button'}
+            data-description={expense.description}
           >
             <EditIcon color="primary" fontSize="small" />
           </IconButton>
@@ -110,6 +112,8 @@ export default function ExpensesPage() {
               e.stopPropagation();
               setToDelete(expense);
             }}
+            data-cy={`delete-expense-button`}
+            data-description={expense.description}
           >
             <DeleteIcon color="error" fontSize="small" />
           </IconButton>
@@ -140,6 +144,7 @@ export default function ExpensesPage() {
             fontSize: "0.8rem",
             lineHeight: "1.3"
            }}
+          data-cy="add-expense-button"
         >
           <strong>Add Expense</strong>
         </Button>
@@ -175,6 +180,7 @@ export default function ExpensesPage() {
               color="primary"
               onClick={()=>setToFilter(true)}
               sx={{height: 40}}
+              data-cy="filter-expenses-button"
             >
               <FilterIcon fontSize="small"/>
             </Button>

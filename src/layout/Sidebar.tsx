@@ -27,7 +27,12 @@ export default function Sidebar({hideSidebar}: Props) {
         width: 240,
         borderRight: "1px solid",
         borderColor: "divider",
-        py: 2, 
+        py: 2,
+        position: "fixed",
+        left: 0,
+        top: 84,
+        bottom: 0,
+        bgcolor: "background.paper",
     }}>
       {isMobile && (
          <Box
