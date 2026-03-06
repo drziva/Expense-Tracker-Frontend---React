@@ -9,6 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ToastProvider } from './toast/ToastProvider.tsx';
 import { AuthProvider } from './auth/AuthProvider.tsx';
 import { AppErrorBoundary } from './components/common/errors/AppErrorBoundary.tsx';
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ createRoot(document.getElementById('root')!).render(
                 <AuthProvider>
                   <App />
                 </AuthProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
               </QueryClientProvider>
             </LocalizationProvider>
           </ToastProvider>

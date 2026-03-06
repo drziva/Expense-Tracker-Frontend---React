@@ -42,64 +42,6 @@ export default function ExpenseGroupsPage() {
   const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null);
   const [toFilter, setToFilter] = useState(false);
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // TEMP - NATIVE ACTION FORM - So much worse than RHF
-
-  const validationSchema = z.object({
-    email: z.email("Field must contain a valid email"),
-    password: z.string().min(8, "Password must be 8 characters or longer."),
-
-    number: z.coerce.number("Field must include a valid number."),
-
-    //step2
-    email2: z.email("Field must contain a valid email"),
-    password2: z.string().min(8, "Password must be 8 characters or longer."),
-  });
-
-  type FormInput = z.input<typeof validationSchema>;
-  type FormOutput = z.output<typeof validationSchema>;
-
-  type State = {
-    ok: boolean,
-    errors: Partial<Record<keyof FormOutput, string>>,
-    values: Partial<Record<keyof FormOutput, string>>,
-  };
-
-  const initialState: State = {ok: false, errors: {}, values: {}}
-
-  const action = async(_prev: State, fd: FormData): Promise<State> => {
-    const raw = {
-      email: String(fd.get("email") ?? ""),
-      password: String(fd.get("password") ?? ""),
-      number: String(fd.get("number") ?? ""),
-    };
-
-    const parsed = validationSchema.safeParse(raw);
-
-    if(!parsed.success) {
-      const errors: State["errors"] = {}
-      for (const issue of parsed.error.issues) {
-        const key = issue.path[0] as keyof FormOutput;
-        errors[key] = issue.message;
-      }
-      return {ok: false, errors, values: raw};
-    }
-
-    const data: FormOutput = parsed.data;
-    console.log("SUBMIT: ", data);
-    
-    return {ok:true, errors: {}, values: {}};
-  }
-
-  const [state, formAction] = useActionState(action, initialState);
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
   const fromParam = searchParams.get("from");
   const from = 
     fromParam && 
@@ -354,25 +296,6 @@ export default function ExpenseGroupsPage() {
         onClose={() => setToUpdate(null)}
         group={toUpdate}
       />
-      {
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-        <form action={formAction}>
-          <input name="email" type="email"></input>
-          <input name="password" type="password"></input>
-          <input name="number"></input>
-          <input name="email2" type="email"></input>
-          <input name="password2" type="password"></input>
-          <button>Send</button>
-        </form>
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////
-      }
     </>
   );
 }

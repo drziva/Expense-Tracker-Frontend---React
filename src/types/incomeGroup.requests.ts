@@ -17,6 +17,11 @@ export type IncomeQuery = {
   sort?: SortOption;
  }
 
+ export type IncomeSummaryQuery = {
+  from?: string;
+  to?: string;
+ }
+
  export type IncomeGroupQuery = {
   from?: string;
   to?: string;
