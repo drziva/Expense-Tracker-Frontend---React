@@ -18,6 +18,11 @@ export type ExpenseQuery = {
   sort?: SortOption;
  }
 
+export type ExpenseGroupSummaryQuery = {
+  from?: string;
+  to?: string;
+}
+
 export type ExpenseSummaryQuery = {
   from?: string;
   to?: string;

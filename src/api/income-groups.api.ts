@@ -1,9 +1,14 @@
 import { api } from "./client";
-import type { IncomeGroupQuery, IncomeGroupRequest } from "../types/incomeGroup.requests";
+import type { IncomeGroupQuery, IncomeGroupRequest, IncomeGroupSummaryQuery } from "../types/incomeGroup.requests";
 import type { GetIncomeGroupResponse } from "../types/incomeGroup.responses";
 
 export async function getIncomeGroups(query: IncomeGroupQuery) {
   const res = await api.get<GetIncomeGroupResponse>("/income-groups", {params: query});
+  return res.data;
+}
+
+export async function getIncomeTotalByGroup(query: IncomeGroupSummaryQuery) {
+  const res = await api.get("/income-groups/total-by-group", {params: query});
   return res.data;
 }
 

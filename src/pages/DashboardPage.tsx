@@ -8,6 +8,7 @@ import type { Income } from "../types/incomes.responses";
 import { MobileTransactionCard } from "../components/mobile/MobileTransactionCard";
 import { useState } from "react";
 import { DashboardTimelineChart } from "../components/common/charts/DashboardTimelineChart";
+import ReactPlayer from "react-player";
 
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")

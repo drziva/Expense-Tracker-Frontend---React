@@ -19,7 +19,10 @@ export function useCreateExpense() {
     onSuccess: () => {
       showToast("Expense created sucessfully!");
       queryClient.invalidateQueries({queryKey:[QUERY_KEYS.EXPENSES]})
-      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]})
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.EXPENSE_SUMMARY],
+        exact: false
+      });
     },
     onError: () => {
       showToast("There has been an error creating the expense, please try again", "error");

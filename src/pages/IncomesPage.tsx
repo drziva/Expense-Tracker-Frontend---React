@@ -20,8 +20,6 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { useIncomeSummary } from "../hooks/incomes/useIncomeSummary";
 import { TimelineChart } from "../components/common/charts/TimelineChart";
 
-//layout messed up for now, experimenting with charts currently
-
 type Range = {
   from: string;
   to: string;
@@ -117,7 +115,7 @@ export default function IncomesPage() {
       align: "center",
       render: income => (
         <>
-                    <Tooltip
+          <Tooltip
             title="Edit"
           >
             <IconButton
@@ -170,6 +168,7 @@ export default function IncomesPage() {
       const from = new Date()
       from.setMonth(now.getMonth() - 1)
 
+
       return { from: from.toISOString(), to: now.toISOString(), type: "regular" }
     }
 
@@ -190,7 +189,6 @@ export default function IncomesPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          mb: 2,
         }}
       >
         <Typography variant={isMobile ? "h6" : "h4"} fontWeight={600} mb={1}>
@@ -201,8 +199,8 @@ export default function IncomesPage() {
 
       {/* CHART + RANGE SELECTOR */}
       {!isMobile && (
-        <Box sx={{ mb: 3 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+        <Box sx={{ mb: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
               Earnings across {<strong>{`last ${range}`}</strong>}
             </Typography>
@@ -236,7 +234,7 @@ export default function IncomesPage() {
               backgroundColor: "background.paper",
             }}
           >
-            <TimelineChart data={timelineData} color="income" />
+            <TimelineChart data={timelineData} color="income" type={range} />
           </Box>
         </Box>
       )}

@@ -8,6 +8,7 @@ import {
   Alert,
   Paper,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useLogin } from "../hooks/auth/useLogin";
@@ -15,6 +16,7 @@ import { useLogin } from "../hooks/auth/useLogin";
 export default function LoginPage() {
   const navigate = useNavigate();
   const loginMutation = useLogin();
+  const theme = useTheme();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +52,7 @@ export default function LoginPage() {
           alt="VegaIT"
           sx={{
             height: 132,
-            filter: "invert(1)",
+            filter: theme => theme.palette.mode === "light" ? "invert(1)" : "none",
             transition: "filter 0.2s ease"
           }}
         />

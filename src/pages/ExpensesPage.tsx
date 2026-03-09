@@ -234,14 +234,13 @@ export default function ExpensesPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          mb: 2
+          mb: 1
         }}
       >
 
         <Typography
           variant={isMobile ? "h6" : "h4"}
           fontWeight={600}
-          mb={1}
         >
           Expenses
         </Typography>
@@ -252,20 +251,20 @@ export default function ExpensesPage() {
 
       {!isMobile && (
 
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 1 }}>
 
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              mb: 1
+              mb: 0
             }}
           >
 
             <Typography
               variant="body2"
               color="textSecondary"
-              sx={{ ml: 2 }}
+              sx={{ ml: 2}}
             >
               Spending across <strong>{`last ${range}`}</strong>
             </Typography>
@@ -307,7 +306,7 @@ export default function ExpensesPage() {
             }}
           >
 
-            <TimelineChart data={timelineData} color="expense" />
+            <TimelineChart data={timelineData} color="expense" type={range} />
 
           </Box>
 

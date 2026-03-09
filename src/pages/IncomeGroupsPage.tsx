@@ -19,6 +19,9 @@ import { EmptyState } from "../components/ui/EmptyState";
 import { useSearchParams } from "react-router-dom";
 import type { GroupSortOption } from "../types/pagination";
 import SearchBox from "../components/common/SearchBox";
+import { useIncomeTotalByGroup } from "../hooks/income-groups/useIncomeTotalByGroup";
+import { GroupBarChart } from "../components/common/charts/GroupBarChart";
+import { Tooltip } from "@mui/material";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -44,6 +47,7 @@ export default function IncomeGroupsPage() {
     search
   })
   const { data, isError, isPending } = useIncomeGroups(query);
+  const {data: summaryData} = useIncomeTotalByGroup({ from: query.from, to: query.to });
 
   const deleteIncomeGroup = useDeleteIncomeGroup();
   const [toDelete, setToDelete] = useState<IncomeGroup | null>(null);
@@ -94,141 +98,195 @@ export default function IncomeGroupsPage() {
       align:"center",
       render: (gr) => (
         <>
-          <IconButton 
-            onClick={(e) => {
-              e.stopPropagation();
+          <Tooltip
+            title="Edit"
+          >
+            <IconButton
+            size="small"
+            onClick={e => {
+              e.stopPropagation()
               setToUpdate(gr)
             }}
-          >
-            <EditIcon color="primary" fontSize="small" />
-          </IconButton>
-          <IconButton 
-            onClick={(e) => {
-              e.stopPropagation();
-              setToDelete(gr)
-            }}
-          >
-            <DeleteIcon color="error" fontSize="small" />
-          </IconButton>
+            >
+              <EditIcon color="primary" fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip 
+              title="Delete"
+            >
+              <IconButton
+                size="small"
+                onClick={e => {
+                  e.stopPropagation()
+                  setToDelete(gr)
+                }}
+            >
+              <DeleteIcon color="error" fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </>
       )
     }
   ]
 
-  return(
+  return (
     <>
+      {/* HEADER */}
+
       <Box
         sx={{
-          display:"flex",
-          justifyContent:"space-between",
-          alignItems:"center",
-          mb: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 2
         }}
-      > 
+      >
+        <Box>
+          <Typography
+            variant={isMobile ? "h6" : "h4"}
+            fontWeight={600}
+          >
+            Income Groups
+          </Typography>
 
-        <Typography variant={isMobile ? "h6" : "h5"}>
-          Income Groups
-        </Typography>
+         {!isMobile && (
+           <Typography
+            variant="body2"
+            color="text.secondary"
+            fontWeight={600}
+            sx={{
+              mt: 1,
+              ml: 2
+            }}
+          >
+            {query.from && query.to
+              ? `Income summary by group from ${query.from} to ${query.to}`
+              : query.from
+              ? `Income summary by group from ${query.from} until now`
+              : query.to
+              ? `Income summary by group until ${query.to}`
+              : "Income summary by group for the last 30 days"}
+          </Typography>)}
+        </Box>
+      </Box>
+
+      {/* CHART */}
+
+      {!isMobile && summaryData && summaryData.length > 0 && (
+        <Box sx={{ mb: 3 }}>
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: "background.paper"
+            }}
+          >
+            <GroupBarChart data={summaryData} />
+          </Box>
+        </Box>
+      )}
+
+      {/* SEARCH + FILTERS */}
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "10px",
+          mb: 2
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            gap: "2px",
+            justifyContent: isMobile ? "center" : "left"
+          }}
+        >
+          <SearchBox />
+
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setToFilter(true)}
+            sx={{ height: 40 }}
+          >
+            <FilterIcon fontSize="small" />
+          </Button>
+
+          <RowLimitSelect />
+        </Box>
 
         <Button
           onClick={() => setToCreate(true)}
           variant="contained"
-          sx={{ height: 40,
-            fontSize: isMobile ? "0.7rem" : "0.8rem",
+          sx={{
+            height: 40,
+            fontSize: "0.8rem",
             lineHeight: "1.3"
-           }}
+          }}
         >
           <strong>Add Group</strong>
         </Button>
       </Box>
 
-      <Box sx={{
-        display:"flex",
-        justifyContent:"space-between",
-        flexDirection: isMobile ? "column" : "row",
-        gap: "10px",
-        mb: 2
-      }}>
-          <SearchBox/>
-          <Box
-            sx={{
-              display: "flex",
-              gap: "10px",
-              justifyContent:"right"
-            }}
-          >
-            <Button 
-              variant="outlined"
-              color="primary"
-              onClick={()=>setToFilter(true)}
-              sx={{height: 40}}
-            >
-              <FilterIcon fontSize="small"/>
-            </Button>
+      {/* TABLE */}
 
-            <RowLimitSelect/>
-        </Box>
-      </Box>
-      
-      <Paper sx={{p:2}}>
-        {
+      <Paper sx={{ p: 2 }}>
         <ActiveIncomeGroupsFilters />
-        }
-        {
-          //DESKTOP TABLE
-          !isMobile && (
-            isEmpty ? 
-            (
-              <EmptyState name="income groups"/>
-            ) 
-            :   
-            (
+
+        {!isMobile && (
+          isEmpty
+            ? <EmptyState name="income groups" />
+            : (
               <Table
                 rows={data.data}
                 columns={columns}
-                getRowKey={gr => gr.id}
+                getRowKey={(gr) => gr.id}
               />
             )
-          )
-        }
+        )}
 
-        {
-          //MOBILE TABLE
-          isMobile && (
-            isEmpty ?
-            (
-              <EmptyState name="income groups"/>
-            )
-            :
-            (
+        {isMobile && (
+          isEmpty
+            ? <EmptyState name="income groups" />
+            : (
               <MobileIncomeGroupTable
                 data={data.data}
                 onDelete={setToDelete}
                 onEdit={setToUpdate}
               />
             )
-          )
-        }
+        )}
       </Paper>
 
-      <IncomeGroupsFiltersDialog
-        open={toFilter}
-        onClose={()=> setToFilter(false)}
-      />
+      {/* PAGINATION */}
 
       <Pagination
         shape="rounded"
         color="primary"
         sx={{
-          display:"flex",
-          justifyContent:"center",
+          display: "flex",
+          justifyContent: "center",
           mr: 2,
           mt: 2
         }}
         count={data?.totalPages}
-        onChange={(_,value)=>setQuery((prev) => ({...prev, page:value}))}
+        onChange={(_, value) =>
+          setQuery((prev) => ({
+            ...prev,
+            page: value
+          }))
+        }
         hideNextButton={isEmpty}
         hidePrevButton={isEmpty}
+      />
+
+      {/* DIALOGS */}
+
+      <IncomeGroupsFiltersDialog
+        open={toFilter}
+        onClose={() => setToFilter(false)}
       />
 
       <ConfirmDialog
@@ -236,20 +294,20 @@ export default function IncomeGroupsPage() {
         action="Delete"
         description={`Are you sure you want to delete the "${toDelete?.name}" group?`}
         open={!!toDelete}
-        onConfirm={()=>{
-          if(!toDelete) return;
-          deleteIncomeGroup.mutate(toDelete.id);
-          setToDelete(null);
+        onConfirm={() => {
+          if (!toDelete) return
+          deleteIncomeGroup.mutate(toDelete.id)
+          setToDelete(null)
         }}
-        onCancel={()=> setToDelete(null)}
+        onCancel={() => setToDelete(null)}
       />
-        
-      <IncomeGroupDialog 
+
+      <IncomeGroupDialog
         open={toCreate}
         onClose={() => setToCreate(false)}
       />
 
-      <IncomeGroupDialog 
+      <IncomeGroupDialog
         open={!!toUpdate}
         onClose={() => setToUpdate(null)}
         group={toUpdate}

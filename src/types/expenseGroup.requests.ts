@@ -14,3 +14,8 @@ export type ExpenseGroupRequest = {
   page?: number; 
   limit?: number;
  }
+
+export type ExpenseGroupSummary = {
+  groupName: string;
+  total: number;
+}

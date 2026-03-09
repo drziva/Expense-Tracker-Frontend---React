@@ -14,4 +14,9 @@ export type ExpenseSummary = {
   total: number;
 }
 
+export type ExpenseTotalByGroup = {
+  groupName: string,
+  total: number
+}
+
 export type GetExpenseResponse = PaginatedResponse<Expense>;

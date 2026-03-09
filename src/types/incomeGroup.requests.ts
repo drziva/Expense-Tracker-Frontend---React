@@ -5,28 +5,16 @@ export type IncomeGroupRequest = {
   description: string;
 }
 
-export type IncomeQuery = {
-  min?: number;
-  max?: number;
+export type IncomeGroupSummaryQuery = {
   from?: string;
   to?: string;
-  group_id?: number;
-  search?: string;
-  page: number;
-  limit: number;
-  sort?: SortOption;
- }
+}
 
- export type IncomeSummaryQuery = {
-  from?: string;
-  to?: string;
- }
-
- export type IncomeGroupQuery = {
+export type IncomeGroupQuery = {
   from?: string;
   to?: string;
   sort?: GroupSortOption;
   search?: string;
   page?: number;
   limit?: number;
- }
+}

@@ -14,7 +14,8 @@ type Props = {
     date: string;
     total: number;
   }[],
-  color: string
+  color: string,
+  type?: "year" | "month" | "week"
 }
 
 const formatCompact = (value: number) => {
@@ -30,7 +31,7 @@ const formatCompact = (value: number) => {
 }
 
 
-export function TimelineChart({ data, color }: Props) {
+export function TimelineChart({ data, color, type }: Props) {
   const theme = useTheme();
 
   return (
@@ -42,9 +43,10 @@ export function TimelineChart({ data, color }: Props) {
           interval="preserveStartEnd"
           tickFormatter={(date) =>
             new Date(date).toLocaleDateString("en-US", {
-              year: "numeric",
+              ...(type === "year" ? { year: "numeric" } : {}),
               month: "short",
-              day: "numeric",
+              ...(type === "week" ? { weekday: "short" } : {}),
+              ...(type === "year" ? {} : { day: "numeric" })
             })
           }
         />
@@ -73,7 +75,7 @@ export function TimelineChart({ data, color }: Props) {
         <Area
           type="bumpX"
           dataKey="total"
-          stroke={color === "income" ? "#4caf50" : "#e94e4e"}
+          stroke={color === "income" ? "#4caf50" : "#e95858"}
           fill={color === "income" ? "#4caf5033" : "#c6282833"}
           strokeWidth={2}
         />

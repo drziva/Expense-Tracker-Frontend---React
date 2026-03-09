@@ -24,6 +24,10 @@ export function useUpdateExpense() {
         showToast("Expense updated sucessfully!");
         queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSES]});
         queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
+        queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.EXPENSE_SUMMARY],
+        exact: false
+      });
       },
     onError: () => {
       showToast("There has been an error updating the expense, please try again", "error");

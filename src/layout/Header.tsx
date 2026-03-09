@@ -3,6 +3,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -78,7 +79,11 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
       <Box sx={{ flexGrow: 1 }} />
       <Box>
         <IconButton onClick={toggleTheme} color="primary">
-          {mode === "dark" ? <LightModeIcon fontSize="small"/> : <DarkModeIcon fontSize="small"/>}
+          <Tooltip
+            title="Switch Theme"
+          >
+            {mode === "dark" ? <LightModeIcon fontSize="small"/> : <DarkModeIcon fontSize="small"/>}
+          </Tooltip>
         </IconButton>        
 
         <IconButton 
@@ -86,7 +91,11 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
           onClick={e => setAnchorEl(e.currentTarget)}
           data-cy="user-button"
         >
-          <ProfileIcon fontSize="small"/>
+          <Tooltip
+            title="Profile"
+          >
+            <ProfileIcon fontSize="small"/>
+          </Tooltip>
         </IconButton>
         <Menu
           open={open}
