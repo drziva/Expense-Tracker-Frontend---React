@@ -33,7 +33,7 @@ export class PageErrorBoundary extends React.Component<Props, State> {
                     gap: 12,
                 }}
                 >
-                <h1>Something went wrong, this is a TEST ERROR BOUNDARY</h1>
+                <h1>Something went wrong</h1>
                 <p>The page crashed, please reload.</p>
                 <Button variant="contained" onClick={() => window.location.reload()}>
                     Reload

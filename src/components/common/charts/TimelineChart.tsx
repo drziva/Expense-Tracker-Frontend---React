@@ -68,15 +68,15 @@ export function TimelineChart({ data, color, type }: Props) {
                 color: theme.palette.text.secondary
             }}
             itemStyle={{
-                color: color === "income" ? theme.palette.success.main : theme.palette.error.main
+                color: color === "income" ? theme.palette.primary.main : theme.palette.error.main
             }}
         />
 
         <Area
           type="bumpX"
           dataKey="total"
-          stroke={color === "income" ? "#4caf50" : "#e95858"}
-          fill={color === "income" ? "#4caf5033" : "#c6282833"}
+          stroke={color === "income" ? "rgb(12, 216, 199)" : "rgb(12, 216, 199)"}
+          fill={color === "income" ? "#28bbc633" : "#28bbc633"}
           strokeWidth={2}
         />
       </AreaChart>

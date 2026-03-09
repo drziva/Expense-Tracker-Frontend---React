@@ -73,15 +73,15 @@ export function DashboardTimelineChart({ data }: { data: DataPoint[] }) {
         <Area
           type="monotone"
           dataKey="income"
-          stroke="#4caf50"
-          fill="#71b87333"
+          stroke="rgb(12, 216, 199)"
+          fill="#28bbc633"
           strokeWidth={2}
         />
 
         <Area
           type="monotone"
           dataKey="expense"
-          stroke="#e95858"
+          stroke="#eb7b7b"
           fill="#df5e5e33"
           strokeWidth={2}
         />

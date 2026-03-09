@@ -31,7 +31,7 @@ export function DashboardTableSection({
           variant="subtitle2"
           sx={{
             fontWeight: 600,
-            color,
+            color: color === "success.main" ? "rgb(12, 216, 199)" : "rgb(235, 79, 79)",
           }}
         >
           {title}
@@ -41,7 +41,7 @@ export function DashboardTableSection({
           variant="subtitle2"
           sx={{
             fontWeight: 600,
-            color,
+            color: color === "success.main" ? "rgb(12, 216, 199)" : "rgb(235, 79, 79)",
           }}
         >
           {sign}

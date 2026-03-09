@@ -276,12 +276,7 @@ export default function IncomesPage() {
             <FilterIcon fontSize="small" />
           </Button>
 
-          <RowLimitSelect
-            value={query.limit}
-            onChange={(limit) =>
-              setQuery((prev) => ({ ...prev, limit, page: 1 }))
-            }
-          />
+          <RowLimitSelect/>
         </Box>
       
         <Box

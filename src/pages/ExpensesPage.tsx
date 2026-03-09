@@ -172,7 +172,6 @@ export default function ExpensesPage() {
               <DeleteIcon color="error" fontSize="small" />
             </IconButton>
           </Tooltip>
-          
         </>
       )
     }
@@ -355,16 +354,7 @@ export default function ExpensesPage() {
 
           </Button>
 
-          <RowLimitSelect
-            value={query.limit}
-            onChange={(limit) =>
-              setQuery(prev => ({
-                ...prev,
-                limit,
-                page: 1
-              }))
-            }
-          />
+          <RowLimitSelect/>
 
         </Box>
 
