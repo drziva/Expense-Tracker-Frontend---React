@@ -9,9 +9,4 @@ export type ExpenseGroup = {
   budgetCap?: number;
 }
 
-export type ExpenseTotalByGroup = {
-  groupName: string,
-  total: number
-}
-
 export type GetExpenseGroupResponse = PaginatedResponse<ExpenseGroup>;

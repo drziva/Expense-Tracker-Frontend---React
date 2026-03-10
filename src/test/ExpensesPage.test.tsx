@@ -14,30 +14,23 @@ test("renders the expenses page", async () => {
 });
 
 test("creates a new expense", async () => {
-  renderApp(<ExpensesPage/>);
+    renderApp(<ExpensesPage/>);
+    expect(await screen.findByText("Expenses")).toBeInTheDocument();
+    
+    await userEvent.click(screen.getByRole("button", { name: /add expense/i }));
+    await screen.findByTestId("expense-description-input");
 
-  // Wait for page load
-  await screen.findByText("Expenses");
+    const descInput = screen.getByTestId("expense-description-input");
+    const amountInput = screen.getByTestId("expense-amount-input");
+    const groupSelect = screen.getByTestId("expense-group-select");
 
-  // Open modal
-  await userEvent.click(screen.getByRole("button", { name: /add expense/i }));
+    await userEvent.type(descInput, "New Expense");
+    await userEvent.type(amountInput, "25");
+    
+    await userEvent.click(groupSelect);
+    await userEvent.click(await screen.findByText(/Health/i));
 
-  // Wait for modal fields
-  const descInput = await screen.findByTestId("expense-description-input");
-  const amountInput = screen.getByTestId("expense-amount-input");
-  const groupSelect = screen.getByTestId("expense-group-select");
+    await userEvent.click(screen.getByRole("button", { name: /create/i }));
 
-  // Fill fields
-  await userEvent.type(descInput, "New Expense");
-  await userEvent.type(amountInput, "25");
-
-  // Select group
-  await userEvent.click(groupSelect);
-  await userEvent.click(await screen.findByText(/Health/i));
-
-  // SUBMIT — IMPORTANT FIX
-  await userEvent.click(screen.getByRole("button", { name: /create/i }));
-
-  // Mutation triggers → Query invalidates → MSW returns updated list
-  expect(await screen.findByText("New Expense")).toBeInTheDocument();
+    expect(await screen.findByText("New Expense")).toBeInTheDocument();
 });

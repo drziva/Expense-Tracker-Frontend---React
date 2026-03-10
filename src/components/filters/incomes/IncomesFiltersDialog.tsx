@@ -13,70 +13,105 @@ import {
   Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
-import type { SortOption } from "../../../types/pagination";
+import { useEffect, useState } from "react";
+import { TransactionSortOption } from "../../../types/commons.types";
 import { useIncomeGroups } from "../../../hooks/income-groups/useIncomeGroups";
-import type { IncomeQuery } from "../../../types/incomeGroup.requests";
 
 export type IncomeFilterValues = {
   from?: string;
   to?: string;
-  min?: number;
-  max?: number;
-  group_id?: number;
-  sort?: SortOption;
+  sort?: TransactionSortOption;
 };
 
 type Props = {
   open: boolean;
-  query: IncomeQuery;
   onClose: () => void;
-  onApply: (values: IncomeFilterValues) => void;
 };
 
-export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
+export function IncomesFiltersDialog({ open, onClose }: Props) {
   const { data } = useIncomeGroups({});
-  const [minValue, setMinValue] = useState("");
-  const [maxValue, setMaxValue] = useState("");
-  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
-  const [toDate, setToDate] = useState<dayjs.Dayjs | null>(null);
-  const [sort, setSort] = useState<SortOption | "">("");
-  const [groupId, setGroupId] = useState<number | "">("");
 
-  useEffect(() => {
-    setMinValue(query.min?.toString() ?? "");
-    setMaxValue(query.max?.toString() ?? "");
-    setFromDate(query.from ? dayjs(query.from) : null);
-    setToDate(query.to ? dayjs(query.to) : null);
-    setGroupId(query.group_id ?? "");
-    setSort(query.sort ?? "");
-  }, [query]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const fromParam = searchParams.get("from");
+  const fromDate = 
+    fromParam && dayjs(fromParam,"YYYY-MM-DD").isValid()
+      ? dayjs(fromParam, "YYYY-MM-DD")
+      : null;
+
+  const toParam = searchParams.get("to");
+  const toDate = 
+    toParam && dayjs(toParam,"YYYY-MM-DD").isValid()
+      ? dayjs(toParam, "YYYY-MM-DD")
+      : null;
+
+  const sort = searchParams.get("sort") ?? null;
+
+  const min = Number(searchParams.get("min")) || undefined;
+  const max = Number(searchParams.get("max")) || undefined;
+
+  const [draftFrom, setDraftFrom] = useState<dayjs.Dayjs | null>(fromDate || null);
+  const [draftTo, setDraftTo] = useState<dayjs.Dayjs | null>(toDate || null);
+  const [draftSort, setDraftSort] = useState(sort);
+  const [draftMin, setDraftMin] = useState(min || "");
+  const [draftMax, setDraftMax] = useState(max || "");
+  const [draftGroupId, setDraftGroupId] = useState<number | "">("");
+
+  useEffect(()=>{
+    setDraftFrom(fromDate || null);
+    setDraftTo(toDate || null);
+    setDraftSort(sort);
+    setDraftMin(min || "");
+    setDraftMax(max || "");
+    setDraftGroupId(searchParams.get("group") ? Number(searchParams.get("group")) : "");
+  },[searchParams])
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Filter incomes</DialogTitle>
-
+      <DialogTitle>Filter income groups</DialogTitle>
       <DialogContent>
         <Box
           component="form"
-          id="income-filters-form"
+          id="income-group-filters-form"
           onSubmit={(e) => {
             e.preventDefault();
 
-            const min = minValue !== "" ? Number(minValue) : undefined;
-            const max = maxValue !== "" ? Number(maxValue) : undefined;
-            const group = groupId !== "" ? Number(groupId) : undefined;
+            setSearchParams(prev => {
+              const params = new URLSearchParams(prev);
+              if(draftFrom){
+                params.set("from", draftFrom.format("YYYY-MM-DD"));
+              } else {
+                params.delete("from");
+              }
+              if(draftTo){
+                params.set("to", draftTo.format("YYYY-MM-DD"));
+              } else {
+                params.delete("to");
+              }
+              if(draftSort){
+                params.set("sort", draftSort);
+              } else {
+                params.delete("sort");
+              }
+              if(draftMin) {
+                params.set("min", String(draftMin));
+              } else {
+                params.delete("min");
+              }
+              if(draftMax) {
+                params.set("max", String(draftMax));
+              } else {
+                params.delete("max");
+              }
+              if(draftGroupId) {
+                params.set("group", String(draftGroupId))
+              } else {
+                params.delete("group");
+              }
 
-            onApply({
-              from: fromDate ? fromDate.format("YYYY-MM-DD") : undefined,
-              to: toDate ? toDate.format("YYYY-MM-DD") : undefined,
-              min,
-              max,
-              sort: sort || undefined,
-              group_id: group,
-            });
-
+              return params;
+            })
             onClose();
           }}
           sx={{
@@ -86,8 +121,7 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
             mt: 1,
           }}
         >
-
-          <Box>
+        <Box>
             <Typography variant="subtitle2" gutterBottom>
               Amount
             </Typography>
@@ -96,22 +130,24 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
               size="small"
               label="Min"
               type="number"
-              value={minValue}
-              onChange={(e) => setMinValue(e.target.value)}
+              value={draftMin}
+              onChange={(e) => setDraftMin(e.target.value === "" ? "" : Number(e.target.value))}
               fullWidth
               sx={{
                 mb:2
               }}
             />
+
             <TextField
               size="small"
               label="Max"
               type="number"
-              value={maxValue}
-              onChange={(e) => setMaxValue(e.target.value)}
+              value={draftMax}
+              onChange={(e) => setDraftMax(e.target.value === "" ? "" : Number(e.target.value))}
               fullWidth
             />
           </Box>
+
 
           <Box>
             <Typography variant="subtitle2" gutterBottom>
@@ -120,20 +156,24 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
 
             <DatePicker
               label="From"
-              value={fromDate}
-              onChange={setFromDate}
+              value={draftFrom}
+              onChange={(val)=>{
+                setDraftFrom(val)
+              }}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
               sx={{
                 mb:2
               }}
             />
+
             <DatePicker
               label="To"
-              value={toDate}
-              onChange={setToDate}
+              value={draftTo}
+              onChange={(val)=>{
+                setDraftTo(val)
+              }}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
             />
-
           </Box>
 
           <Box>
@@ -145,8 +185,10 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
               <Select
                 labelId="sort-label"
                 label="Sort by"
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortOption)}
+                value = {draftSort}
+                onChange={(e)=>{
+                  setDraftSort(e.target.value)
+                }}
               >
                 <MenuItem value="">
                   <em>None</em>
@@ -158,8 +200,9 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
               </Select>
             </FormControl>
           </Box>
-
-          <Box>
+        </Box>
+        
+        <Box>
             <Typography variant="subtitle2" gutterBottom>
               Group
             </Typography>
@@ -168,8 +211,8 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
               <Select
                 labelId="group-label"
                 label="Group"
-                value={groupId}
-                onChange={(e) => setGroupId(e.target.value as number | "")}
+                value={draftGroupId}
+                onChange={(e) => setDraftGroupId(e.target.value as number | "")}
               >
                 <MenuItem value="">
                   <em>All</em>
@@ -182,11 +225,11 @@ export function IncomesFiltersDialog({ open, onClose, onApply, query }: Props) {
               </Select>
             </FormControl>
           </Box>
-        </Box>
+
       </DialogContent>
 
       <DialogActions>
-        <Button form="income-filters-form" type="submit" variant="contained">
+        <Button form="income-group-filters-form" type="submit" variant="contained">
           Apply
         </Button>
         <Button onClick={onClose}>Cancel</Button>

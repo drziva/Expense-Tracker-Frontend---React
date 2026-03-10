@@ -22,6 +22,7 @@ import SearchBox from "../components/common/SearchBox";
 import { useIncomeTotalByGroup } from "../hooks/income-groups/useIncomeTotalByGroup";
 import { GroupBarChart } from "../components/common/charts/GroupBarChart";
 import { Tooltip } from "@mui/material";
+import dayjs from "dayjs";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -129,6 +130,19 @@ export default function IncomeGroupsPage() {
     }
   ]
 
+  let descriptionText = "";
+
+  if(query.from && query.to) {
+    descriptionText = `Spending summary by group from ${dayjs(query.from).format("MMM D, YYYY")} to ${dayjs(query.to).format("MMM D, YYYY")}`;
+  } else if (query.from) {
+    descriptionText = `Spending summary by group from ${dayjs(query.from).format("MMM D, YYYY")} onwards`;
+  } else if (query.to) {
+    descriptionText = `Spending summary by group until ${dayjs(query.to).format("MMM D, YYYY")}`;
+  } else {
+    descriptionText = "Spending summary by group for the last 30 days";
+  }
+
+
   return (
     <>
       {/* HEADER */}
@@ -152,19 +166,12 @@ export default function IncomeGroupsPage() {
            <Typography
             variant="body2"
             color="text.secondary"
-            fontWeight={600}
             sx={{
               mt: 1,
               ml: 2
             }}
           >
-            {query.from && query.to
-              ? `Income summary by group from ${query.from} to ${query.to}`
-              : query.from
-              ? `Income summary by group from ${query.from} until now`
-              : query.to
-              ? `Income summary by group until ${query.to}`
-              : "Income summary by group for the last 30 days"}
+            {descriptionText}
           </Typography>)}
         </Box>
       </Box>

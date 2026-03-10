@@ -59,7 +59,7 @@ export function GroupBarChart({ data }: { data: DataPoint[] }) {
         <Bar
           dataKey="total"
           fill={theme.palette.primary.main}
-          radius={[6, 6, 0, 0]}
+          radius={[6, 6, 0, 0]}          
         />
       </BarChart>
     </ResponsiveContainer>

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, CircularProgress, IconButton, MenuItem, Pagination, Paper, Select, TextField, Tooltip, Typography, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, MenuItem, Pagination, Paper, Select, Tooltip, Typography, useMediaQuery } from "@mui/material";
 import { useIncomes } from "../hooks/incomes/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
@@ -19,6 +19,11 @@ import { MobileTransactionTable } from "../components/mobile/MobileTransactionTa
 import { EmptyState } from "../components/ui/EmptyState";
 import { useIncomeSummary } from "../hooks/incomes/useIncomeSummary";
 import { TimelineChart } from "../components/common/charts/TimelineChart";
+import { useSearchParams } from "react-router-dom";
+import { GroupSortOption } from "../types/pagination";
+import { TransactionSortOption } from "../types/commons.types";
+import SearchBox from "../components/common/SearchBox";
+import dayjs from "dayjs";
 
 type Range = {
   from: string;
@@ -29,18 +34,50 @@ type Range = {
 export default function IncomesPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const from = searchParams.get("from") ?? undefined;
+  const to = searchParams.get("to") ?? undefined;
+  
+  const sortParam = searchParams.get("sort");
+  const sort: TransactionSortOption | undefined = 
+    sortParam === "amount_asc" ||
+    sortParam === "amount_desc" ||
+    sortParam === "date_asc" ||
+    sortParam === "date_desc" 
+      ? sortParam 
+      : undefined;
+
+  const search = searchParams.get("search") ?? undefined;
+
+  const limit = Number(searchParams.get("limit")) === 0 ? 10 : Number(searchParams.get("limit"));
+  const page = Number(searchParams.get("page")) ?? 1; 
+
+  const min = searchParams.get("min");
+  const max = searchParams.get("max");
+
   const [query, setQuery] = useState<IncomeQuery>({
-    page:1,
-    limit: 10
+    page,
+    limit,
+    from,
+    to,
+    search
   })
 
   const [range, setRange] = useState<"week" | "month" | "year">("week");
 
   const [summaryQuery, setSummaryQuery] = useState<IncomeSummaryQuery>({
-    from: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-    to: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+    from: from || new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+    to: to || new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
     type: range === "year" ? "yearly" : "regular"
   });
+
+  useEffect(()=>{
+    setSummaryQuery({
+      from: from || new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
+      to: to || new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+      type: range === "year" ? "yearly" : "regular"
+    });
+  },[from,to])
 
   const {data, isError, isLoading} = useIncomes(query);
 
@@ -59,26 +96,19 @@ export default function IncomesPage() {
   const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
   const [toFilter, setToFilter] = useState(false);
-  const [searchText, setSearchText] = useState("");
-
-
-  useEffect(()=>{
-    const timeout = setTimeout(() => {
-      setQuery(prev => ({
-        ...prev,
-        search: searchText,
-        page: 1
-      }))
-    }, 500)
-
-    return() => clearTimeout(timeout);
-  }, [searchText])
-
+  
   useEffect(() => {
-    if (!query.search && searchText !== "") {
-      setSearchText("");
-    }
-  }, [query]);
+    setQuery(prev => ({
+      ...prev,
+      from,
+      to,
+      page,
+      limit,
+      search,
+      sort
+    }))
+  }, [searchParams])
+
 
   if(isLoading) return <CircularProgress />
 
@@ -151,9 +181,6 @@ export default function IncomesPage() {
     total: Number(point.total),
   })) ?? [];
 
-  console.log("summaryData", summaryData);
-  console.log("timelineData", timelineData);
-
   const getRange = (range: string): Range => {
     const now = new Date()
 
@@ -182,6 +209,18 @@ export default function IncomesPage() {
     throw new Error("Invalid range");
   }
 
+  const graphDescriptionText = (from?: string, to?: string) => {
+    if (from && to) {
+      return `Earnings from ${dayjs(from).format("MMM D, YYYY")} to ${dayjs(to).format("MMM D, YYYY")}`
+    } else if (from) {
+      return `Earnings from ${dayjs(from).format("MMM D, YYYY")} onwards`
+    } else if (to) {
+      return `Earnings until ${dayjs(to).format("MMM D, YYYY")}`
+    } else {
+      return `Earnings across last ${range}`
+    }
+  };
+
   return (
     <>
       {/* HEADER */}
@@ -202,7 +241,7 @@ export default function IncomesPage() {
         <Box sx={{ mb: 1 }}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
-              Earnings across {<strong>{`last ${range}`}</strong>}
+              {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
             </Typography>
 
             <Select
@@ -256,17 +295,9 @@ export default function IncomesPage() {
             justifyContent: isMobile ? "center" : "left",
           }}
         >
-          <TextField
-            size="small"
-            label="Search"
-            color="primary"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            sx={{
-              height: 40,
-              minWidth: isMobile ? null : 450,
-            }}
-          />
+
+          <SearchBox/>
+
           <Button
             variant="outlined"
             color="primary"
@@ -303,11 +334,7 @@ export default function IncomesPage() {
 
       {/* TABLE */}
       <Paper sx={{ p: 2 }}>
-        <ActiveIncomeFilters
-          groups={groupNameById}
-          query={query}
-          onChange={setQuery}
-        />
+        <ActiveIncomeFilters/>
 
         {!isMobile && (
           isEmpty ? (
@@ -355,16 +382,8 @@ export default function IncomesPage() {
 
       {/* DIALOGS */}
       <IncomesFiltersDialog
-        query={query}
         open={toFilter}
         onClose={() => setToFilter(false)}
-        onApply={(filters) => {
-          setQuery((prev) => ({
-            ...prev,
-            ...filters,
-            page: 1,
-          }));
-        }}
       />
 
       <ConfirmDialog

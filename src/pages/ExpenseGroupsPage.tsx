@@ -205,7 +205,6 @@ export default function ExpenseGroupsPage() {
           <Typography
               variant="body2"
               color="text.secondary"
-              fontWeight={600}
               sx={{
                 mt: 1,
               ml: 2,

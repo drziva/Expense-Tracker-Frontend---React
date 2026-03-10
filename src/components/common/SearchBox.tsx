@@ -9,8 +9,6 @@ export default function SearchBox() {
     
     const [searchParams, setSearchParams] = useSearchParams();
 
-    console.log("render");
-
     const debouncedUpdateRef = useRef(
         debounce((value) => {
             setSearchParams(prev => {

@@ -8,14 +8,12 @@ import type { Income } from "../types/incomes.responses";
 import { MobileTransactionCard } from "../components/mobile/MobileTransactionCard";
 import { useState } from "react";
 import { DashboardTimelineChart } from "../components/common/charts/DashboardTimelineChart";
-import ReactPlayer from "react-player";
-
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
 
   const [summaryQuery, setSummaryQuery] = useState({
-    from: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-    to: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+    from: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(),
+    to: new Date(new Date().setDate(new Date().getDate())).toISOString(),
   });
   const { data, isError, isLoading } = useDashboard();
   const {data: summaryData} = useDashboardSummary(summaryQuery);
