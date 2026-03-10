@@ -43,6 +43,8 @@ export default function ExpenseGroupsPage() {
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null);
   const [toFilter, setToFilter] = useState(false);
+  const [formDirty, setFormDirty] = useState(false);
+  const [toClose, setToClose] = useState(false);
 
   const fromParam = searchParams.get("from");
   const from = 
@@ -351,13 +353,41 @@ export default function ExpenseGroupsPage() {
 
     <ExpenseGroupDialog
       open={toCreate}
-      onClose={() => setToCreate(false)}
+      onClose={() => {
+        if(formDirty) {
+          setToClose(true);
+          return;
+        }
+        setToCreate(false);
+        setFormDirty(false);
+      }}
+      onChange={setFormDirty}
     />
 
     <ExpenseGroupDialog
       open={!!toUpdate}
-      onClose={() => setToUpdate(null)}
+      onClose={() => {
+        if(formDirty) {
+          setToClose(true);
+          return;
+        }
+        setToUpdate(null)}
+      }
+      onChange={setFormDirty}
       group={toUpdate}
+    />
+
+    <ConfirmDialog
+      open={toClose}
+      title="Unsaved Changes"
+      description="You have unsaved changes. Are you sure you want to discard them?"
+      action="Discard"
+      onConfirm={() => {
+        setToClose(false);
+        setToUpdate(null);
+        setToCreate(false);
+      }}
+      onCancel={() => setToClose(false)}
     />
   </>
 );

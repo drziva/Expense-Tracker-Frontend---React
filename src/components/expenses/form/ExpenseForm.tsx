@@ -15,7 +15,7 @@ type Props = {
 export function ExpenseForm({form, groups}: Props) {
   const {
     register,
-    formState: {errors}
+    formState: {errors, isDirty},
   } = form
   const isMobile = useMediaQuery("(max-width: 600px)");
 

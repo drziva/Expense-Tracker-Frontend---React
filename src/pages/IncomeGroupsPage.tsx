@@ -3,7 +3,7 @@ import { useIncomeGroups } from "../hooks/income-groups/useIncomeGroups";
 import { type Column } from "../components/ui/Table";
 import { Table } from "../components/ui/Table"
 import type { IncomeGroup } from "../types/incomeGroup.responses";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
 import ConfirmDialog from "../components/ui/ConfirmDialog";
@@ -55,6 +55,8 @@ export default function IncomeGroupsPage() {
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<IncomeGroup | null>(null)
   const [toFilter, setToFilter] = useState(false);
+  const [formDirty, setFormDirty] = useState(false);
+  const [toClose, setToClose] = useState(false);
 
   useEffect(()=>{
     setQuery(prev=>({
@@ -309,16 +311,47 @@ export default function IncomeGroupsPage() {
         onCancel={() => setToDelete(null)}
       />
 
+
       <IncomeGroupDialog
         open={toCreate}
-        onClose={() => setToCreate(false)}
+        onClose={() => {
+          if(formDirty){
+            setToClose(true);
+            return;
+          }
+          setToCreate(false)
+        }}
+        onChange={setFormDirty}
       />
 
       <IncomeGroupDialog
         open={!!toUpdate}
-        onClose={() => setToUpdate(null)}
+        onClose={() => {
+            if(formDirty){
+              setToClose(true);
+              return;
+            }
+            setToUpdate(null);
+            setFormDirty(false);
+          }
+        }
+        onChange={setFormDirty}
         group={toUpdate}
       />
+
+      <ConfirmDialog
+        open={toClose}
+        title="Unsaved Changes"
+        description="You have unsaved changes. Are you sure you want to discard them?"
+        action="Discard"
+        onConfirm={() => {
+          setToCreate(false);
+          setToUpdate(null);
+          setToClose(false);
+          setFormDirty(false);
+        }}
+        onCancel={() => setToClose(false)}
+      />      
     </>
   )
 }

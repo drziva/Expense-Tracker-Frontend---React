@@ -16,6 +16,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   transaction?: SchedTransaction | null;
+  onChange?: (isDirty: boolean) => void;
 };
 
 type FormInput = z.input<typeof scheduledTransactionSchema>;
@@ -25,6 +26,7 @@ export function ScheduledTransactionDialog({
   open,
   onClose,
   transaction,
+  onChange
 }: Props) {
   const createTx = useCreateSchedTransaction();
   const updateTx = useUpdateSchedTransaction();
@@ -64,6 +66,15 @@ export function ScheduledTransactionDialog({
       });
     }
   }, [open, transaction]);
+
+  useEffect(() => {
+    if(isDirty && onChange) {
+      onChange(true);
+    };
+    if(!isDirty && onChange) {
+      onChange(false);
+    }
+  }, [isDirty])
 
   async function onSubmit(data: FormOutput) {
     if(isUpdate && !isDirty){

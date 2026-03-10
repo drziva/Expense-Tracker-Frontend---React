@@ -47,6 +47,7 @@ import { TransactionSortOption } from "../types/commons.types"
 
 import SearchBox from "../components/common/SearchBox"
 import dayjs from "dayjs"
+import { set } from "zod"
 
 type Range = {
   from: string
@@ -55,6 +56,7 @@ type Range = {
 }
 
 export default function ExpensesPage() {
+  const [formDirty, setFormDirty] = useState(false);
 
   const isMobile = useMediaQuery("(max-width: 600px)")
   const [searchParams, setSearchParams] = useSearchParams()
@@ -133,6 +135,7 @@ export default function ExpensesPage() {
   const [toUpdate, setToUpdate] = useState<Expense | null>(null)
   const [toDelete, setToDelete] = useState<Expense | null>(null)
   const [toFilter, setToFilter] = useState(false)
+  const [toClose, setToClose] = useState(false)
 
   if (isLoading) return <CircularProgress />
   if (isError) return <Alert severity="error">Failed to load expenses.</Alert>
@@ -422,12 +425,46 @@ export default function ExpensesPage() {
 
       <ExpenseDialog
         open={toCreate}
-        onClose={() => setToCreate(false)}
+        onClose={() => {
+          if(formDirty) {
+            setToClose(true);
+            return;
+          }
+          setToCreate(false)
+        }
+      }
+        onChange={()=>{
+          setFormDirty(true)
+        }}
+      />
+
+      <ConfirmDialog
+        open={toClose}
+        title="Unsaved changes"
+        action="Discard"
+        description="You have unsaved changes. Are you sure you want to discard them?"
+        onCancel={()=>{
+          setToClose(false);
+        }}
+        onConfirm={()=>{
+          setToClose(false);
+          setToCreate(false);
+          setFormDirty(false);
+          setToUpdate(null);
+        }}
       />
 
       <ExpenseDialog
         open={!!toUpdate}
-        onClose={() => setToUpdate(null)}
+        onClose={() => {
+          if(formDirty) {
+            setToClose(true);
+            return;
+          }
+          setToUpdate(null)
+          }
+        }
+        onChange={setFormDirty}
         expense={toUpdate}
       />
 

@@ -15,11 +15,12 @@ type FormOutput = z.infer<typeof incomeGroupSchema>
 
 type Props = {
   open: boolean;
-  onClose: () => void
-  group?: IncomeGroup | null
+  onClose: () => void;
+  group?: IncomeGroup | null;
+  onChange?: (isDirty: boolean) => void;
 }
 
-export function IncomeGroupDialog({open, onClose, group}: Props) {
+export function IncomeGroupDialog({open, onClose, group, onChange}: Props) {
   const createIncomeGroup = useCreateIncomeGroup();
   const updateIncomeGroup = useUpdateIncomeGroup();
 
@@ -48,6 +49,16 @@ export function IncomeGroupDialog({open, onClose, group}: Props) {
       })
     }
   },[open, group])
+
+  useEffect(() => {
+    if(isDirty && onChange) {
+      onChange(true);
+    };
+    if(!isDirty && onChange) {
+      onChange(false);
+    }
+  }, [isDirty])
+
 
   async function onSubmit(data: FormOutput) {
     if(isUpdate && !isDirty){

@@ -96,7 +96,9 @@ export default function IncomesPage() {
   const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
   const [toFilter, setToFilter] = useState(false);
-  
+  const [toClose, setToClose] = useState(false);
+  const [formDirty, setFormDirty] = useState(false);
+
   useEffect(() => {
     setQuery(prev => ({
       ...prev,
@@ -400,13 +402,47 @@ export default function IncomesPage() {
         }}
       />
 
-      <IncomeDialog open={toCreate} onClose={() => setToCreate(false)} />
+      <IncomeDialog 
+        open={toCreate} 
+        onClose={() => {
+          if(formDirty) {
+            setToClose(true);
+            return;
+          }
+            setToCreate(false);
+          }
+        } 
+        onChange={setFormDirty}
+      />
 
       <IncomeDialog
         open={!!toUpdate}
-        onClose={() => setToUpdate(null)}
+        onClose={() => {
+          if(formDirty) {
+            setToClose(true);
+            return;
+          }
+          setToUpdate(null);
+        }}
+        onChange={setFormDirty}
         income={toUpdate}
       />
+
+      <ConfirmDialog
+        open={toClose}
+        title="Unsaved changes"
+        action="Discard"
+        description="You have unsaved changes. Are you sure you want to discard them?"
+        onCancel={()=>{
+          setToClose(false);
+        }}
+        onConfirm={()=>{
+          setToClose(false);
+          setToCreate(false);
+          setFormDirty(false);
+          setToUpdate(null);
+        }}
+      />      
     </>
   );
 }
