@@ -21,7 +21,7 @@ export function ActiveIncomeFilters() {
     searchParams.get("max") || 
     searchParams.get("from") ||
     searchParams.get("to") ||
-    searchParams.get("group_id") ||
+    searchParams.get("group") ||
     searchParams.get("sort")
   );
 
@@ -95,7 +95,7 @@ export function ActiveIncomeFilters() {
           label={`Group: ${data?.data?.find((g) => g.id === Number(group))?.name || group}`}
           onDelete={() =>
             setSearchParams(prev => {
-              prev.delete("group_id");
+              prev.delete("group");
               prev.set("page", "1");
               return prev;
             })

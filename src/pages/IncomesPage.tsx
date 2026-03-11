@@ -52,15 +52,23 @@ export default function IncomesPage() {
   const limit = Number(searchParams.get("limit")) === 0 ? 10 : Number(searchParams.get("limit"));
   const page = Number(searchParams.get("page")) ?? 1; 
 
-  const min = searchParams.get("min");
-  const max = searchParams.get("max");
+  const minParam = searchParams.get("min");
+  const maxParam = searchParams.get("max");
+  const groupIdParam = searchParams.get("group");
+
+  const min = minParam ? Number(minParam) : undefined;
+  const max = maxParam ? Number(maxParam) : undefined;
+  const group_id = groupIdParam ? Number(groupIdParam) : undefined;
 
   const [query, setQuery] = useState<IncomeQuery>({
     page,
     limit,
     from,
     to,
-    search
+    search,
+    min,
+    max,
+    group_id
   })
 
   const [range, setRange] = useState<"week" | "month" | "year">("week");
@@ -107,7 +115,10 @@ export default function IncomesPage() {
       page,
       limit,
       search,
-      sort
+      sort,
+      max,
+      min,
+      group_id
     }))
   }, [searchParams])
 
