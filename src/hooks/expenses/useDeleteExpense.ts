@@ -13,6 +13,10 @@ export function useDeleteExpense() {
       showToast("Expense deleted sucessfully!");
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSES]});
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.EXPENSE_SUMMARY],
+        exact: false
+      });
     },
     onError: () => {
       showToast("There has been an error deleting the expense, please try again", "error");

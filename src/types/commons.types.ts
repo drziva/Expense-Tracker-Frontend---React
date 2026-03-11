@@ -1,0 +1,1 @@
+export type TransactionSortOption = "date_asc" | "date_desc" | "amount_asc" | "amount_desc";

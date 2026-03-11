@@ -1,19 +1,26 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { useSearchParams } from "react-router-dom";
 
-type Props = {
-  value: number;
-  onChange: (val: number) => void
-}
+export function RowLimitSelect() {
+  const [searchParams, setSearchParams] = useSearchParams();
 
-export function RowLimitSelect({onChange, value}: Props) {
+  const limit = searchParams.get("limit") ?? 10;
+
   return(
   <FormControl size="small">
     <InputLabel id="rows-label">Rows</InputLabel>
     <Select
       labelId="rows-label"
       label="Rows"
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
+      value={limit}
+      onChange={(e) => {
+        setSearchParams(prev => {
+          const params = new URLSearchParams(prev);
+          params.set("limit", String(e.target.value));
+          params.set("page", "1");
+          return params;
+        })
+      }}
     >
       <MenuItem key={5} value={5}>5</MenuItem>
       <MenuItem key={10} value={10}>10</MenuItem>

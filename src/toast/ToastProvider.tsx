@@ -36,6 +36,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           onClose={() => setOpen(false)}
           severity={severity}
           variant="filled"
+          data-cy="toast-alert"
         >
           {message}
         </Alert>

@@ -15,7 +15,7 @@ type Props = {
 export function ExpenseForm({form, groups}: Props) {
   const {
     register,
-    formState: {errors}
+    formState: {errors, isDirty},
   } = form
   const isMobile = useMediaQuery("(max-width: 600px)");
 
@@ -32,6 +32,12 @@ export function ExpenseForm({form, groups}: Props) {
         {...register("description")}
         error={!!errors.description}
         helperText={errors.description?.message}
+        slotProps={{
+          htmlInput: {
+            "data-cy": "expense-description-input",
+            "data-testid": "expense-description-input"
+          }
+        }}
       />
 
       <TextField
@@ -39,6 +45,12 @@ export function ExpenseForm({form, groups}: Props) {
         {...register("amount")}
         error={!!errors.amount}
         helperText={errors.amount?.message}
+        slotProps={{
+          htmlInput: {
+            "data-cy": "expense-amount-input",
+            "data-testid": "expense-amount-input"
+          }
+        }}
       />
 
       <FormControl error={!!errors.groupId}>
@@ -54,9 +66,15 @@ export function ExpenseForm({form, groups}: Props) {
             {...field}
             labelId="expense-group-label"
             label="Expense Group"
+            data-cy="expense-group-select"
+            data-testid="expense-group-select"
           >
             {groups.map((gr) => (
-              <MenuItem key={gr.id} value={String(gr.id)}>
+              <MenuItem 
+                key={gr.id} 
+                value={String(gr.id)}
+                data-cy={`expense-group-option-${gr.id}`}
+              >
                 {gr.name}
               </MenuItem>
             ))}

@@ -27,6 +27,8 @@ import formatEuros from "../utils/formatMoney";
 import { capitalizeFirst } from "../utils/capitalizeFirst";
 import { PremiumRequiredPage } from "./PremiumRequiredPage";
 import { AxiosError } from "axios";
+import { EmptyState } from "../components/ui/EmptyState";
+import { set } from "zod";
 
 export default function ScheduledTransactionsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -37,6 +39,10 @@ export default function ScheduledTransactionsPage() {
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<SchedTransaction | null>(null);
   const [toDelete, setToDelete] = useState<SchedTransaction | null>(null);
+  const [toClose, setToClose] = useState(false);
+  const [formDirty, setFormDirty] = useState(false);
+
+  const isEmpty = !data || data.length === 0;
 
   const isPremiumError =
     isError &&
@@ -150,19 +156,27 @@ export default function ScheduledTransactionsPage() {
 
       <Paper sx={{ p: 2 }}>
         {!isMobile && (
-          <Table
-            rows={data ?? []}
-            columns={columns}
-            getRowKey={tx => tx.id}
-          />
+          (isEmpty ? (
+            <EmptyState name="scheduled transactions" />
+          ) : (
+            <Table
+              rows={data ?? []}
+              columns={columns}
+              getRowKey={tx => tx.id}
+            />
+          ))
         )}
 
         {isMobile && (
-          <MobileSchedTransactionsTable
-            data={data ?? []}
-            onEdit={setToUpdate}
-            onDelete={setToDelete}
-          />
+          (isEmpty ? (
+            <EmptyState name="scheduled transactions" />
+          ) : (
+            (<MobileSchedTransactionsTable
+              data={data ?? []}
+              onEdit={setToUpdate}
+              onDelete={setToDelete}
+            />)
+          ))
         )}
       </Paper>
 
@@ -182,13 +196,49 @@ export default function ScheduledTransactionsPage() {
 
       <ScheduledTransactionDialog
         open={toCreate}
-        onClose={() => setToCreate(false)}
+        onClose={() => {
+          if(formDirty) {
+            setToClose(true);
+            return;
+          }
+          setToCreate(false)
+          setFormDirty(false);          
+        }}
+        onChange={setFormDirty}
+        onSuccess={() => {
+          setToCreate(false);
+        }}
       />
 
       <ScheduledTransactionDialog
         open={!!toUpdate}
         transaction={toUpdate}
-        onClose={() => setToUpdate(null)}
+        onClose={() => {
+          if(formDirty) {
+            setToClose(true);
+            return;
+          }
+          setToUpdate(null);
+          setFormDirty(false);
+        }}
+        onChange={setFormDirty}
+        onSuccess={() => {
+          setToUpdate(null);
+        }}
+      />
+
+      <ConfirmDialog
+        open={toClose}
+        title="Unsaved changes"
+        action="Discard"
+        description="You have unsaved changes. Are you sure you want to leave this page?"
+        onConfirm={() => {
+          setToUpdate(null);
+          setToCreate(false);
+          setFormDirty(false);
+          setToClose(false);
+        }}
+        onCancel={() => setToClose(false)}
       />
     </>
   );

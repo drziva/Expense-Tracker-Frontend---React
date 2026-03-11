@@ -13,45 +13,58 @@ import {
   Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import type { SortOption } from "../../../types/pagination";
 import { useExpenseGroups } from "../../../hooks/expense-groups/useExpenseGroups";
-import type { ExpenseQuery } from "../../../types/expenses.requests";
-
-export type ExpenseFilterValues = {
-  from?: string;
-  to?: string;
-  min?: number;
-  max?: number;
-  group_id?: number;
-  sort?: SortOption;
-};
 
 type Props = {
   open: boolean;
-  query: ExpenseQuery;
   onClose: () => void;
-  onApply: (values: ExpenseFilterValues) => void;
 };
 
-export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) {
+export function ExpensesFiltersDialog({ open, onClose }: Props) {
   const { data } = useExpenseGroups({});
-  const [minValue, setMinValue] = useState("");
-  const [maxValue, setMaxValue] = useState("");
-  const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
-  const [toDate, setToDate] = useState<dayjs.Dayjs | null>(null);
-  const [sort, setSort] = useState<SortOption | "">("");
-  const [groupId, setGroupId] = useState<number | "">("");
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const fromParam = searchParams.get("from");
+  const fromDate =
+    fromParam && dayjs(fromParam, "YYYY-MM-DD").isValid()
+      ? dayjs(fromParam, "YYYY-MM-DD")
+      : null;
+
+  const toParam = searchParams.get("to");
+  const toDate =
+    toParam && dayjs(toParam, "YYYY-MM-DD").isValid()
+      ? dayjs(toParam, "YYYY-MM-DD")
+      : null;
+
+  const sort = searchParams.get("sort") ?? null;
+
+  const minParam = searchParams.get("min");
+  const maxParam = searchParams.get("max");
+  const groupParam = searchParams.get("group");
+
+  const min = minParam !== null ? Number(minParam) : undefined;
+  const max = maxParam !== null ? Number(maxParam) : undefined;
+  const groupId = groupParam !== null ? Number(groupParam) : undefined;
+
+  const [draftFrom, setDraftFrom] = useState<dayjs.Dayjs | null>(fromDate);
+  const [draftTo, setDraftTo] = useState<dayjs.Dayjs | null>(toDate);
+  const [draftSort, setDraftSort] = useState<SortOption | "">(sort as SortOption || "");
+  const [draftMin, setDraftMin] = useState<number | "">(min ?? "");
+  const [draftMax, setDraftMax] = useState<number | "">(max ?? "");
+  const [draftGroupId, setDraftGroupId] = useState<number | "">(groupId ?? "");
 
   useEffect(() => {
-    setMinValue(query.min?.toString() ?? "");
-    setMaxValue(query.max?.toString() ?? "");
-    setFromDate(query.from ? dayjs(query.from) : null);
-    setToDate(query.to ? dayjs(query.to) : null);
-    setGroupId(query.group_id ?? "");
-    setSort(query.sort ?? "");
-  }, [query]);
+    setDraftFrom(fromDate);
+    setDraftTo(toDate);
+    setDraftSort((sort as SortOption) || "");
+    setDraftMin(min ?? "");
+    setDraftMax(max ?? "");
+    setDraftGroupId(groupId ?? "");
+  }, [searchParams]);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -64,17 +77,46 @@ export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) 
           onSubmit={(e) => {
             e.preventDefault();
 
-            const min = minValue !== "" ? Number(minValue) : undefined;
-            const max = maxValue !== "" ? Number(maxValue) : undefined;
-            const group = groupId !== "" ? Number(groupId) : undefined;
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
 
-            onApply({
-              from: fromDate ? fromDate.format("YYYY-MM-DD") : undefined,
-              to: toDate ? toDate.format("YYYY-MM-DD") : undefined,
-              min,
-              max,
-              sort: sort || undefined,
-              group_id: group,
+              if (draftFrom) {
+                params.set("from", draftFrom.format("YYYY-MM-DD"));
+              } else {
+                params.delete("from");
+              }
+
+              if (draftTo) {
+                params.set("to", draftTo.format("YYYY-MM-DD"));
+              } else {
+                params.delete("to");
+              }
+
+              if (draftSort) {
+                params.set("sort", draftSort);
+              } else {
+                params.delete("sort");
+              }
+
+              if (draftMin !== "") {
+                params.set("min", String(draftMin));
+              } else {
+                params.delete("min");
+              }
+
+              if (draftMax !== "") {
+                params.set("max", String(draftMax));
+              } else {
+                params.delete("max");
+              }
+
+              if (draftGroupId !== "") {
+                params.set("group", String(draftGroupId));
+              } else {
+                params.delete("group");
+              }
+
+              return params;
             });
 
             onClose();
@@ -86,8 +128,7 @@ export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) 
             mt: 1,
           }}
         >
-
-<Box>
+          <Box>
             <Typography variant="subtitle2" gutterBottom>
               Amount
             </Typography>
@@ -96,19 +137,22 @@ export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) 
               size="small"
               label="Min"
               type="number"
-              value={minValue}
-              onChange={(e) => setMinValue(e.target.value)}
+              value={draftMin}
+              onChange={(e) =>
+                setDraftMin(e.target.value === "" ? "" : Number(e.target.value))
+              }
               fullWidth
-              sx={{
-                mb:2
-              }}
+              sx={{ mb: 2 }}
             />
+
             <TextField
               size="small"
               label="Max"
               type="number"
-              value={maxValue}
-              onChange={(e) => setMaxValue(e.target.value)}
+              value={draftMax}
+              onChange={(e) =>
+                setDraftMax(e.target.value === "" ? "" : Number(e.target.value))
+              }
               fullWidth
             />
           </Box>
@@ -120,34 +164,35 @@ export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) 
 
             <DatePicker
               label="From"
-              value={fromDate}
-              onChange={setFromDate}
+              value={draftFrom}
+              onChange={(val) => setDraftFrom(val)}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
-              sx={{
-                mb:2
-              }}
+              sx={{ mb: 2 }}
             />
+
             <DatePicker
               label="To"
-              value={toDate}
-              onChange={setToDate}
+              value={draftTo}
+              onChange={(val) => setDraftTo(val)}
               slotProps={{ textField: { size: "small", fullWidth: true } }}
             />
-
           </Box>
-
 
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               Sorting
             </Typography>
+
             <FormControl size="small" fullWidth>
               <InputLabel id="sort-label">Sort by</InputLabel>
+
               <Select
                 labelId="sort-label"
                 label="Sort by"
-                value={sort}
-                onChange={(e) => setSort(e.target.value as SortOption)}
+                value={draftSort}
+                onChange={(e) =>
+                  setDraftSort(e.target.value as SortOption | "")
+                }
               >
                 <MenuItem value="">
                   <em>None</em>
@@ -164,17 +209,22 @@ export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) 
             <Typography variant="subtitle2" gutterBottom>
               Group
             </Typography>
+
             <FormControl size="small" fullWidth>
               <InputLabel id="group-label">Group</InputLabel>
+
               <Select
                 labelId="group-label"
                 label="Group"
-                value={groupId}
-                onChange={(e) => setGroupId(e.target.value as number | "")}
+                value={draftGroupId}
+                onChange={(e) =>
+                  setDraftGroupId(e.target.value as number | "")
+                }
               >
                 <MenuItem value="">
                   <em>All</em>
                 </MenuItem>
+
                 {data?.data?.map((gr) => (
                   <MenuItem key={gr.id} value={gr.id}>
                     {gr.name}
@@ -190,6 +240,7 @@ export function ExpensesFiltersDialog({ open, onClose, onApply, query }: Props) 
         <Button form="expense-filters-form" type="submit" variant="contained">
           Apply
         </Button>
+
         <Button onClick={onClose}>Cancel</Button>
       </DialogActions>
     </Dialog>

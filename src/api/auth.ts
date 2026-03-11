@@ -1,4 +1,4 @@
-import { api } from "./client.ts";
+import { api } from "./client";
 
 export type LoginRequest = {
   email: string,
@@ -11,7 +11,8 @@ export type LoginResponse = {
     id: number,
     username: string,
     email: string,
-    premium: boolean
+    premium: boolean,
+    notifications: boolean
   }
 };
 

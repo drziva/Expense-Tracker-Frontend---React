@@ -13,6 +13,10 @@ export function useDeleteIncome() {
       showToast("Income deleted succesfully");
       queryClient.invalidateQueries({queryKey:[QUERY_KEYS.INCOMES]});
       queryClient.invalidateQueries({queryKey:[QUERY_KEYS.DASHBOARD]});
+      queryClient.invalidateQueries({
+        queryKey:[QUERY_KEYS.INCOME_SUMMARY],
+        exact: false
+      });
     },
     onError: () => {
       showToast("There has been an error deleting the income", "error");

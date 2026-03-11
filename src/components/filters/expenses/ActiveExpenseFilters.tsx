@@ -1,35 +1,45 @@
 import { Chip, Stack } from "@mui/material";
-import type { ExpenseQuery } from "../../../types/expenses.requests";
 import formatEuros from "../../../utils/formatMoney";
-
-type Props = {
-  query: ExpenseQuery;
-  onChange: (updater: (prev: ExpenseQuery) => ExpenseQuery) => void;
-  groups: Record<number, string>
-};
+import { useSearchParams } from "react-router-dom";
+import { useExpenseGroups } from "../../../hooks/expense-groups/useExpenseGroups";
+import type { SortOption } from "../../../types/pagination";
 
 function capitalizeFirst(str: string) {
   if (!str) return str;
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export function ActiveExpenseFilters({ query, onChange, groups }: Props) {
-  const hasFilters =
-    query.search ||
-    query.min ||
-    query.max ||
-    query.from ||
-    query.to ||
-    query.group_id ||
-    query.sort;
+export function ActiveExpenseFilters() {
+  const { data } = useExpenseGroups({});
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const hasFilters = Boolean(
+    searchParams.get("search") ||
+      searchParams.get("min") ||
+      searchParams.get("max") ||
+      searchParams.get("from") ||
+      searchParams.get("to") ||
+      searchParams.get("group") ||
+      searchParams.get("sort")
+  );
 
   if (!hasFilters) return null;
 
+  const search = searchParams.get("search") || undefined;
+  const min = searchParams.get("min") || undefined;
+  const max = searchParams.get("max") || undefined;
+  const from = searchParams.get("from") || undefined;
+  const to = searchParams.get("to") || undefined;
+  const group = searchParams.get("group") || undefined;
+  const sortParam = searchParams.get("sort") || undefined;
+
+  const sort: SortOption | undefined = sortParam as SortOption | undefined;
+
   return (
-   <Stack  
+    <Stack
       direction={{ xs: "column", sm: "row" }}
       spacing={1}
-      sx={{ 
+      sx={{
         mb: 2,
         flexWrap: "wrap",
         "& .MuiChip-root": {
@@ -38,69 +48,73 @@ export function ActiveExpenseFilters({ query, onChange, groups }: Props) {
         },
       }}
     >
-      {query.search && (
+      {search && (
         <Chip
-          label={`Search: "${query.search}"`}
+          label={`Search: "${search}"`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              search: undefined,
-              page: 1,
-            }))
+            setSearchParams((prev) => {
+              prev.delete("search");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {(query.min || query.max) && (
+      {(min || max) && (
         <Chip
-          label={`Amount: ${query.min ? formatEuros(Number(query.min)) : "Any"} - ${ query.max ? formatEuros(Number(query.max)) : "Any"}`}
+          label={`Amount: ${
+            min ? formatEuros(Number(min)) : "Any"
+          } - ${max ? formatEuros(Number(max)) : "Any"}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              min: undefined,
-              max: undefined,
-              page: 1,
-            }))
+            setSearchParams((prev) => {
+              prev.delete("min");
+              prev.delete("max");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {(query.from || query.to) && (
+      {(from || to) && (
         <Chip
-          label={`Date: ${query.from ?? "Any"} → ${query.to ?? "Any"}`}
+          label={`Date: ${from ?? "Any"} → ${to ?? "Any"}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              from: undefined,
-              to: undefined,
-              page: 1,
-            }))
+            setSearchParams((prev) => {
+              prev.delete("from");
+              prev.delete("to");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {query.group_id && (
+      {group && (
         <Chip
-          label={`Group: ${groups[query.group_id]}`}
+          label={`Group: ${
+            data?.data?.find((g) => g.id === Number(group))?.name || group
+          }`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              group_id: undefined,
-              page: 1,
-            }))
+            setSearchParams((prev) => {
+              prev.delete("group");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {query.sort && (
+      {sort && (
         <Chip
-          label={`Sort: ${capitalizeFirst(query.sort.replace("_", ": "))}`}
+          label={`Sort: ${capitalizeFirst(sort.replace("_", ": "))}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              sort: undefined,
-              page: 1,
-            }))
+            setSearchParams((prev) => {
+              prev.delete("sort");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
@@ -108,13 +122,7 @@ export function ActiveExpenseFilters({ query, onChange, groups }: Props) {
       <Chip
         color="primary"
         label="Clear all"
-        onDelete={() =>
-          onChange(prev => ({
-            page: 1,
-            limit: prev.limit,
-            search: ""
-          }))
-        }
+        onDelete={() => setSearchParams({})}
       />
     </Stack>
   );

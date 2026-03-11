@@ -8,6 +8,7 @@ import {
   Alert,
   Paper,
   CircularProgress,
+  useTheme,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useLogin } from "../hooks/auth/useLogin";
@@ -15,6 +16,7 @@ import { useLogin } from "../hooks/auth/useLogin";
 export default function LoginPage() {
   const navigate = useNavigate();
   const loginMutation = useLogin();
+  const theme = useTheme();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,7 +52,7 @@ export default function LoginPage() {
           alt="VegaIT"
           sx={{
             height: 132,
-            filter: "invert(1)",
+            filter: theme => theme.palette.mode === "light" ? "invert(1)" : "none",
             transition: "filter 0.2s ease"
           }}
         />
@@ -102,23 +104,36 @@ export default function LoginPage() {
             )}
 
             <TextField
+              name="email"
               label="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               autoComplete="email"
               fullWidth
+              slotProps={{
+                htmlInput: {
+                  "data-cy": "login-email",
+                },
+              }}
             />
 
             <TextField
+              name="password"
               label="Password"
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               autoComplete="current-password"
               fullWidth
+              slotProps={{
+                htmlInput: {
+                  "data-cy": "login-password",
+                },
+              }}
             />
 
             <Button
+              name="submit"
               type="submit"
               size="large"
               variant="contained"
@@ -128,6 +143,7 @@ export default function LoginPage() {
                 py: 1.2,
                 fontWeight: 600,
               }}
+              data-cy="login-submit"
             >
               {loginMutation.isPending ? (
                 <CircularProgress size={22} color="inherit" />

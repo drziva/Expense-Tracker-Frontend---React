@@ -1,10 +1,16 @@
 import { api } from "./client";
 import type { ExpenseGroupQuery, ExpenseGroupRequest } from "../types/expenseGroup.requests";
 import type { GetExpenseGroupResponse } from "../types/expenseGroup.responses";
+import { ExpenseGroupSummaryQuery } from "../types/expenses.requests";
 
 
 export async function getExpenseGroups(query: ExpenseGroupQuery) {
   const res = await api.get<GetExpenseGroupResponse>("/expense-groups", {params: query});
+  return res.data;
+}
+
+export async function getExpenseTotalByGroup(query: ExpenseGroupSummaryQuery) {
+  const res = await api.get("expense-groups/total-by-group", {params: query});
   return res.data;
 }
 

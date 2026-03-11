@@ -7,8 +7,8 @@ const navItems = [
   { label: "Expenses", to: "/app/expenses" },
   { label: "Income Groups", to: "/app/income-groups" },
   { label: "Expense Groups", to: "/app/expense-groups" },
-  { label: "Reports", to:"/app/reports"},
   { label: "Scheduled Transactions", to:"/app/scheduled-transactions"},
+  { label: "Reports", to:"/app/reports"},
   { label: "Reminders", to:"/app/reminders"},
 ];
 
@@ -27,7 +27,12 @@ export default function Sidebar({hideSidebar}: Props) {
         width: 240,
         borderRight: "1px solid",
         borderColor: "divider",
-        py: 2, 
+        py: 2,
+        position: "fixed",
+        left: 0,
+        top: 84,
+        bottom: 0,
+        bgcolor: "background.paper",
     }}>
       {isMobile && (
          <Box

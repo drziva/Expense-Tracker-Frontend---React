@@ -3,6 +3,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -40,6 +41,12 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
         borderBottom: "1px solid",
         borderColor: "divider",
         gap: 1,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: theme.zIndex.appBar,
+        bgcolor: "background.paper",
       }}
     >
       {showMenuButton && (
@@ -72,23 +79,34 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
       <Box sx={{ flexGrow: 1 }} />
       <Box>
         <IconButton onClick={toggleTheme} color="primary">
-          {mode === "dark" ? <LightModeIcon fontSize="small"/> : <DarkModeIcon fontSize="small"/>}
+          <Tooltip
+            title="Switch Theme"
+          >
+            {mode === "dark" ? <LightModeIcon fontSize="small"/> : <DarkModeIcon fontSize="small"/>}
+          </Tooltip>
         </IconButton>        
 
         <IconButton 
           color="primary"
           onClick={e => setAnchorEl(e.currentTarget)}
+          data-cy="user-button"
         >
-          <ProfileIcon fontSize="small"/>
+          <Tooltip
+            title="Profile"
+          >
+            <ProfileIcon fontSize="small"/>
+          </Tooltip>
         </IconButton>
         <Menu
           open={open}
           onClose={() => setAnchorEl(null)}
           anchorEl={anchorEl}
         >
-          <MenuItem onClick={()=>{
-            setAnchorEl(null);
-            logout();
+          <MenuItem
+            data-cy="logout-button"
+            onClick={()=>{
+              setAnchorEl(null);
+              logout();
           }}>Log out</MenuItem>
         </Menu>
       </Box>

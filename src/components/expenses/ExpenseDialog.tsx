@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,12 +15,14 @@ type Props = {
   open: boolean;
   onClose: () => void;
   expense?: Expense | null;
+  onChange?: (isDirty: boolean) => void;
+  onSuccess: () => void;
 };
 
 type FormInput = z.input<typeof expenseSchema>;
 type FormOutput = z.infer<typeof expenseSchema>;
 
-export function ExpenseDialog({ open, onClose, expense }: Props) {
+export function ExpenseDialog({ open, onClose, expense, onChange, onSuccess }: Props) {
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
   const { data, isError, isPending } = useExpenseGroups({});
@@ -57,11 +59,21 @@ export function ExpenseDialog({ open, onClose, expense }: Props) {
     }
   }, [open, isUpdate, expense]);
 
+  useEffect(() => {
+    if(isDirty && onChange) {
+      onChange(true);
+    };
+    if(!isDirty && onChange) {
+      onChange(false);
+    }
+  }, [isDirty])
+
   async function onSubmit(data: FormOutput) {
     if(isUpdate && !isDirty){
       onClose();
       return;
     }
+
     try {
       if (!isUpdate) {
         await createExpense.mutateAsync(data);
@@ -71,7 +83,7 @@ export function ExpenseDialog({ open, onClose, expense }: Props) {
           req: data,
         });
       }
-      onClose();
+      onSuccess();
     } catch {}
   }
 

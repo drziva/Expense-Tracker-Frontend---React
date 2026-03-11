@@ -10,17 +10,20 @@ import { useUpdateIncome } from "../../hooks/incomes/useUpdateIncome";
 import { useIncomeGroups } from "../../hooks/income-groups/useIncomeGroups";
 import { IncomeForm } from "./form/IncomeForm";
 import type { Income } from "../../types/incomes.responses";
+import { is } from "zod/v4/locales";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   income?: Income | null;
+  onChange?: (isDirty: boolean) => void;
+  onSuccess: () => void;
 };
 
 type FormInput = z.input<typeof incomeSchema>;
 type FormOutput = z.infer<typeof incomeSchema>;
 
-export function IncomeDialog({ open, onClose, income }: Props) {
+export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Props) {
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
   const { data, isError, isPending } = useIncomeGroups({});
@@ -40,6 +43,15 @@ export function IncomeDialog({ open, onClose, income }: Props) {
   } = form
 
   const groups = data?.data ?? [];
+
+  useEffect(() => {
+    if(isDirty && onChange) {
+      onChange(true);
+    };
+    if(!isDirty && onChange) {
+      onChange(false);
+    }
+  }, [isDirty]);
 
   useEffect(() => {
     if (!open) {
@@ -72,7 +84,7 @@ export function IncomeDialog({ open, onClose, income }: Props) {
           req: data,
         });
       }
-      onClose();
+      onSuccess();
     } catch {}
   }
 

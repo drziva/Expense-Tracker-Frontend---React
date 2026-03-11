@@ -1,21 +1,35 @@
 import { Chip, Stack } from "@mui/material";
-import type { ExpenseGroupQuery } from "../../../types/expenseGroup.requests";
+import dayjs from "dayjs";
+import { useSearchParams } from "react-router-dom";
 
-type Props = {
-  query: ExpenseGroupQuery;
-  onChange: (updater: (prev: ExpenseGroupQuery) => ExpenseGroupQuery) => void;
-};
 function capitalizeFirst(str: string) {
   if (!str) return str;
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export function ActiveExpenseGroupsFilters({ query, onChange }: Props) {
-  const hasFilters =
-    query.search ||
-    query.from ||
-    query.to ||
-    query.sort;
+export function ActiveExpenseGroupsFilters() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const hasFilters = Boolean(
+    searchParams.get("from") ||
+    searchParams.get("to") ||
+    searchParams.get("sort") || 
+    searchParams.get("search")
+  )
+
+  const fromParam = searchParams.get("from");
+  const fromDate = 
+   fromParam && dayjs(fromParam,"YYYY-MM-DD",true).isValid()
+   ? fromParam
+   : null;
+
+  const toParam = searchParams.get("to");
+  const toDate = 
+   toParam && dayjs(toParam,"YYYY-MM-DD",true).isValid()
+   ? toParam
+   : null;
+
+  const sort = searchParams.get("sort");
+  const search = searchParams.get("search");
 
   if (!hasFilters) return null;
 
@@ -32,56 +46,45 @@ export function ActiveExpenseGroupsFilters({ query, onChange }: Props) {
         },
       }}
     >
-      {query.search && (
-        <Chip
-          label={`Search: "${query.search}"`}
-          onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              search: undefined,
-              page: 1,
-            }))
-          }
+      {search && (
+        <Chip 
+          label={`Search: "${search}"`}
+          onDelete={()=>{
+            setSearchParams(prev => {
+              const params = new URLSearchParams(prev);
+              params.delete("search");
+
+              return params;
+            })
+          }}
         />
       )}
 
-      {(query.from || query.to) && (
-        <Chip
-          label={`Date: ${query.from ?? "Any"} → ${query.to ?? "Any"}`}
-          onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              from: undefined,
-              to: undefined,
-              page: 1,
-            }))
-          }
+      {(fromDate || toDate) && (
+        <Chip 
+          label={`Date: ${fromDate ?? "Any"} → ${toDate ?? "Any"}`}
+          onDelete={()=>{
+            setSearchParams(prev => {
+              const params = new URLSearchParams(prev);
+              params.delete("from");
+              params.delete("to");
+
+              return params;
+            })
+          }}
         />
       )}
 
-      {query.sort && (
-        <Chip
-          label={`Sort: ${capitalizeFirst(query.sort.replace("_", ": "))}`}
-          onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              sort: undefined,
-              page: 1,
-            }))
-          }
-        />
+      {sort && (
+        <Chip label={`Sort: ${capitalizeFirst(sort.replace("_", ": "))}`} />
       )}
 
       <Chip
         color="primary"
         label="Clear all"
-        onDelete={() =>
-          onChange(prev => ({
-            page: 1,
-            limit: prev.limit,
-            search: ""
-          }))
-        }
+        onDelete={()=>{
+          setSearchParams({});
+        }}
       />
     </Stack>
   );

@@ -1,27 +1,41 @@
 import { Chip, Stack } from "@mui/material";
-import type { IncomeQuery } from "../../../types/incomeGroup.requests";
 import formatEuros from "../../../utils/formatMoney";
-type Props = {
-  query: IncomeQuery;
-  onChange: (updater: (prev: IncomeQuery) => IncomeQuery) => void;
-  groups: Record<number, string>
-};
+import { useSearchParams } from "react-router-dom";
+import { TransactionSortOption } from "../../../types/commons.types";
+import { set } from "zod";
+import { useIncomeGroups } from "../../../hooks/income-groups/useIncomeGroups";
+
 function capitalizeFirst(str: string) {
   if (!str) return str;
   return str[0].toUpperCase() + str.slice(1);
 }
 
-export function ActiveIncomeFilters({ query, onChange, groups }: Props) {
-  const hasFilters =
-    query.search ||
-    query.min ||
-    query.max ||
-    query.from ||
-    query.to ||
-    query.group_id ||
-    query.sort;
+export function ActiveIncomeFilters() {
+  const { data } = useIncomeGroups({});
+
+  const [searchParams, setSearchParams] = useSearchParams(); 
+
+  const hasFilters = Boolean(
+    searchParams.get("search") ||
+    searchParams.get("min") ||
+    searchParams.get("max") || 
+    searchParams.get("from") ||
+    searchParams.get("to") ||
+    searchParams.get("group") ||
+    searchParams.get("sort")
+  );
 
   if (!hasFilters) return null;
+
+  const search = searchParams.get("search") || undefined;
+  const min = searchParams.get("min") || undefined;
+  const max = searchParams.get("max") || undefined;
+  const from = searchParams.get("from") || undefined;
+  const to = searchParams.get("to") || undefined;
+  const group = searchParams.get("group") || undefined;
+  const sortParam = searchParams.get("sort") || undefined;
+
+  const sort: TransactionSortOption | undefined = sortParam as TransactionSortOption | undefined;
 
   return (
     <Stack  
@@ -36,70 +50,69 @@ export function ActiveIncomeFilters({ query, onChange, groups }: Props) {
         },
       }}
     >
-      {query.search && (
+      {search && (
         <Chip
-          label={`Search: "${query.search}"`}
+          label={`Search: "${search}"`}
+          onDelete={() => 
+            setSearchParams(prev => {
+              prev.delete("search");
+              prev.set("page", "1");
+              return prev;
+          })}
+        />
+      )}
+
+      {(min || max) && (
+        <Chip
+          label={`Amount: ${min ? formatEuros(Number(min)) : "Any"} - ${ max ? formatEuros(Number(max)) : "Any"}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              search: undefined,
-              page: 1,
-            }))
+            setSearchParams(prev => {
+              prev.delete("min");
+              prev.delete("max");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {(query.min || query.max) && (
+      {(from || to) && (
         <Chip
-          label={`Amount: ${query.min ? formatEuros(Number(query.min)) : "Any"} - ${ query.max ? formatEuros(Number(query.max)) : "Any"}`}
+          label={`Date: ${from ?? "Any"} → ${to ?? "Any"}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              min: undefined,
-              max: undefined,
-              page: 1,
-            }))
+            setSearchParams(prev => {
+              prev.delete("from");
+              prev.delete("to");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {(query.from || query.to) && (
+      {group && (
         <Chip
-          label={`Date: ${query.from ?? "Any"} → ${query.to ?? "Any"}`}
+          label={`Group: ${data?.data?.find((g) => g.id === Number(group))?.name || group}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              from: undefined,
-              to: undefined,
-              page: 1,
-            }))
+            setSearchParams(prev => {
+              prev.delete("group");
+              prev.set("page", "1");
+              return prev;
+            })
           }
         />
       )}
 
-      {query.group_id && (
+      {sort && (
         <Chip
-          label={`Group: ${groups[query.group_id]}`}
+          label={`Sort: ${capitalizeFirst(sort.replace("_", ": "))}`}
           onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              group_id: undefined,
-              page: 1,
-            }))
-          }
-        />
-      )}
-
-      {query.sort && (
-        <Chip
-          label={`Sort: ${capitalizeFirst(query.sort.replace("_", ": "))}`}
-          onDelete={() =>
-            onChange(prev => ({
-              ...prev,
-              sort: undefined,
-              page: 1,
-            }))
-          }
+            setSearchParams(prev => {
+              prev.delete("sort");
+              prev.set("page", "1");
+              return prev;
+            })
+           }
         />
       )}
 
@@ -107,11 +120,7 @@ export function ActiveIncomeFilters({ query, onChange, groups }: Props) {
         color="primary"
         label="Clear all"
         onDelete={() =>
-          onChange(prev => ({
-            page: 1,
-            limit: prev.limit,
-            search: ""
-          }))
+          setSearchParams({})
         }
       />
     </Stack>

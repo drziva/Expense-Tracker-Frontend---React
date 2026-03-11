@@ -9,4 +9,9 @@ export type Income = {
   groupName: string;
 }
 
+export type IncomeSummary = {
+  date: string;
+  total: number;
+}
+
 export type GetIncomeResponse = PaginatedResponse<Income>;

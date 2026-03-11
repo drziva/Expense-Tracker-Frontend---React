@@ -1,16 +1,22 @@
 import { Alert, Box, CircularProgress, Paper, Typography, useMediaQuery } from "@mui/material";
-import { useDashboard } from "../hooks/useDashboard";
+import { useDashboard, useDashboardSummary } from "../hooks/useDashboard";
 import { Table, type Column } from "../components/ui/Table";
 import { DashboardTableSection } from "../components/dashboard/DashboardTableSection";
 import formatEuros from "../utils/formatMoney"
 import type { Expense } from "../types/expenses.responses";
 import type { Income } from "../types/incomes.responses";
 import { MobileTransactionCard } from "../components/mobile/MobileTransactionCard";
-
+import { useState } from "react";
+import { DashboardTimelineChart } from "../components/common/charts/DashboardTimelineChart";
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
 
+  const [summaryQuery, setSummaryQuery] = useState({
+    from: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString(),
+    to: new Date(new Date().setDate(new Date().getDate())).toISOString(),
+  });
   const { data, isError, isLoading } = useDashboard();
+  const {data: summaryData} = useDashboardSummary(summaryQuery);
 
   if(isError) return <Alert severity="error">There was an error loading the dashboard page.</Alert>
   if(isLoading) return <CircularProgress/>
@@ -39,6 +45,13 @@ export default function DashboardPage() {
     },    
   ]
 
+  const timelineData =
+    summaryData?.map(item => ({
+      date: item.date,
+      income: item.income ?? 0,
+      expense: item.expense ?? 0
+  })) ?? []
+
   return(
     <Box
       sx={{
@@ -65,6 +78,15 @@ export default function DashboardPage() {
           </Typography>
         </Box>
 
+      </Paper>
+
+      <Paper
+        sx={{
+          mb: 2,
+          p: 2,
+        }}
+      >
+        <DashboardTimelineChart data={timelineData}/>
       </Paper>
       <Box
         sx={{

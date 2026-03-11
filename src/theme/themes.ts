@@ -17,9 +17,9 @@ const colors = {
   },
   //violet: 9157f5ff
   //green : "b3d80cff"
-  primary: "#9157f5ff",
+  primary: "rgb(12, 216, 199)",
   success: "#5bcc84ff",
-  error: "#da5c5cff",
+  error: "rgb(235, 79, 79)",
 };
 
 const typography = {
@@ -130,7 +130,9 @@ export const lightTheme = createTheme({
       paper: colors.light.paper,
     },
     primary: {
-      main: "#9157f5ff",
+      //"#9157f5ff"
+      //main: "rgb(4, 121, 52)",
+      main:"rgb(12, 216, 199)"
     },
     secondary: {
       main: colors.success,

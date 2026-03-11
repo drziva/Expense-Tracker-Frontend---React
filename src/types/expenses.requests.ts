@@ -17,3 +17,14 @@ export type ExpenseQuery = {
   limit: number;
   sort?: SortOption;
  }
+
+export type ExpenseGroupSummaryQuery = {
+  from?: string;
+  to?: string;
+}
+
+export type ExpenseSummaryQuery = {
+  from?: string;
+  to?: string;
+  type: "regular" | "yearly";
+}

@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { Suspense, useState } from "react";
+import { PageErrorBoundary } from "../components/common/errors/PageErrorBoundary";
 
 export default function AppLayout() {
   const theme = useTheme();
@@ -38,13 +39,15 @@ export default function AppLayout() {
         )
         }
         
-        <Box sx={{ flex: 1, p: 3}}>
+        <Box sx={{ flex: 1, p: 3, ml: isMobile ? 0 : "240px", mt: "84px", overflowY: "auto" }}>
           <Suspense
             fallback={
                 <CircularProgress />
             }
           >
-            <Outlet />
+            <PageErrorBoundary>
+              <Outlet />
+            </PageErrorBoundary>
           </Suspense>
         </Box>
 
