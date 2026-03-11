@@ -35,7 +35,7 @@ export function DashboardTimelineChart({ data }: { data: DataPoint[] }) {
 
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: theme.palette.text.primary }}
           interval="preserveStartEnd"
           tickFormatter={(date) =>
             new Date(date).toLocaleDateString("en-US", {
@@ -46,7 +46,7 @@ export function DashboardTimelineChart({ data }: { data: DataPoint[] }) {
         />
 
         <YAxis
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: theme.palette.text.primary }}
           tickFormatter={(value) => `${formatCompact(value)}€`}
         />
 
@@ -72,19 +72,20 @@ export function DashboardTimelineChart({ data }: { data: DataPoint[] }) {
 
         <Area
           type="monotone"
+          dataKey="expense"
+          stroke="#eb7b7b"
+          fill="#df5e5e33"
+          strokeWidth={2}
+        />
+
+        <Area
+          type="monotone"
           dataKey="income"
           stroke="rgb(12, 216, 199)"
           fill="#28bbc633"
           strokeWidth={2}
         />
 
-        <Area
-          type="monotone"
-          dataKey="expense"
-          stroke="#eb7b7b"
-          fill="#df5e5e33"
-          strokeWidth={2}
-        />
       </AreaChart>
     </ResponsiveContainer>
   )

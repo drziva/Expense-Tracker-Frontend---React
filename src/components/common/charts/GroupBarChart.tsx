@@ -27,7 +27,11 @@ export function GroupBarChart({ data }: { data: DataPoint[] }) {
 
   return (
     <ResponsiveContainer width="100%" height={220}>
-      <BarChart data={data}>
+      <BarChart
+        data={data}
+        margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
+        barCategoryGap="30%"
+      >
         <CartesianGrid
           strokeDasharray="3 3"
           stroke={theme.palette.divider}
@@ -35,11 +39,13 @@ export function GroupBarChart({ data }: { data: DataPoint[] }) {
 
         <XAxis
           dataKey="groupName"
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: theme.palette.text.primary }}
+          interval={0}
         />
 
         <YAxis
-          tick={{ fontSize: 12 }}
+          width={60}
+          tick={{ fontSize: 12, fill: theme.palette.text.primary }}
           tickFormatter={(value) => `${formatCompact(value)}€`}
         />
 
@@ -59,7 +65,8 @@ export function GroupBarChart({ data }: { data: DataPoint[] }) {
         <Bar
           dataKey="total"
           fill={theme.palette.primary.main}
-          radius={[6, 6, 0, 0]}          
+          radius={[6, 6, 0, 0]}
+          maxBarSize={60}
         />
       </BarChart>
     </ResponsiveContainer>

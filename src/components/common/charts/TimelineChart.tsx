@@ -39,19 +39,19 @@ export function TimelineChart({ data, color, type }: Props) {
       <AreaChart data={data}>
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 12 }}
+          tick={{ fontSize: 12, fill: theme.palette.text.primary }}
           interval="preserveStartEnd"
           tickFormatter={(date) =>
             new Date(date).toLocaleDateString("en-US", {
-              ...(type === "year" ? { year: "numeric" } : {}),
               month: "short",
+              ...(type === "year" ? { year: "numeric" } : {}),
               ...(type === "week" ? { weekday: "short" } : {}),
               ...(type === "year" ? {} : { day: "numeric" })
             })
           }
         />
         <YAxis 
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: 12, fill: theme.palette.text.primary }}
             tickFormatter={(value) => `${formatCompact(value)}€`}
         />
 

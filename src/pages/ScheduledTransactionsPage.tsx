@@ -205,6 +205,9 @@ export default function ScheduledTransactionsPage() {
           setFormDirty(false);          
         }}
         onChange={setFormDirty}
+        onSuccess={() => {
+          setToCreate(false);
+        }}
       />
 
       <ScheduledTransactionDialog
@@ -219,6 +222,9 @@ export default function ScheduledTransactionsPage() {
           setFormDirty(false);
         }}
         onChange={setFormDirty}
+        onSuccess={() => {
+          setToUpdate(null);
+        }}
       />
 
       <ConfirmDialog

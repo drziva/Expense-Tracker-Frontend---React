@@ -18,9 +18,10 @@ type Props = {
   onClose: () => void;
   group?: IncomeGroup | null;
   onChange?: (isDirty: boolean) => void;
+  onSuccess: () => void;
 }
 
-export function IncomeGroupDialog({open, onClose, group, onChange}: Props) {
+export function IncomeGroupDialog({open, onClose, group, onChange, onSuccess}: Props) {
   const createIncomeGroup = useCreateIncomeGroup();
   const updateIncomeGroup = useUpdateIncomeGroup();
 
@@ -74,7 +75,7 @@ export function IncomeGroupDialog({open, onClose, group, onChange}: Props) {
           req: data
         })
       }
-      onClose();
+      onSuccess();
     } catch(error) {}
   }
 

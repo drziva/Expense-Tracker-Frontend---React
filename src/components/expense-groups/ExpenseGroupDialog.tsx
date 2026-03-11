@@ -15,12 +15,13 @@ type Props = {
   onClose: () => void;
   group?: ExpenseGroup | null;
   onChange?: (isDirty: boolean) => void;
+  onSuccess: () => void;  
 }
 
 type FormInput = z.input<typeof expenseGroupSchema>
 type FormOutput = z.infer<typeof expenseGroupSchema>
 
-export function ExpenseGroupDialog({open, onClose, group, onChange}: Props) {
+export function ExpenseGroupDialog({open, onClose, group, onChange, onSuccess}: Props) {
   const createExpenseGroup = useCreateExpenseGroup();
   const updateExpenseGroup = useUpdateExpenseGroup();
 
@@ -76,7 +77,7 @@ export function ExpenseGroupDialog({open, onClose, group, onChange}: Props) {
       else if(!isUpdate){
         await createExpenseGroup.mutateAsync(data);
       }
-      onClose();
+      onSuccess();
     } catch(error) {}
   }
 

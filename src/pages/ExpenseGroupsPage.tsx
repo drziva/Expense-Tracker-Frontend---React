@@ -362,6 +362,9 @@ export default function ExpenseGroupsPage() {
         setFormDirty(false);
       }}
       onChange={setFormDirty}
+      onSuccess={() => {
+        setToCreate(false);
+      }}
     />
 
     <ExpenseGroupDialog
@@ -375,6 +378,9 @@ export default function ExpenseGroupsPage() {
       }
       onChange={setFormDirty}
       group={toUpdate}
+      onSuccess={() => {
+        setToUpdate(null)
+      }}
     />
 
     <ConfirmDialog

@@ -16,12 +16,13 @@ type Props = {
   onClose: () => void;
   expense?: Expense | null;
   onChange?: (isDirty: boolean) => void;
+  onSuccess: () => void;
 };
 
 type FormInput = z.input<typeof expenseSchema>;
 type FormOutput = z.infer<typeof expenseSchema>;
 
-export function ExpenseDialog({ open, onClose, expense, onChange }: Props) {
+export function ExpenseDialog({ open, onClose, expense, onChange, onSuccess }: Props) {
   const createExpense = useCreateExpense();
   const updateExpense = useUpdateExpense();
   const { data, isError, isPending } = useExpenseGroups({});
@@ -82,7 +83,7 @@ export function ExpenseDialog({ open, onClose, expense, onChange }: Props) {
           req: data,
         });
       }
-      onClose();
+      onSuccess();
     } catch {}
   }
 

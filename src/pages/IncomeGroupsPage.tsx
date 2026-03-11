@@ -322,6 +322,9 @@ export default function IncomeGroupsPage() {
           setToCreate(false)
         }}
         onChange={setFormDirty}
+        onSuccess={() => {
+          setToCreate(false);
+        }}
       />
 
       <IncomeGroupDialog
@@ -337,6 +340,9 @@ export default function IncomeGroupsPage() {
         }
         onChange={setFormDirty}
         group={toUpdate}
+        onSuccess={() => {
+          setToUpdate(null);
+        }}
       />
 
       <ConfirmDialog

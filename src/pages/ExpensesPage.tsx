@@ -426,15 +426,18 @@ export default function ExpensesPage() {
       <ExpenseDialog
         open={toCreate}
         onClose={() => {
-          if(formDirty) {
-            setToClose(true);
-            return;
+            if(formDirty) {
+              setToClose(true);
+              return;
+            }
+            setToCreate(false)
           }
-          setToCreate(false)
         }
-      }
         onChange={()=>{
           setFormDirty(true)
+        }}
+        onSuccess={() => {
+          setToCreate(false);
         }}
       />
 
@@ -466,6 +469,9 @@ export default function ExpensesPage() {
         }
         onChange={setFormDirty}
         expense={toUpdate}
+        onSuccess={() => {
+          setToUpdate(null);
+        }}
       />
 
     </>

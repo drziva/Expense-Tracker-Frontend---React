@@ -17,12 +17,13 @@ type Props = {
   onClose: () => void;
   income?: Income | null;
   onChange?: (isDirty: boolean) => void;
+  onSuccess: () => void;
 };
 
 type FormInput = z.input<typeof incomeSchema>;
 type FormOutput = z.infer<typeof incomeSchema>;
 
-export function IncomeDialog({ open, onClose, income, onChange }: Props) {
+export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Props) {
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
   const { data, isError, isPending } = useIncomeGroups({});
@@ -83,7 +84,7 @@ export function IncomeDialog({ open, onClose, income, onChange }: Props) {
           req: data,
         });
       }
-      onClose();
+      onSuccess();
     } catch {}
   }
 

@@ -413,6 +413,9 @@ export default function IncomesPage() {
           }
         } 
         onChange={setFormDirty}
+        onSuccess={() => {
+          setToCreate(false);
+        }}
       />
 
       <IncomeDialog
@@ -426,6 +429,9 @@ export default function IncomesPage() {
         }}
         onChange={setFormDirty}
         income={toUpdate}
+        onSuccess={() => {
+          setToUpdate(null)
+        }}
       />
 
       <ConfirmDialog
