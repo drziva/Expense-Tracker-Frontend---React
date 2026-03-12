@@ -1,0 +1,32 @@
+import { Box, Paper, Typography } from "@mui/material";
+import formatEuros from "@/shared/lib/formatMoney";
+import type { Expense } from "@/features/expenses/types/expenses.responses";
+import type { Income } from "@/features/incomes/types/incomes.responses";
+
+type Props = {
+  data?: Income[] | Expense[];
+  color: string;
+}
+
+export function MobileTransactionCard({color, data}: Props) {
+
+  return (
+    <Box display="flex" flexDirection="column" gap={2}>
+      {data?.map(tx => (
+        <Paper key={tx.id} sx={{ p: 0.7, pr: 0, pl:1}}>
+          <Typography fontWeight={600}>
+            {tx.description}
+          </Typography>
+
+          <Typography color={color} fontWeight={700}>
+            +{formatEuros(tx.amount)}
+          </Typography>
+
+          <Typography variant="caption" color="text.secondary">
+            {new Date(tx.createdAt).toLocaleDateString()} · {tx.groupName}
+          </Typography>
+        </Paper>
+      ))}
+    </Box>
+  )
+}
