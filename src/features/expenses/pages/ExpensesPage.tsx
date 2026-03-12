@@ -480,8 +480,12 @@ export default function ExpensesPage() {
 
       <DetailsDialog
         open={!!detailsOpen}
-        data={{type:"expense", item: detailsOpen!}}
+        data={{type:"expense", item: detailsOpen}}
         onClose={() => {
+          setDetailsOpen(null);
+        }}
+        onEdit={() => {
+          setToUpdate(detailsOpen);
           setDetailsOpen(null);
         }}
       />

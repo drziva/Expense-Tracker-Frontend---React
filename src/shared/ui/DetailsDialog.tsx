@@ -32,6 +32,7 @@ type Props = {
   open: boolean
   onClose: () => void
   data?: DetailsData | null
+  onEdit?: (item: Expense | Income | IncomeGroup | ExpenseGroup | SchedTransaction | null ) => void
 }
 
     function Field({ label,value, multiline = false}: { label: string, value: React.ReactNode, multiline?: boolean }) {
@@ -203,7 +204,8 @@ function Details({ data }: { data: DetailsData }) {
   }
 }
 
-export function DetailsDialog({ open, data, onClose }: Props) {
+export function DetailsDialog({ open, data, onClose, onEdit }: Props) {
+    if(!data) return;
   return (
     <Dialog
       open={open}
@@ -226,6 +228,16 @@ export function DetailsDialog({ open, data, onClose }: Props) {
       </DialogContent>
 
       <DialogActions sx={{ pb: 2, pr: 3 }}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            onEdit && onEdit(data.item);
+          }}
+          sx={{ borderRadius: 2 }}
+        >
+          Edit
+        </Button>
+
         <Button
           variant="contained"
           onClick={onClose}

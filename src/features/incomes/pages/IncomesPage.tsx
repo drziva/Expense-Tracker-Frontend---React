@@ -472,6 +472,10 @@ export default function IncomesPage() {
         onClose={()=>{
           setDetailsOpen(null);
         }}
+        onEdit={() => {
+          setToUpdate(detailsOpen);
+          setDetailsOpen(null);
+        }}
       />
     </>
   );

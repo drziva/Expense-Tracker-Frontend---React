@@ -1,16 +1,28 @@
 import { useEffect } from "react";
-import { Alert} from "@mui/material";
+import {
+  Alert,
+  Box,
+  Divider,
+  Paper,
+  Stack,
+  Typography
+} from "@mui/material";
+import PaymentsIcon from "@mui/icons-material/Payments"
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { FormDialog } from "@/shared/ui/FormDialog";
+
 import type { z } from "zod";
 import { incomeSchema } from "@/features/incomes/schemas/income.schema";
+
 import { useCreateIncome } from "@/features/incomes/hooks/useCreateIncome";
 import { useUpdateIncome } from "@/features/incomes/hooks/useUpdateIncome";
 import { useIncomeGroups } from "@/features/income-groups/hooks/useIncomeGroups";
+
 import { IncomeForm } from "@/features/incomes/components/form/IncomeForm";
 import type { Income } from "@/features/incomes/types/incomes.responses";
-import { is } from "zod/v4/locales";
 
 type Props = {
   open: boolean;
@@ -23,12 +35,20 @@ type Props = {
 type FormInput = z.input<typeof incomeSchema>;
 type FormOutput = z.infer<typeof incomeSchema>;
 
-export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Props) {
+export function IncomeDialog({
+  open,
+  onClose,
+  income,
+  onChange,
+  onSuccess
+}: Props) {
+
   const createIncome = useCreateIncome();
   const updateIncome = useUpdateIncome();
   const { data, isError, isPending } = useIncomeGroups({});
 
   const isUpdate = !!income;
+
   const form = useForm<FormInput, any, FormOutput>({
     resolver: zodResolver(incomeSchema),
     defaultValues: {
@@ -39,18 +59,13 @@ export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Pro
   });
 
   const {
-    formState: {isDirty}
-  } = form
+    formState: { isDirty }
+  } = form;
 
   const groups = data?.data ?? [];
 
   useEffect(() => {
-    if(isDirty && onChange) {
-      onChange(true);
-    };
-    if(!isDirty && onChange) {
-      onChange(false);
-    }
+    onChange?.(isDirty);
   }, [isDirty]);
 
   useEffect(() => {
@@ -71,10 +86,11 @@ export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Pro
   }, [open, isUpdate, income]);
 
   async function onSubmit(data: FormOutput) {
-    if(isUpdate && !isDirty){
+    if (isUpdate && !isDirty) {
       onClose();
       return;
     }
+
     try {
       if (!isUpdate) {
         await createIncome.mutateAsync(data);
@@ -84,6 +100,7 @@ export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Pro
           req: data,
         });
       }
+
       onSuccess();
     } catch {}
   }
@@ -103,25 +120,46 @@ export function IncomeDialog({ open, onClose, income, onChange, onSuccess }: Pro
       onSubmit={form.handleSubmit(onSubmit)}
       submitting={createIncome.isPending || updateIncome.isPending}
     >
-      {apiError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {apiError}
-        </Alert>
-      )}
+      <Paper
+        variant="outlined"
+        sx={{
+          p: 3,
+          borderRadius: 3
+        }}
+      >
+        <Stack spacing={2}>
 
-      {isError && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          Failed to load income groups.
-        </Alert>
-      )}
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <PaymentsIcon color="success" />
+            <Typography variant="h6">
+              {isUpdate ? "Income Details" : "New Income"}
+            </Typography>
+          </Stack>
 
-      {!isPending && groups.length === 0 && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
-          You must create an income group before adding incomes.
-        </Alert>
-      )}
+          <Divider />
 
-      <IncomeForm form={form} groups={groups} />
+          {apiError && (
+            <Alert severity="error">
+              {apiError}
+            </Alert>
+          )}
+
+          {isError && (
+            <Alert severity="error">
+              Failed to load income groups.
+            </Alert>
+          )}
+
+          {!isPending && groups.length === 0 && (
+            <Alert severity="warning">
+              You must create an income group before adding incomes.
+            </Alert>
+          )}
+
+          <IncomeForm form={form} groups={groups} />
+
+        </Stack>
+      </Paper>
     </FormDialog>
   );
 }

@@ -370,6 +370,10 @@ export default function IncomeGroupsPage() {
         onClose={()=>{
           setDetailsOpen(null);
         }}
+        onEdit={() => {
+          setToUpdate(detailsOpen);
+          setDetailsOpen(null);
+        }}
       />
     </>
   )

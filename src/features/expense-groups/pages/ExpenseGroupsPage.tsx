@@ -410,6 +410,10 @@ export default function ExpenseGroupsPage() {
       onClose={()=>{
         setDetailsOpen(null);
       }}
+      onEdit={() => {
+        setToUpdate(detailsOpen);
+        setDetailsOpen(null);
+      }}
     />
   </>
 );
