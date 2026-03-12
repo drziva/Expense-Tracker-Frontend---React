@@ -8,6 +8,7 @@ import type { Income } from "@/features/incomes/types/incomes.responses";
 import { MobileTransactionCard } from "@/shared/mobile/MobileTransactionCard";
 import { useState } from "react";
 import { DashboardTimelineChart } from "@/features/dashboard/components/DashboardTimelineChart";
+
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
 
@@ -80,14 +81,16 @@ export default function DashboardPage() {
 
       </Paper>
 
+      {!isMobile && (      
       <Paper
-        sx={{
-          mb: 2,
-          p: 2,
-        }}
-      >
+          sx={{
+            mb: 2,
+            p: 2,
+          }}
+        >
         <DashboardTimelineChart data={timelineData}/>
       </Paper>
+      )}
       <Box
         sx={{
           display:"flex",
