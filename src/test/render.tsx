@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { PropsWithChildren } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { render } from "@testing-library/react";
-import { ToastProvider } from "../toast/ToastProvider";
+import { ToastProvider } from "@/app/providers/toast/ToastProvider";
 
 function createTestQueryClient() {
     return new QueryClient({

@@ -1,33 +1,40 @@
 import { StrictMode} from 'react';
 import { createRoot } from 'react-dom/client';
-import './index.css';
+import '@/app/styles/index.css';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import App from './App';
-import { AppThemeProvider } from './theme/AppThemeProvider';
+import App from '@/app/App';
+import { AppThemeProvider } from '@/app/providers/theme/AppThemeProvider';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { ToastProvider } from './toast/ToastProvider';
-import { AuthProvider } from './auth/AuthProvider';
-import { AppErrorBoundary } from './components/common/errors/AppErrorBoundary';
+import { ToastProvider } from '@/app/providers/toast/ToastProvider';
+import { AuthProvider } from '@/features/auth/context/AuthProvider';
+import { AppErrorBoundary } from '@/shared/errors/AppErrorBoundary';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { ErrorProvider } from '@/app/providers/error/ErrorProvider';
+import { ErrorListener } from '@/app/providers/error/ErrorListener';
+import { GlobalErrorSnackbar } from '@/shared/errors/GlobalErrorSnackbar';
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(    
   //<StrictMode>
       <AppThemeProvider>
-        <AppErrorBoundary>
-          <ToastProvider>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <QueryClientProvider client={queryClient}>
-                <AuthProvider>
-                  <App />
-                </AuthProvider>
-                <ReactQueryDevtools initialIsOpen={false} />
-              </QueryClientProvider>
-            </LocalizationProvider>
-          </ToastProvider>
-        </AppErrorBoundary>
+        <ErrorProvider>
+          <AppErrorBoundary>
+            <ErrorListener />
+            <GlobalErrorSnackbar/>
+            <ToastProvider>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <QueryClientProvider client={queryClient}>
+                  <AuthProvider>
+                    <App />
+                  </AuthProvider>
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </QueryClientProvider>
+              </LocalizationProvider>
+            </ToastProvider>
+          </AppErrorBoundary>
+        </ErrorProvider>
       </AppThemeProvider>
   //</StrictMode>
 );
