@@ -20,7 +20,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SortIcon from "@mui/icons-material/Sort";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import type { GroupSortOption } from "@/shared/types/pagination";
 import { useSearchParams } from "react-router-dom";
@@ -42,6 +42,12 @@ export function ExpenseGroupsFiltersDialog({ open, onClose }: Props) {
   const [draftFromDate, setDraftFromDate] = useState<dayjs.Dayjs | null>(null);
   const [draftToDate, setDraftToDate] = useState<dayjs.Dayjs | null>(null);
   const [draftSort, setDraftSort] = useState<GroupSortOption | "">("");
+
+  useEffect(() => {
+    setDraftFromDate(searchParams.get("from") ? dayjs(searchParams.get("from")) : null);
+    setDraftToDate(searchParams.get("to") ? dayjs(searchParams.get("to")) : null);
+    setDraftSort((searchParams.get("sort") as GroupSortOption) || "");
+  }, [searchParams])
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>

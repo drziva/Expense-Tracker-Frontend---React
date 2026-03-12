@@ -68,6 +68,7 @@ export function ActiveExpenseGroupsFilters() {
               const params = new URLSearchParams(prev);
               params.delete("from");
               params.delete("to");
+              params.set("page", "1");
 
               return params;
             })
@@ -76,7 +77,18 @@ export function ActiveExpenseGroupsFilters() {
       )}
 
       {sort && (
-        <Chip label={`Sort: ${capitalizeFirst(sort.replace("_", ": "))}`} />
+        <Chip  
+          label={`Sort: ${capitalizeFirst(sort.replace("_", ": "))}`} 
+          onDelete={() => {
+            setSearchParams(prev => {
+              const params = new URLSearchParams(prev);
+              params.delete("sort");
+              params.set("page", "1");
+
+              return params;
+            })
+          }}
+        />
       )}
 
       <Chip

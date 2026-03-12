@@ -175,7 +175,7 @@ function Details({ data }: { data: DetailsData }) {
 
                 <Field label="Description" multiline={true} value={data.item.description} />
 
-                <Field label="Budget Cap" value={data.item.budgetCap ? formatEuros(data.item.budgetCap) : "-"}/>
+                <Field label="Budget Cap" multiline={true} value={data.item.budgetCap ? formatEuros(data.item.budgetCap) : "-"}/>
 
                 <Field
                 label="Date Created"
