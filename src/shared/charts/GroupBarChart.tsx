@@ -31,6 +31,7 @@ export function GroupBarChart({ data }: { data: DataPoint[] }) {
         data={data}
         margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
         barCategoryGap="30%"
+        
       >
         <CartesianGrid
           strokeDasharray="3 3"
@@ -50,6 +51,7 @@ export function GroupBarChart({ data }: { data: DataPoint[] }) {
         />
 
         <Tooltip
+          cursor={false}
           formatter={(value) => [
             formatEuros(Number(value)),
             "Total"
