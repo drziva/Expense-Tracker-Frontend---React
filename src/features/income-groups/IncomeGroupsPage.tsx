@@ -156,9 +156,14 @@ export default function IncomeGroupsPage() {
         }}
       >
         <Box>
-          <Typography
-            variant={isMobile ? "h6" : "h4"}
+          <Typography 
+            variant={isMobile ? "h5" : "h4"} 
             fontWeight={600}
+            sx={{
+              mb: 0,
+              mt: 1,
+              ml: isMobile ? 2 : 1
+            }}
           >
             Income Groups
           </Typography>

@@ -261,7 +261,15 @@ export default function ExpensesPage() {
   return (
     <>
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-        <Typography variant={isMobile ? "h6" : "h4"} fontWeight={600}>
+        <Typography 
+          variant={isMobile ? "h5" : "h4"} 
+          fontWeight={600}
+          sx={{
+            mb: 1,
+            mt: 1,
+            ml: 1
+          }}
+        >
           Expenses
         </Typography>
       </Box>
@@ -310,6 +318,7 @@ export default function ExpensesPage() {
         </Box>
       )}
 
+      {/* SEARCH + FILTERS */}
       <Box
         sx={{
           display: "flex",

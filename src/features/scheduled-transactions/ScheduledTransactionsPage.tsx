@@ -133,11 +133,13 @@ export default function ScheduledTransactionsPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "stretch" : "center",
+          gap: isMobile ? 1 : 0,
           mb: 2,
         }}
-        >
-        <Typography variant="h5">
+      >
+        <Typography variant={isMobile ? "h5" : "h4"} fontWeight={600}>
           Scheduled Transactions
         </Typography>
 
@@ -146,8 +148,9 @@ export default function ScheduledTransactionsPage() {
           onClick={() => setToCreate(true)}
           sx={{
             height: 40,
-            fontSize: "0.75rem",
-            lineHeight: "1.1",
+            fontSize: "0.8rem",
+            lineHeight: "1.3",
+            width: isMobile ? "100%" : "auto",
           }}
         >
           <strong>Add Transaction</strong>

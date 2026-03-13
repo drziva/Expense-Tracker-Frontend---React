@@ -32,7 +32,7 @@ type Range = {
 }
 
 export default function IncomesPage() {
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery("(max-width: 700px)");
 
   const [searchParams, setSearchParams] = useSearchParams();
   const from = searchParams.get("from") ?? undefined;
@@ -244,7 +244,15 @@ export default function IncomesPage() {
           justifyContent: "space-between",
         }}
       >
-        <Typography variant={isMobile ? "h6" : "h4"} fontWeight={600} mb={1}>
+        <Typography 
+          variant={isMobile ? "h5" : "h4"} 
+          fontWeight={600}
+          sx={{
+            mb: 2,
+            mt: 1,
+            ml: 1
+          }}
+        >
           Incomes
         </Typography>
 
@@ -323,15 +331,6 @@ export default function IncomesPage() {
 
           <RowLimitSelect/>
         </Box>
-      
-        <Box
-          sx={{
-            display: "flex",
-            gap: "10px",
-            justifyContent: "right",
-          }}
-        >
-          
           <Button
             onClick={() => setToCreate(true)}
             variant="contained"
@@ -343,7 +342,6 @@ export default function IncomesPage() {
           >
           <strong>Add Income</strong>
         </Button>
-        </Box>
       </Box>
 
       {/* TABLE */}

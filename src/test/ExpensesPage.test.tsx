@@ -1,5 +1,5 @@
 import { renderApp } from "@/test/render";
-import ExpensesPage from "@/features/expenses/pages/ExpensesPage";
+import ExpensesPage from "@/features/expenses/ExpensesPage";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 

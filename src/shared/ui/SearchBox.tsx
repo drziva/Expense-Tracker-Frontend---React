@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 export default function SearchBox() {
     const inputRef = useRef(null);
 
-    const isMobile = useMediaQuery("(max-width: 600px)");
+    const isMobile = useMediaQuery("(max-width: 700px)");
     
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -42,6 +42,7 @@ export default function SearchBox() {
             }}
             sx={{ 
                 height: 40,
+                width: isMobile ? "100%" : "auto",
                 minWidth: isMobile ? null : 450,
             }}
         />

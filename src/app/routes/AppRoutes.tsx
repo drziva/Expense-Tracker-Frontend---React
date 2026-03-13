@@ -6,11 +6,11 @@ import AppLayout from "@/app/layout/AppLayout";
 import { ReportsPage } from "@/features/reports/pages/ReportsPage";
 
 const DashboardPage = lazy(() => import("@/features/dashboard/pages/DashboardPage"));
-const ExpensesPage = lazy(() => import("@/features/expenses/pages/ExpensesPage"));
-const IncomesPage = lazy(() => import("@/features/incomes/pages/IncomesPage"));
-const ExpenseGroupsPage = lazy(() => import("@/features/expense-groups/pages/ExpenseGroupsPage"));
-const IncomeGroupsPage = lazy(() => import("@/features/income-groups/pages/IncomeGroupsPage"));
-const ScheduledTransactionsPage = lazy(() => import("@/features/scheduled-transactions/pages/ScheduledTransactionsPage"))
+const ExpensesPage = lazy(() => import("@/features/expenses/ExpensesPage"));
+const IncomesPage = lazy(() => import("@/features/incomes/IncomesPage"));
+const ExpenseGroupsPage = lazy(() => import("@/features/expense-groups/ExpenseGroupsPage"));
+const IncomeGroupsPage = lazy(() => import("@/features/income-groups/IncomeGroupsPage"));
+const ScheduledTransactionsPage = lazy(() => import("@/features/scheduled-transactions/ScheduledTransactionsPage"))
 const RemindersPage = lazy(() => import("@/features/reminders/pages/RemindersPage"));
 
 export default function AppRoutes() {

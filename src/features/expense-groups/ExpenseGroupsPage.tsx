@@ -201,12 +201,18 @@ export default function ExpenseGroupsPage() {
       }}
     >
       <Box>
-        <Typography
-          variant={isMobile ? "h6" : "h4"}
-          fontWeight={600}
-        >
-          Expense Groups
-        </Typography>
+          <Typography 
+            variant={isMobile ? "h5" : "h4"} 
+            fontWeight={600}
+            sx={{
+              mb: 0,
+              mt: 1,
+              ml: isMobile ? 2 : 1
+            }}
+          >
+            Expense Groups
+          </Typography>
+
         {!isMobile && (
           <Typography
               variant="body2"
