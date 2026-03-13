@@ -8,7 +8,7 @@ import { PageErrorBoundary } from "@/shared/errors/PageErrorBoundary";
 export default function AppLayout() {
   const theme = useTheme();
 
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMobile = useMediaQuery("(max-width: 1000px)");
 
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 

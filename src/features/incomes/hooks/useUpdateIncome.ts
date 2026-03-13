@@ -25,6 +25,7 @@ export function useUpdateIncome() {
         queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOMES]});
         queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
         queryClient.invalidateQueries({queryKey:[QUERY_KEYS.INCOME_SUMMARY]});
+        queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP]})
       },
       onError: () => {
         showToast("There has been an error updating the income", "error");

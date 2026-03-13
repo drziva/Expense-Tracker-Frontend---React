@@ -3,7 +3,7 @@ import { useIncomeGroups } from "@/features/income-groups/hooks/useIncomeGroups"
 import { type Column } from "@/shared/ui/Table";
 import { Table } from "@/shared/ui/Table"
 import type { IncomeGroup } from "@/features/income-groups/types/incomeGroup.responses";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
 import ConfirmDialog from "@/shared/ui/ConfirmDialog";
@@ -24,9 +24,11 @@ import { GroupBarChart } from "@/shared/charts/GroupBarChart";
 import { Tooltip } from "@mui/material";
 import dayjs from "dayjs";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
+import { formatBarChartData } from "@/shared/charts/utils/formatChartData";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
+
   const [searchParams, setSearchParams] = useSearchParams();
   const from = searchParams.get("from") ?? undefined;
   const to = searchParams.get("to") ?? undefined;
@@ -48,8 +50,16 @@ export default function IncomeGroupsPage() {
     to,
     search
   })
+
   const { data, isError, isPending } = useIncomeGroups(query);
-  const {data: summaryData} = useIncomeTotalByGroup({ from: query.from, to: query.to });
+  const {data: summaryData} = useIncomeTotalByGroup();
+
+  const formattedData = useMemo(() => {
+    if(!summaryData?.length) {
+      return [];
+    }
+    return formatBarChartData(summaryData);
+  }, [summaryData]);
 
   const deleteIncomeGroup = useDeleteIncomeGroup();
   const [toDelete, setToDelete] = useState<IncomeGroup | null>(null);
@@ -134,19 +144,6 @@ export default function IncomeGroupsPage() {
     }
   ]
 
-  let descriptionText = "";
-
-  if(query.from && query.to) {
-    descriptionText = `Spending summary by group from ${dayjs(query.from).format("MMM D, YYYY")} to ${dayjs(query.to).format("MMM D, YYYY")}`;
-  } else if (query.from) {
-    descriptionText = `Spending summary by group from ${dayjs(query.from).format("MMM D, YYYY")} onwards`;
-  } else if (query.to) {
-    descriptionText = `Spending summary by group until ${dayjs(query.to).format("MMM D, YYYY")}`;
-  } else {
-    descriptionText = "Spending summary by group for the last 30 days";
-  }
-
-
   return (
     <>
       {/* HEADER */}
@@ -175,7 +172,7 @@ export default function IncomeGroupsPage() {
               ml: 2
             }}
           >
-            {descriptionText}
+            Total Earnings Distribution by Group
           </Typography>)}
         </Box>
       </Box>
@@ -191,7 +188,7 @@ export default function IncomeGroupsPage() {
               backgroundColor: "background.paper"
             }}
           >
-            <GroupBarChart data={summaryData} />
+            <GroupBarChart data={formattedData ? formattedData : []} />
           </Box>
         </Box>
       )}

@@ -14,7 +14,7 @@ import { useExpenseGroups } from "@/features/expense-groups/hooks/useExpenseGrou
 import { type Column } from "@/shared/ui/Table";
 import { Table } from "@/shared/ui/Table";
 import type { ExpenseGroup } from "@/features/expense-groups/types/expenseGroup.responses";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import ConfirmDialog from "@/shared/ui/ConfirmDialog";
@@ -35,6 +35,7 @@ import SearchBox from "@/shared/ui/SearchBox";
 import { useExpenseTotalByGroup } from "@/features/expense-groups/hooks/useExpenseTotalByGroup";
 import { GroupBarChart } from "@/shared/charts/GroupBarChart";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
+import { formatBarChartData } from "@/shared/charts/utils/formatChartData";
 
 export default function ExpenseGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -87,8 +88,17 @@ export default function ExpenseGroupsPage() {
   
   const { data, isError, isPending } = useExpenseGroups(query);
 
-  const {data: summaryData} = useExpenseTotalByGroup({ from: query.from, to: query.to });
+  const {data: summaryData} = useExpenseTotalByGroup();
 
+  
+  // DATA FORMATTING - SORT + LIMIT TO 5 TOP + AGGEGATE OTHERS INTO "OTHER"
+  const formattedData = useMemo(() => {
+    if(!summaryData?.length) {
+      return [];
+    }
+    return formatBarChartData(summaryData);
+  }, [summaryData]);
+  
   useEffect(() => {
     setQuery(prev => ({
       ...prev,
@@ -111,18 +121,6 @@ export default function ExpenseGroupsPage() {
   if (isPending) return <CircularProgress />;
 
   const isEmpty = data?.data.length === 0;
-
-  let descriptionText; 
-
-  if(query.from && query.to) {
-    descriptionText = `Spending summary by group from ${dayjs(query.from).format("MMM D, YYYY")} to ${dayjs(query.to).format("MMM D, YYYY")}`;
-  } else if (query.from) {
-    descriptionText = `Spending summary by group from ${dayjs(query.from).format("MMM D, YYYY")} onwards`;
-  } else if (query.to) {
-    descriptionText = `Spending summary by group until ${dayjs(query.to).format("MMM D, YYYY")}`;
-  } else {
-    descriptionText = "Spending summary by group for the last 30 days";
-  }
 
   const columns: Column<ExpenseGroup>[] = [
     {
@@ -189,6 +187,8 @@ export default function ExpenseGroupsPage() {
     },
   ];
 
+
+
  return (
   <>
     {/* HEADER */}
@@ -216,7 +216,7 @@ export default function ExpenseGroupsPage() {
               ml: 2,
             }}
           >
-            {descriptionText}
+            Total Expense Distribution by Group
           </Typography>
         )}
       </Box>
@@ -224,7 +224,7 @@ export default function ExpenseGroupsPage() {
 
     {/* CHART */}
 
-    {!isMobile && summaryData && summaryData.length > 0 && (
+    {!isMobile && formattedData && formattedData.length > 0 && (
       <Box sx={{ mb: 3 }}>
         <Box
           sx={{
@@ -233,7 +233,7 @@ export default function ExpenseGroupsPage() {
             backgroundColor: "background.paper"
           }}
         >
-          <GroupBarChart data={summaryData} />
+          <GroupBarChart data={formattedData ? formattedData : []} />
         </Box>
       </Box>
     )}

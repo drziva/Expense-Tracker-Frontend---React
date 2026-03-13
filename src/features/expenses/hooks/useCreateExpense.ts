@@ -23,6 +23,8 @@ export function useCreateExpense() {
         queryKey: [QUERY_KEYS.EXPENSE_SUMMARY],
         exact: false
       });
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]}),
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.EXPENSE_TOTAL_BY_GROUP]})
     },
     onError: () => {
       showToast("There has been an error creating the expense, please try again", "error");

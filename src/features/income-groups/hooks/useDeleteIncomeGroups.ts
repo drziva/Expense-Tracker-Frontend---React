@@ -14,6 +14,7 @@ export function useDeleteIncomeGroup() {
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.DASHBOARD]});
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_GROUPS]});
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOMES]});
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP]});
     },
     onError: () => {
       showToast("There has been an error deleting the income, please try again", "error");
