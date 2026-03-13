@@ -30,7 +30,7 @@ export default function Sidebar({hideSidebar}: Props) {
         py: 2,
         position: "fixed",
         left: 0,
-        top: 84,
+        top: isMobile ? 0 : 84,
         bottom: 0,
         bgcolor: "background.paper",
     }}>

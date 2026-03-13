@@ -1,13 +1,51 @@
 import { AxiosError } from "axios";
-import type { ReportQuery } from "@/features/reports/types/reports.requests";
+import type { FilteredReportQuery, ReportQuery } from "@/features/reports/types/reports.requests";
 import type { ReportPdfResponse } from "@/features/reports/types/reports.responses";
 import { api } from "@/shared/api/client";
+import { IncomeQuery } from "@/features/incomes/types/incomes.requests";
+import { ExpenseQuery } from "@/features/expenses/types/expenses.requests";
 
 export async function getReportPdf(
   query: ReportQuery
 ): Promise<ReportPdfResponse>{
   try {
       const res = await api.get("/reports/pdf", {
+      params: query,
+      responseType: "blob",
+      });
+
+      const disposition = res.headers["content-disposition"];
+      const filename = extractFilename(disposition) ?? "report.pdf";
+
+      return {
+        blob: res.data,
+        filename,
+      }
+    } catch (error) {
+      if ( error instanceof AxiosError && error.response?.data instanceof Blob ) {
+        const text = await error.response.data.text();
+
+        let message = "Unknown error";
+
+        try {
+          const json = JSON.parse(text);
+          message = json.message ?? message;
+        } catch {
+          message = text;
+        }
+        throw new Error(message);
+      }
+
+      throw error;
+    }
+}
+
+export async function getFilteredReportPdf(
+  type: "incomes" | "expenses",
+  query: IncomeQuery | ExpenseQuery
+): Promise<ReportPdfResponse>{
+  try {
+      const res = await api.get(`/reports/${type}/pdf`, {
       params: query,
       responseType: "blob",
       });

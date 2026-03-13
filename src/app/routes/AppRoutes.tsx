@@ -3,7 +3,7 @@ import { lazy } from "react";
 import LoginPage from "@/features/auth/pages/LoginPage"; // eager (correct)
 import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import AppLayout from "@/app/layout/AppLayout";
-import { ReportsPage } from "@/features/reports/pages/ReportsPage";
+import { ReportsPage } from "@/features/reports/ReportsPage";
 
 const DashboardPage = lazy(() => import("@/features/dashboard/pages/DashboardPage"));
 const ExpensesPage = lazy(() => import("@/features/expenses/ExpensesPage"));
