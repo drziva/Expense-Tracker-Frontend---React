@@ -6,19 +6,19 @@ import dayjs from "dayjs";
 import { useReportEmail } from "@/features/reports/hooks/useReportEmail";
 
 export function ReportsPage() {
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery("(max-width: 900px)");
 
   const [fromDate, setFromDate] = useState<dayjs.Dayjs | null>(null);
   const [toDate, setToDate] = useState<dayjs.Dayjs | null>(null);
 
   const downloadReportPdf = useDownloadReportPdf();
   const emailReport = useReportEmail();
-  
+
   const [formError, setFormError] = useState("");
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     setFormError("");
-  },[fromDate,toDate])
+  }, [fromDate, toDate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,106 +33,116 @@ export function ReportsPage() {
 
     const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
 
-    if(submitter.name === "download"){
-        downloadReportPdf.mutate({
-        from,
-        to
-      });
+    if (submitter.name === "download") {
+      downloadReportPdf.mutate({ from, to });
+    } else {
+      emailReport.mutate({ from, to });
     }
-    else {
-      emailReport.mutate({
-        from,
-        to
-      })
-    }
-
   };
 
   return (
-    <Box sx={{ px: { xs: 0, md: 4 }, py: 3 }}>
-      <Typography variant={ isMobile ? "h5" :"h4"} fontWeight={600}>
-        Reports
-      </Typography>
-
-      <Typography variant="subtitle2" color="text.secondary" mt={0.5}>
-        Generate and download a financial report in PDF format or have it sent to you via email.
-      </Typography>
-
-      <Divider sx={{ my: 3 }} />
-
-      <Paper
-        elevation={0}
-        sx={{
-          p: isMobile ? 1.5 : 3,
-          borderRadius: 2,
-          border: theme => `1px solid ${theme.palette.divider}`,
-          maxWidth: 720,
-        }}
-      >
-        {formError && (<Alert severity="error">{formError}</Alert>)}
-        
-        <Typography variant={isMobile ? "subtitle1" :"h6"} fontWeight={500} mb={2}>
-          PDF Report
+    <Box
+      sx={{
+        px: { xs: 0, md: 4 },
+        py: 3,
+        display: "flex",
+        justifyContent: isMobile ? "center" : "flex-start",
+      }}
+    >
+      <Box width="100%" maxWidth={720}>
+        <Typography variant={isMobile ? "h5" : "h4"} fontWeight={600}>
+          Reports
         </Typography>
-        
 
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
+        <Typography variant="subtitle2" color="text.secondary" mt={0.5}>
+          Generate and download a financial report in PDF format or have it sent to you via email.
+        </Typography>
+
+        <Divider sx={{ my: 3 }} />
+
+        <Paper
+          elevation={0}
           sx={{
+            p: isMobile ? 1.5 : 3,
+            borderRadius: 2,
+            border: (theme) => `1px solid ${theme.palette.divider}`,
             display: "flex",
-            flexWrap: "wrap",
-            gap: 2,
-            alignItems: "flex-end",
+            flexDirection: "column",
+            alignItems: isMobile ? "center" : "flex-start",
           }}
         >
-          <DatePicker
-            label="From"
-            value={fromDate}
-            onChange={(date) => setFromDate(date)}
-          />
+          {formError && <Alert severity="error">{formError}</Alert>}
 
-          <DatePicker
-            label="To"
-            value={toDate}
-            onChange={(date) => setToDate(date)}
-          />
+          <Typography variant={isMobile ? "subtitle1" : "h6"} fontWeight={500} mb={2}>
+            PDF Report
+          </Typography>
+
           <Box
-            display="flex"
-            gap="10px"
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: isMobile ? "center" : "flex-start",
+              flexWrap: "wrap",
+              gap: 2,
+              width: "100%",
+            }}
           >
-            <Button
-              type="submit"
-              variant="contained"
-              name="download"
-              sx={{
-                height: 56,
-                px: 2,
-                fontWeight: 600,
-                textTransform: "none",
-                lineHeight: 1.2
-              }}
-            >
-              Download PDF
-            </Button>
+            <DatePicker
+              label="From"
+              value={fromDate}
+              onChange={(date) => setFromDate(date)}
+              sx={{ width: isMobile ? "100%" : "250px" }}
+            />
 
-            <Button
-              type="submit"
-              variant="outlined"
-              name="email"
-              sx={{
-                height: 56,
-                px: 2,
-                fontWeight: 600,
-                textTransform: "none",
-                lineHeight: 1.2
-              }}
+            <DatePicker
+              label="To"
+              value={toDate}
+              onChange={(date) => setToDate(date)}
+              sx={{ width: isMobile ? "100%" : "250px" }}
+            />
+
+            <Box
+              display="flex"
+              flexDirection={isMobile ? "column" : "row"}
+              gap="10px"
+              justifyContent="center"
+              width={isMobile ? "100%" : "auto"}
             >
-              Send via Email
-            </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                name="download"
+                sx={{
+                  height: 56,
+                  px: 2,
+                  fontWeight: 600,
+                  textTransform: "none",
+                  lineHeight: 1.2,
+                }}
+              >
+                Download PDF
+              </Button>
+
+              <Button
+                type="submit"
+                variant="outlined"
+                name="email"
+                sx={{
+                  height: 56,
+                  px: 2,
+                  fontWeight: 600,
+                  textTransform: "none",
+                  lineHeight: 1.2,
+                }}
+              >
+                Send via Email
+              </Button>
+            </Box>
           </Box>
-        </Box>
-      </Paper>
+        </Paper>
+      </Box>
     </Box>
   );
 }

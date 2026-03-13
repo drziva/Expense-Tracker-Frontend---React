@@ -39,7 +39,7 @@ export default function AppLayout() {
         )
         }
         
-        <Box sx={{ flex: 1, p: 3, ml: isMobile ? 0 : "240px", mt: "84px", overflowY: "auto" }}>
+        <Box sx={{ flex: 1, p: isMobile ? 1 : 3, ml: isMobile ? 0 : "240px", mt: "84px", overflowY: "auto" }}>
           <Suspense
             fallback={
                 <CircularProgress />
