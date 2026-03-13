@@ -8,6 +8,7 @@ import {
   Pagination,
   Paper,
   Select,
+  Stack,
   Tooltip,
   Typography,
   useMediaQuery
@@ -29,6 +30,7 @@ import { Table, type Column } from "@/shared/ui/Table"
 import { RowLimitSelect } from "@/shared/ui/RowLimitSelect"
 import ConfirmDialog from "@/shared/ui/ConfirmDialog"
 import { EmptyState } from "@/shared/ui/EmptyState"
+import PictureAsPdf from "@mui/icons-material/PictureAsPdf"
 
 import { TimelineChart } from "@/shared/charts/TimelineChart"
 
@@ -47,7 +49,9 @@ import { TransactionSortOption } from "@/shared/types/commons.types"
 
 import SearchBox from "@/shared/ui/SearchBox"
 import dayjs from "dayjs"
+
 import { DetailsDialog } from "@/shared/ui/DetailsDialog"
+import { useDownloadFilteredReport, useDownloadReportPdf } from "../reports/hooks/useDownloadReportPdf"
 
 type Range = {
   from: string
@@ -125,6 +129,7 @@ export default function ExpensesPage() {
 
   const { data, isError, isLoading } = useExpenses(query)
   const { data: summaryData } = useExpenseSummary(summaryQuery)
+  const filteredReport = useDownloadFilteredReport("expenses");
 
   const deleteExpense = useDeleteExpense()
 
@@ -260,18 +265,40 @@ export default function ExpensesPage() {
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >      
         <Typography 
           variant={isMobile ? "h5" : "h4"} 
           fontWeight={600}
           sx={{
-            mb: 1,
+            mb: 2,
             mt: 1,
             ml: 1
           }}
         >
           Expenses
         </Typography>
+        <Button
+          onClick={() => {
+            filteredReport.mutateAsync(query)
+          }}
+          sx={{
+            height: 40,
+            fontSize: "0.8rem",
+
+          }}
+        >
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="body2">Export Table</Typography>
+            <PictureAsPdf fontSize="small" />
+          </Stack>
+        </Button>
       </Box>
 
       {!isMobile && (

@@ -1,8 +1,8 @@
-import { Alert, Box, Button, CircularProgress, IconButton, MenuItem, Pagination, Paper, Select, Tooltip, Typography, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, IconButton, MenuItem, Pagination, Paper, Select, Stack, Tooltip, Typography, useMediaQuery } from "@mui/material";
 import { useIncomes } from "@/features/incomes/hooks/useIncomes";
 import DeleteIcon from "@mui/icons-material/DeleteOutline"
 import EditIcon from "@mui/icons-material/Edit"
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useDeleteIncome } from "@/features/incomes/hooks/useDeleteIncome";
 import { Table, type Column } from "@/shared/ui/Table";
 import formatEuros from "@/shared/lib/formatMoney";
@@ -24,6 +24,8 @@ import { TransactionSortOption } from "@/shared/types/commons.types";
 import SearchBox from "@/shared/ui/SearchBox";
 import dayjs from "dayjs";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
+import { useDownloadFilteredReport } from "../reports/hooks/useDownloadReportPdf";
+import PictureAsPdf from "@mui/icons-material/PictureAsPdf";
 
 type Range = {
   from: string;
@@ -90,6 +92,8 @@ export default function IncomesPage() {
   const {data, isError, isLoading} = useIncomes(query);
 
   const {data: summaryData} = useIncomeSummary(summaryQuery);
+
+  const filteredReport = useDownloadFilteredReport("incomes");
 
   const deleteIncome = useDeleteIncome();
 
@@ -242,6 +246,8 @@ export default function IncomesPage() {
         sx={{
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
+          gap: 2,
         }}
       >
         <Typography 
@@ -256,6 +262,21 @@ export default function IncomesPage() {
           Incomes
         </Typography>
 
+        <Button
+          onClick={() => {
+            filteredReport.mutateAsync(query)
+          }}
+          sx={{
+            height: 40,
+            fontSize: "0.8rem",
+
+          }}
+        >
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography variant="body2">Export Table</Typography>
+            <PictureAsPdf fontSize="small" />
+          </Stack>
+        </Button>
       </Box>
 
       {/* CHART + RANGE SELECTOR */}
