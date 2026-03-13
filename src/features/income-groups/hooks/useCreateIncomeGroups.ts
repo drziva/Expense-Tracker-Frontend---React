@@ -19,7 +19,10 @@ export function useCreateIncomeGroup() {
     mutationFn: createIncomeGroup,
     onSuccess: () => {
       showToast("Income group created successfully!");
-      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_GROUPS]});
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INCOME_GROUPS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INCOMES] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.DASHBOARD] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP] });
     },
     onError: () => {
       showToast("There has been an error creating the income, please try again", "error");

@@ -1,14 +1,15 @@
 import { api } from "@/shared/api/client";
 import type { IncomeGroupQuery, IncomeGroupRequest, IncomeGroupSummaryQuery } from "@/features/income-groups/types/incomeGroup.requests";
 import type { GetIncomeGroupResponse } from "@/features/income-groups/types/incomeGroup.responses";
+import { GroupSummary } from "@/shared/types/group";
 
 export async function getIncomeGroups(query: IncomeGroupQuery) {
   const res = await api.get<GetIncomeGroupResponse>("/income-groups", {params: query});
   return res.data;
 }
 
-export async function getIncomeTotalByGroup(query: IncomeGroupSummaryQuery) {
-  const res = await api.get("/income-groups/total-by-group", {params: query});
+export async function getIncomeTotalByGroup(): Promise<GroupSummary[]> {
+  const res = await api.get("/income-groups/total-by-group");
   return res.data;
 }
 

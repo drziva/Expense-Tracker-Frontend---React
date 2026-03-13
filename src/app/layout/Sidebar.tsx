@@ -18,7 +18,7 @@ type Props = {
 
 export default function Sidebar({hideSidebar}: Props) {
   const theme = useTheme(); 
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const isMobile = useMediaQuery("(max-width: 900px)");
   const isDark = theme.palette.mode === "dark"
 
   return(

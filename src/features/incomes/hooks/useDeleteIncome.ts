@@ -17,6 +17,7 @@ export function useDeleteIncome() {
         queryKey:[QUERY_KEYS.INCOME_SUMMARY],
         exact: false
       });
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP]})
     },
     onError: () => {
       showToast("There has been an error deleting the income", "error");

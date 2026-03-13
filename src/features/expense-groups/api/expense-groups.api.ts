@@ -9,8 +9,8 @@ export async function getExpenseGroups(query: ExpenseGroupQuery) {
   return res.data;
 }
 
-export async function getExpenseTotalByGroup(query: ExpenseGroupSummaryQuery) {
-  const res = await api.get("expense-groups/total-by-group", {params: query});
+export async function getExpenseTotalByGroup() {
+  const res = await api.get("expense-groups/total-by-group");
   return res.data;
 }
 

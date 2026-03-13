@@ -13,3 +13,8 @@ export type GetGroupResponse = {
   totalItems: number;
   totalPages: number;
 }
+
+export type GroupSummary = {
+  groupName: string;
+  total: number;
+}

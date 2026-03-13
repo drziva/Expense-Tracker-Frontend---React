@@ -24,6 +24,7 @@ export function useCreateIncome() {
         queryKey:[QUERY_KEYS.INCOME_SUMMARY],
         exact: false
       });
+      queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP]})
     },
     onError: () => {
       showToast("There has been an error adding the income, please try again", "error");
