@@ -1,8 +1,9 @@
 import type z from "zod"
 import type { incomeSchema } from "@/features/incomes/schemas/income.schema"
 import { Controller, type UseFormReturn } from "react-hook-form";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
+import { FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
 import type { IncomeGroup } from "@/features/income-groups/types/incomeGroup.responses";
+import { NumericFormat } from "react-number-format";
 
 type FormInput = z.input<typeof incomeSchema>;
 type FormOutput = z.infer<typeof incomeSchema>;
@@ -16,6 +17,7 @@ type Props = {
 export function IncomeForm({form, groups}: Props) {
   const {
     register,
+    control,
     formState: {errors}
   } = form;
   
@@ -35,14 +37,43 @@ export function IncomeForm({form, groups}: Props) {
         error={!!errors.description}
         helperText={errors.description?.message}
       />
-      <TextField
-        label="Amount"
-        {...register("amount")}
-        error={!!errors.amount}
-        helperText={errors.amount?.message}
+      
+      <Controller
+        name="amount"
+        control={control}
+        render={({ field }) => (
+          <NumericFormat
+            name={field.name}
+            value={(field.value as string) ?? ""}
+            customInput={TextField}
+            label="Amount"
+            thousandSeparator=","
+            decimalScale={2}
+            fixedDecimalScale
+            allowNegative={false}
+            onValueChange={(values) => {
+              field.onChange(values.value);
+            }}
+            error={!!errors.amount}
+            helperText={errors.amount?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    €
+                  </InputAdornment>
+                )
+              },
+              htmlInput: {
+                "data-cy": "income-amount-input",
+                "data-testid": "income-amount-input"
+              }
+            }}
+          />
+        )}
       />
       <FormControl error={!!errors.groupId}>
-        <InputLabel id="expense-group-label">
+        <InputLabel id="income-group-label">
           Income Group
         </InputLabel>
 
@@ -52,7 +83,7 @@ export function IncomeForm({form, groups}: Props) {
         render={({ field }) => (
           <Select
             {...field}
-            labelId="expense-group-label"
+            labelId="income-group-label"
             label="Income Group"
           >
             {groups.map((gr) => (

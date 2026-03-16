@@ -6,6 +6,7 @@ import {
   FormControl,
   InputLabel,
   Select,
+  InputAdornment,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import type { z } from "zod";
@@ -17,6 +18,7 @@ import dayjs from "dayjs";
 import type { scheduledTransactionSchema } from "@/features/scheduled-transactions/schemas/scheduled-transaction.schema";
 import { useExpenseGroups } from "@/features/expense-groups/hooks/useExpenseGroups";
 import { useIncomeGroups } from "@/features/income-groups/hooks/useIncomeGroups";
+import { NumericFormat } from "react-number-format";
 
 type FormInput = z.input<typeof scheduledTransactionSchema>;
 type FormOutput = z.infer<typeof scheduledTransactionSchema>;
@@ -66,15 +68,41 @@ export function ScheduledTransactionForm({ form }: Props) {
         fullWidth
       />
 
-      <TextField
-        label="Amount"
-        type="number"
-        {...register("amount")}
-        error={!!errors.amount}
-        helperText={errors.amount?.message}
-        fullWidth
+      <Controller
+        name="amount"
+        control={control}
+        render={({ field }) => (
+          <NumericFormat
+            name={field.name}
+            value={(field.value as string) ?? ""}
+            customInput={TextField}
+            label="Amount"
+            thousandSeparator=","
+            decimalScale={2}
+            fixedDecimalScale
+            allowNegative={false}
+            onValueChange={(values) => {
+              field.onChange(values.value);
+            }}
+            error={!!errors.amount}
+            helperText={errors.amount?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    €
+                  </InputAdornment>
+                )
+              },
+              htmlInput: {
+                "data-cy": "scheduled-transaction-amount-input",
+                "data-testid": "scheduled-transaction-amount-input"
+              }
+            }}
+          />
+        )}
       />
-
+      
       <Controller
         control={control}
         name="date"
