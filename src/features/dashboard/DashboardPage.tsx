@@ -9,7 +9,6 @@ import { MobileTransactionCard } from "@/shared/mobile/MobileTransactionCard";
 import { useState } from "react";
 import { DashboardTimelineChart } from "@/features/dashboard/components/DashboardTimelineChart";
 import dayjs from "dayjs";
-import { DetailsDialog } from "@/shared/ui/DetailsDialog";
 
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")

@@ -377,6 +377,10 @@ export default function IncomeGroupsPage() {
           setToUpdate(detailsOpen);
           setDetailsOpen(null);
         }}
+        onDelete={() => {
+          setToDelete(detailsOpen);
+          setDetailsOpen(null);
+        }}
       />
     </>
   )

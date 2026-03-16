@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -8,8 +7,7 @@ import {
   Divider,
   Stack,
   Typography,
-  Paper,
-  useMediaQuery
+  Paper
 } from "@mui/material"
 
 import ReceiptIcon from "@mui/icons-material/Receipt"
@@ -20,6 +18,7 @@ import { Expense } from "@/features/expenses/types/expenses.responses"
 import { IncomeGroup } from "@/features/income-groups/types/incomeGroup.responses"
 import { Income } from "@/features/incomes/types/incomes.responses"
 import { SchedTransaction } from "@/features/scheduled-transactions/types/scheduled-transactions.responses"
+
 import formatEuros from "../lib/formatMoney"
 
 type DetailsData =
@@ -33,46 +32,105 @@ type Props = {
   open: boolean
   onClose: () => void
   data?: DetailsData | null
-  onEdit?: (item: Expense | Income | IncomeGroup | ExpenseGroup | SchedTransaction | null ) => void
+  onEdit?: (item: Expense | Income | IncomeGroup | ExpenseGroup | SchedTransaction | null) => void
+  onDelete?: (item: Expense | Income | IncomeGroup | ExpenseGroup | SchedTransaction | null) => void
 }
 
-    function Field({ label,value, multiline = false}: { label: string, value: React.ReactNode, multiline?: boolean }) {
-        if (multiline) {
-            return (
-                <Stack spacing={0.5}>
-                    <Typography color="text.primary" fontWeight={500}>
-                        {label}
-                    </Typography>
+function Field({ label, value, multiline = false }: { label: string, value: React.ReactNode, multiline?: boolean }) {
 
-                    <Typography
-                        sx={{
-                            whiteSpace: "pre-wrap",
-                            wordBreak: "break-word",
-                            color: "text.secondary"
-                        }}
-                    >
-                    {value}
-                    </Typography>
-                </Stack>
-            )
-        }
+  if (multiline) {
+    return (
+      <Stack spacing={0.5}>
+        <Typography color="text.primary" fontWeight={500}>
+          {label}
+        </Typography>
 
-        return (
-            <Stack direction="row" justifyContent="space-between">
-            <Typography color="text.secondary">{label}</Typography>
-            <Typography fontWeight={600}>{value}</Typography>
-            </Stack>
-        )
-    }
+        <Typography
+          sx={{
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+            color: "text.secondary"
+          }}
+        >
+          {value}
+        </Typography>
+      </Stack>
+    )
+  }
 
-function Details({ data }: { data: DetailsData }) {
-  const isMobile = useMediaQuery("(max-width: 700px)");
-    if(!data || data.item === null) return;
+  return (
+    <Stack direction="row" justifyContent="space-between">
+      <Typography color="text.secondary">{label}</Typography>
+      <Typography fontWeight={600}>{value}</Typography>
+    </Stack>
+  )
+}
+
+/* ---------------- Buttons ---------------- */
+
+function EditButton({ item, onEdit, label }: {
+  item: any
+  onEdit?: Props["onEdit"]
+  label?: string
+}) {
+  return (
+    <Button
+      variant="outlined"
+      onClick={() => onEdit?.(item)}
+      sx={{ borderRadius: 2 }}
+    >
+      {label ?? "Edit"}
+    </Button>
+  )
+}
+
+function DeleteButton({ item, onDelete, label }: {
+  item: any
+  onDelete?: Props["onDelete"]
+  label?: string
+}) {
+  return (
+    <Button
+      variant="outlined"
+      color="error"
+      onClick={() => onDelete?.(item)}
+      sx={{ borderRadius: 2 }}
+    >
+      {label ?? "Delete"}
+    </Button>
+  )
+}
+
+function ViewGroupButton({ href, label }: { href: string, label: string }) {
+  return (
+    <Button
+      variant="outlined"
+      onClick={() => {
+        location.href = href
+      }}
+    >
+      {label}
+    </Button>
+  )
+}
+
+/* ---------------- Details ---------------- */
+
+function Details({ data, onEdit, onDelete }: {
+  data: DetailsData
+  onEdit?: Props["onEdit"]
+  onDelete?: Props["onDelete"]
+}) {
+
+  if (!data || data.item === null) return null
+
   switch (data.type) {
+
     case "expense":
       return (
-        <Paper sx={{ p: isMobile ? 1 : 3 }}>
+        <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack spacing={2}>
+
             <Stack direction="row" alignItems="center" spacing={1}>
               <ReceiptIcon color="error" />
               <Typography variant="h6">Expense</Typography>
@@ -80,27 +138,24 @@ function Details({ data }: { data: DetailsData }) {
 
             <Divider />
 
-            <Field multiline={isMobile ? true : false} label="Description" value={data.item.description} />
+            <Field label="Description" value={data.item.description} />
+            <Field label="Amount" value={formatEuros(data.item.amount)} />
+            <Field label="Date Created" value={new Date(data.item.createdAt).toLocaleDateString()} />
 
-            <Field
-              multiline={isMobile ? true : false}
-              label="Amount"
-              value={formatEuros(data.item.amount)}
-            />
+            <Stack gap={0.5}>
+              <EditButton item={data.item} onEdit={onEdit} label="Edit Expense" />
+              <DeleteButton item={data.item} onDelete={onDelete} label="Delete Expense" />
+            </Stack>
 
-            <Field
-              multiline={isMobile ? true : false}
-              label="Date Created"
-              value={new Date(data.item.createdAt).toLocaleDateString()}
-            />
           </Stack>
         </Paper>
       )
 
     case "income":
       return (
-        <Paper sx={{ p: isMobile ? 1 : 3 }}>
+        <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack spacing={2}>
+
             <Stack direction="row" alignItems="center" spacing={1}>
               <PaymentsIcon color="success" />
               <Typography variant="h6">Income</Typography>
@@ -108,31 +163,23 @@ function Details({ data }: { data: DetailsData }) {
 
             <Divider />
 
-            <Field 
-              multiline={isMobile ? true : false} 
-              label="Source" 
-              value={data.item.description} 
-            />
+            <Field label="Source" value={data.item.description} />
+            <Field label="Amount" value={formatEuros(data.item.amount)} />
+            <Field label="Date Created" value={new Date(data.item.createdAt).toLocaleDateString()} />
 
-            <Field
-              multiline={isMobile ? true : false}
-              label="Amount"
-              value={formatEuros(data.item.amount)}
-            />
-
-            <Field
-              multiline={isMobile ? true : false}
-              label="Date Created"
-              value={new Date(data.item.createdAt).toLocaleDateString()}
-            />
+            <Stack gap={0.5}>
+              <EditButton item={data.item} onEdit={onEdit} label="Edit Income" />
+              <DeleteButton item={data.item} onDelete={onDelete} label="Delete Income" />
+            </Stack>
           </Stack>
         </Paper>
       )
 
     case "income_group":
       return (
-        <Paper sx={{ p: isMobile ? 1 : 3 }}>
+        <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
           <Stack spacing={2}>
+
             <Stack direction="row" alignItems="center" spacing={1}>
               <PaymentsIcon color="success" />
               <Typography variant="h6">Income Group</Typography>
@@ -140,64 +187,51 @@ function Details({ data }: { data: DetailsData }) {
 
             <Divider />
 
-            <Field label="Description" multiline={true} value={data.item.description} />
+            <Field label="Description" multiline value={data.item.description} />
+            <Field label="Date Created" multiline value={new Date(data.item.createdAt).toLocaleDateString()} />
 
-            <Field
-              label="Date Created"
-              multiline={true}
-              value={new Date(data.item.createdAt).toLocaleDateString()}
+            <ViewGroupButton
+              href={`/app/incomes?group=${data.item.id}`}
+              label="View Incomes for group"
             />
 
-            <Button 
-                variant="outlined" 
-                onClick={()=>{
-                    location.href = `/app/incomes?group=${data!.item!.id}`
-                }}
-                sx={{
-                  fontSize: isMobile ? "12px" : "14px" 
-                }}                
-            >
-                View Incomes for group
-            </Button>
+            <Stack gap={0.5}>
+              <EditButton item={data.item} onEdit={onEdit} label="Edit Group" />
+              <DeleteButton item={data.item} onDelete={onDelete} label="Delete Group" />
+            </Stack>
+
           </Stack>
         </Paper>
       )
 
-      case "expense_group": 
-        return (
-            <Paper sx={{ p: isMobile ? 1 : 3 }}>
-            <Stack spacing={2}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                <ReceiptIcon color="error" />
-                <Typography variant="h6">Expense Group</Typography>
-                </Stack>
+    case "expense_group":
+      return (
+        <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
+          <Stack spacing={2}>
 
-                <Divider />
-
-                <Field label="Description" multiline={true} value={data.item.description} />
-
-                <Field label="Budget Cap" multiline={true} value={data.item.budgetCap ? formatEuros(data.item.budgetCap) : "-"}/>
-
-                <Field
-                label="Date Created"
-                multiline={true}
-                value={new Date(data.item.createdAt).toLocaleDateString()}
-                />
-
-                <Button 
-                    variant="outlined" 
-                    onClick={()=>{
-                        location.href = `/app/expenses?group=${data!.item!.id}`
-                    }}
-                    sx={{
-                      fontSize: isMobile ? "12px" : "14px" 
-                    }}
-                >
-                    View Expenses for group
-                </Button>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <ReceiptIcon color="error" />
+              <Typography variant="h6">Expense Group</Typography>
             </Stack>
-            </Paper>
-        )       
+
+            <Divider />
+
+            <Field label="Description" multiline value={data.item.description} />
+            <Field label="Budget Cap" multiline value={data.item.budgetCap ? formatEuros(data.item.budgetCap) : "-"} />
+            <Field label="Date Created" multiline value={new Date(data.item.createdAt).toLocaleDateString()} />
+
+            <ViewGroupButton
+              href={`/app/expenses?group=${data.item.id}`}
+              label="View Expenses for group"
+            />
+
+            <Stack gap={0.5}>
+              <EditButton item={data.item} onEdit={onEdit} label="Edit Group" />
+              <DeleteButton item={data.item} onDelete={onDelete} label="Delete Group" />
+            </Stack>
+          </Stack>
+        </Paper>
+      )
 
     default:
       return (
@@ -208,8 +242,10 @@ function Details({ data }: { data: DetailsData }) {
   }
 }
 
-export function DetailsDialog({ open, data, onClose, onEdit }: Props) {
-    if(!data) return;
+export function DetailsDialog({ open, data, onClose, onEdit, onDelete }: Props) {
+
+  if (!data) return null
+
   return (
     <Dialog
       open={open}
@@ -219,25 +255,19 @@ export function DetailsDialog({ open, data, onClose, onEdit }: Props) {
       PaperProps={{
         sx: {
           borderRadius: 4,
-          border: "1px solid #383737"
+          p: 1
         }
       }}
     >
+      <DialogTitle sx={{ fontWeight: 700 }}>
+        Transaction Details
+      </DialogTitle>
+
       <DialogContent>
-        {data && <Details data={data} />}
+        <Details data={data} onEdit={onEdit} onDelete={onDelete} />
       </DialogContent>
 
       <DialogActions sx={{ pb: 2, pr: 3 }}>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            onEdit && onEdit(data.item);
-          }}
-          sx={{ borderRadius: 2 }}
-        >
-          Edit
-        </Button>
-
         <Button
           variant="contained"
           onClick={onClose}
