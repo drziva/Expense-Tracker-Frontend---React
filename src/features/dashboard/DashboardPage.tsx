@@ -9,6 +9,7 @@ import { MobileTransactionCard } from "@/shared/mobile/MobileTransactionCard";
 import { useState } from "react";
 import { DashboardTimelineChart } from "@/features/dashboard/components/DashboardTimelineChart";
 import dayjs from "dayjs";
+import { DetailsDialog } from "@/shared/ui/DetailsDialog";
 
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
@@ -17,6 +18,9 @@ export default function DashboardPage() {
     from: dayjs().subtract(7, "day").startOf("day").toISOString(),
     to: dayjs().endOf("day").toISOString(),
   });
+
+  const [detailsOpen, setDetailsOpen] = useState<Income | Expense | null>(null);
+
   const { data, isError, isLoading } = useDashboard();
   const {data: summaryData} = useDashboardSummary(summaryQuery);
 
@@ -110,7 +114,11 @@ export default function DashboardPage() {
               <Table
                 rows={data?.incomes ?? []}
                 columns={txColumns}
-                getRowKey={tx=> tx.id}/>
+                getRowKey={tx=> tx.id}
+                onRowClick={(tx) => {
+                  location.href = `/app/incomes?search=${tx.description}`
+                }}  
+              />
 
             </DashboardTableSection>
             <DashboardTableSection
@@ -123,6 +131,9 @@ export default function DashboardPage() {
                 rows={data?.expenses ?? []}
                 columns={txColumns}
                 getRowKey={tx=> tx.id}
+                onRowClick={(tx) => {
+                  location.href = `/app/expenses?search=${tx.description}`
+                }}
               />
             </DashboardTableSection>
           </>
@@ -139,6 +150,9 @@ export default function DashboardPage() {
               <MobileTransactionCard
                 data={data?.incomes}
                 color="success.main"
+                onClick={(tx) => {
+                  location.href = `/app/incomes?search=${tx.description}`
+                }}
               />
             </DashboardTableSection>
 
@@ -151,6 +165,9 @@ export default function DashboardPage() {
               <MobileTransactionCard
                 data={data?.expenses}
                 color="error.main"
+                onClick={(tx) => {
+                  location.href = `/app/expenses?search=${tx.description}`
+                }}
               />  
             </DashboardTableSection>
           </>

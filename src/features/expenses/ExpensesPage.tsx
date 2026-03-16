@@ -284,21 +284,6 @@ export default function ExpensesPage() {
         >
           Expenses
         </Typography>
-        <Button
-          onClick={() => {
-            filteredReport.mutateAsync(query)
-          }}
-          sx={{
-            height: 40,
-            fontSize: "0.8rem",
-
-          }}
-        >
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="body2">Export Table</Typography>
-            <PictureAsPdf fontSize="small" />
-          </Stack>
-        </Button>
       </Box>
 
       {!isMobile && (
@@ -377,17 +362,38 @@ export default function ExpensesPage() {
 
         </Box>
 
-        <Button
-          onClick={() => setToCreate(true)}
-          variant="contained"
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          spacing={1}
           sx={{
-            height: 40,
-            fontSize: "0.8rem",
-            lineHeight: "1.3"
+            alignItems: isMobile ? "stretch" : "center",
           }}
         >
-          <strong>Add Expense</strong>
-        </Button>
+          <Button
+            variant="outlined"
+            onClick={() => filteredReport.mutateAsync(query)}
+            sx={{
+              height: 40,
+              fontSize: "0.8rem",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Export PDF
+          </Button>
+
+          <Button
+            onClick={() => setToCreate(true)}
+            variant="contained"
+            sx={{
+              height: 40,
+              fontSize: "0.8rem",
+              lineHeight: "1.3",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <strong>Add Expense</strong>
+          </Button>
+        </Stack>
       </Box>
 
       <Paper sx={{ p: 2 }}>
@@ -417,6 +423,7 @@ export default function ExpensesPage() {
                 data={data?.data}
                 onDelete={setToDelete}
                 onEdit={setToUpdate}
+                onClick={setDetailsOpen}
                 color="error"
               />
             )

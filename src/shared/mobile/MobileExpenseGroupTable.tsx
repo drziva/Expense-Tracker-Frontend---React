@@ -6,11 +6,12 @@ import formatEuros from "@/shared/lib/formatMoney";
 
 type Props = {
   data?: ExpenseGroup[];
+  onClick: (gr: ExpenseGroup) => void;
   onEdit: (gr: ExpenseGroup) => void;
   onDelete: (gr: ExpenseGroup) => void;
 }
 
-export function MobileExpenseGroupTable({data, onEdit, onDelete}: Props) {
+export function MobileExpenseGroupTable({data, onEdit, onDelete, onClick}: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={1}>
       {data?.map(gr => (
@@ -21,7 +22,9 @@ export function MobileExpenseGroupTable({data, onEdit, onDelete}: Props) {
             justifyContent:"space-between"
           }}
         >
-          <Box>
+          <Box
+            onClick={() => onClick(gr)}
+          >
             <Typography fontWeight={700}>
               {gr.name}
             </Typography>
@@ -41,14 +44,20 @@ export function MobileExpenseGroupTable({data, onEdit, onDelete}: Props) {
           <Box display="flex" flexDirection="column" gap={1} mt={1}>
             <Button
               size="small"
-              onClick={() => onEdit(gr)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(gr)
+              }}
             >
               <EditIcon fontSize="small"/>
             </Button>
             <Button
               size="small"
               color="error"
-              onClick={() => onDelete(gr)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(gr)
+              }}
             >
               <DeleteIcon fontSize="small"/>
             </Button>

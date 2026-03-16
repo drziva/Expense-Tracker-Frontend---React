@@ -9,7 +9,7 @@ export function GlobalErrorSnackbar() {
             open={!!error}
             autoHideDuration={3000}
             onClose={clearError}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
             sx={{
                 mt: 2
             }}

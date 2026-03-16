@@ -36,6 +36,7 @@ import { useExpenseTotalByGroup } from "@/features/expense-groups/hooks/useExpen
 import { GroupBarChart } from "@/shared/charts/GroupBarChart";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
 import { formatBarChartData } from "@/shared/charts/utils/formatChartData";
+import { set } from "zod";
 
 export default function ExpenseGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -318,6 +319,7 @@ export default function ExpenseGroupsPage() {
               data={data.data}
               onDelete={setToDelete}
               onEdit={setToUpdate}
+              onClick={setDetailsOpen}
             />
           )
       )}

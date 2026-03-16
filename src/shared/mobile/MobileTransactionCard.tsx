@@ -6,14 +6,15 @@ import type { Income } from "@/features/incomes/types/incomes.responses";
 type Props = {
   data?: Income[] | Expense[];
   color: string;
+  onClick?: (tx: Income | Expense) => void;
 }
 
-export function MobileTransactionCard({color, data}: Props) {
+export function MobileTransactionCard({color, data, onClick }: Props) {
 
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       {data?.map(tx => (
-        <Paper key={tx.id} sx={{ p: 0.7, pr: 0, pl:1}}>
+        <Paper key={tx.id} sx={{ p: 0.7, pr: 0, pl:1}} onClick={() => onClick?.(tx)}>
           <Typography fontWeight={600}>
             {tx.description}
           </Typography>
