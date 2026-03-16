@@ -1,6 +1,6 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { ExpenseGroup } from "@/features/expense-groups/types/expenseGroup.responses";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
+import { FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
 import { expenseSchema } from "@/features/expenses/schemas/expense.schema";
 import type { z } from "zod";
 
@@ -45,12 +45,6 @@ export function ExpenseForm({form, groups}: Props) {
         {...register("amount")}
         error={!!errors.amount}
         helperText={errors.amount?.message}
-        slotProps={{
-          htmlInput: {
-            "data-cy": "expense-amount-input",
-            "data-testid": "expense-amount-input"
-          }
-        }}
       />
 
       <FormControl error={!!errors.groupId}>

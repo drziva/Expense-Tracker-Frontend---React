@@ -114,15 +114,15 @@ export default function ExpensesPage() {
   const [range, setRange] = useState<"week" | "month" | "year">("week")
 
   const [summaryQuery, setSummaryQuery] = useState<ExpenseSummaryQuery>({
-    from: from || new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-    to: to || new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+    from: from || dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+    to: to || dayjs().format("YYYY-MM-DD"),
     type: range === "year" ? "yearly" : "regular"
   });
 
   useEffect(()=>{
     setSummaryQuery({
-      from: from || new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-      to: to || new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+      from: from || dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+      to: to || dayjs().format("YYYY-MM-DD"),
       type: range === "year" ? "yearly" : "regular"
     });
   },[from,to])

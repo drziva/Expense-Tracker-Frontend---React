@@ -26,7 +26,10 @@ export function useCreateIncome() {
       });
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP]})
     },
-    onError: () => {
+    onError: (error) => {
+      if(error.message === "OFFLINE") {
+        return;
+      }
       showToast("There has been an error adding the income, please try again", "error");
     }
   });
