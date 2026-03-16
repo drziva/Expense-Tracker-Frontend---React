@@ -4,6 +4,7 @@ import type { ReportPdfResponse } from "@/features/reports/types/reports.respons
 import type { FilteredReportQuery, ReportQuery } from "@/features/reports/types/reports.requests";
 import { useToast } from "@/app/providers/toast/ToastProvider";
 import { IncomeQuery } from "@/features/incomes/types/incomes.requests";
+import { ExpenseQuery } from "@/features/expenses/types/expenses.requests";
 
 export function useDownloadReportPdf() {
   const { showToast } = useToast();
@@ -31,7 +32,7 @@ export function useDownloadReportPdf() {
 export function useDownloadFilteredReport(type: "incomes" | "expenses") {
   const { showToast } = useToast();
 
-  return useMutation<ReportPdfResponse, Error, IncomeQuery>({
+  return useMutation<ReportPdfResponse, Error, IncomeQuery | ExpenseQuery>({
     mutationFn: (query) => getFilteredReportPdf(type, query),
     onSuccess: ({ blob, filename }) => {
       showToast("PDF Generated Succesfully!")

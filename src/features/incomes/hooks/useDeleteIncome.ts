@@ -19,7 +19,10 @@ export function useDeleteIncome() {
       });
       queryClient.invalidateQueries({queryKey: [QUERY_KEYS.INCOME_TOTAL_BY_GROUP]})
     },
-    onError: () => {
+    onError: (error) => {
+      if(error.message === "OFFLINE") {
+        return;
+      }
       showToast("There has been an error deleting the income", "error");
     }
   })

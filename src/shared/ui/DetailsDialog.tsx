@@ -8,7 +8,8 @@ import {
   Divider,
   Stack,
   Typography,
-  Paper
+  Paper,
+  useMediaQuery
 } from "@mui/material"
 
 import ReceiptIcon from "@mui/icons-material/Receipt"
@@ -65,14 +66,12 @@ type Props = {
     }
 
 function Details({ data }: { data: DetailsData }) {
+  const isMobile = useMediaQuery("(max-width: 700px)");
     if(!data || data.item === null) return;
   switch (data.type) {
     case "expense":
       return (
-        <Paper
-          variant="outlined"
-          sx={{ p: 3, borderRadius: 3 }}
-        >
+        <Paper sx={{ p: isMobile ? 1 : 3 }}>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <ReceiptIcon color="error" />
@@ -81,15 +80,17 @@ function Details({ data }: { data: DetailsData }) {
 
             <Divider />
 
-            <Field label="Description" value={data.item.description} />
+            <Field multiline={isMobile ? true : false} label="Description" value={data.item.description} />
 
             <Field
+              multiline={isMobile ? true : false}
               label="Amount"
               value={formatEuros(data.item.amount)}
             />
 
             <Field
-              label="Date"
+              multiline={isMobile ? true : false}
+              label="Date Created"
               value={new Date(data.item.createdAt).toLocaleDateString()}
             />
           </Stack>
@@ -98,10 +99,7 @@ function Details({ data }: { data: DetailsData }) {
 
     case "income":
       return (
-        <Paper
-          variant="outlined"
-          sx={{ p: 3, borderRadius: 3 }}
-        >
+        <Paper sx={{ p: isMobile ? 1 : 3 }}>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <PaymentsIcon color="success" />
@@ -110,15 +108,21 @@ function Details({ data }: { data: DetailsData }) {
 
             <Divider />
 
-            <Field label="Source" value={data.item.description} />
+            <Field 
+              multiline={isMobile ? true : false} 
+              label="Source" 
+              value={data.item.description} 
+            />
 
             <Field
+              multiline={isMobile ? true : false}
               label="Amount"
               value={formatEuros(data.item.amount)}
             />
 
             <Field
-              label="Date"
+              multiline={isMobile ? true : false}
+              label="Date Created"
               value={new Date(data.item.createdAt).toLocaleDateString()}
             />
           </Stack>
@@ -127,10 +131,7 @@ function Details({ data }: { data: DetailsData }) {
 
     case "income_group":
       return (
-        <Paper
-          variant="outlined"
-          sx={{ p: 3, borderRadius: 3 }}
-        >
+        <Paper sx={{ p: isMobile ? 1 : 3 }}>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <PaymentsIcon color="success" />
@@ -144,7 +145,7 @@ function Details({ data }: { data: DetailsData }) {
             <Field
               label="Date Created"
               multiline={true}
-              value={"•  " + new Date(data.item.createdAt).toLocaleDateString()}
+              value={new Date(data.item.createdAt).toLocaleDateString()}
             />
 
             <Button 
@@ -152,6 +153,9 @@ function Details({ data }: { data: DetailsData }) {
                 onClick={()=>{
                     location.href = `/app/incomes?group=${data!.item!.id}`
                 }}
+                sx={{
+                  fontSize: isMobile ? "12px" : "14px" 
+                }}                
             >
                 View Incomes for group
             </Button>
@@ -161,10 +165,7 @@ function Details({ data }: { data: DetailsData }) {
 
       case "expense_group": 
         return (
-            <Paper
-            variant="outlined"
-            sx={{ p: 3, borderRadius: 3 }}
-            >
+            <Paper sx={{ p: isMobile ? 1 : 3 }}>
             <Stack spacing={2}>
                 <Stack direction="row" alignItems="center" spacing={1}>
                 <ReceiptIcon color="error" />
@@ -180,13 +181,16 @@ function Details({ data }: { data: DetailsData }) {
                 <Field
                 label="Date Created"
                 multiline={true}
-                value={"•  " + new Date(data.item.createdAt).toLocaleDateString()}
+                value={new Date(data.item.createdAt).toLocaleDateString()}
                 />
 
                 <Button 
                     variant="outlined" 
                     onClick={()=>{
                         location.href = `/app/expenses?group=${data!.item!.id}`
+                    }}
+                    sx={{
+                      fontSize: isMobile ? "12px" : "14px" 
                     }}
                 >
                     View Expenses for group
@@ -215,14 +219,10 @@ export function DetailsDialog({ open, data, onClose, onEdit }: Props) {
       PaperProps={{
         sx: {
           borderRadius: 4,
-          p: 1
+          border: "1px solid #383737"
         }
       }}
     >
-      <DialogTitle sx={{ fontWeight: 700 }}>
-        Transaction Details
-      </DialogTitle>
-
       <DialogContent>
         {data && <Details data={data} />}
       </DialogContent>

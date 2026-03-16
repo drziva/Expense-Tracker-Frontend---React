@@ -28,12 +28,12 @@ export function FormDialog({
       onClose={onClose}
       sx={{
         "& .MuiDialog-paper":{
-          borderRadius:"10px",
+          borderRadius:"25px",
           padding: isMobile ? "0px" : "25px",
+          border: "1px solid #383737"
         }
       }}
     >
-      <DialogTitle>{title}</DialogTitle>
 
       <DialogContent>{children}</DialogContent>
 

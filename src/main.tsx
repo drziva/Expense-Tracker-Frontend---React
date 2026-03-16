@@ -13,8 +13,30 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ErrorProvider } from '@/app/providers/error/ErrorProvider';
 import { ErrorListener } from '@/app/providers/error/ErrorListener';
 import { GlobalErrorSnackbar } from '@/shared/errors/GlobalErrorSnackbar';
+import { registerSW } from "virtual:pwa-register";
+import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      networkMode: "always",
+      retry: (failureCount) => {
+        return navigator.onLine && failureCount < 3;
+      }
+    },
+
+    mutations: {
+      networkMode: "always",
+      retry: (failureCount) => {
+        return navigator.onLine && failureCount < 3;
+      }
+    }
+  }
+});
+
+registerSW({
+  immediate: true
+});
 
 createRoot(document.getElementById('root')!).render(    
   //<StrictMode>
@@ -22,14 +44,15 @@ createRoot(document.getElementById('root')!).render(
         <ErrorProvider>
           <AppErrorBoundary>
             <ErrorListener />
-            <GlobalErrorSnackbar/>
+            <GlobalErrorSnackbar />
+            <GlobalOfflineSnackbar />
             <ToastProvider>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <QueryClientProvider client={queryClient}>
                   <AuthProvider>
                     <App />
                   </AuthProvider>
-                  <ReactQueryDevtools initialIsOpen={false} />
+                  {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                 </QueryClientProvider>
               </LocalizationProvider>
             </ToastProvider>

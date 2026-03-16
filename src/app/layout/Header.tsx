@@ -12,7 +12,7 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { NavLink } from "react-router-dom";
 import { useThemeMode } from "@/app/providers/theme/AppThemeProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileIcon from '@mui/icons-material/PermIdentity';
 import { useAuth } from "@/features/auth/context/AuthProvider";
 
@@ -28,8 +28,22 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
 
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   const { mode, toggleTheme } = useThemeMode();
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [])
 
   return (
     <Box
@@ -76,8 +90,17 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
         )}
       </Box>
 
-      <Box sx={{ flexGrow: 1 }} />
-      <Box>
+      <Box sx={{ flexGrow: 1 }} ></Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {/* <Box>
+          <Tooltip title={!isOnline && "Offline"}>
+            <Typography variant="body2" color={isOnline ? "success.main" : "warning.main"} sx={{cursor: "pointer"}}>   
+              {isOnline ? "" : "Offline ○"}
+            </Typography>
+          </Tooltip>
+        </Box> */}
+
         <IconButton onClick={toggleTheme} color="primary">
           <Tooltip
             title="Switch Theme"

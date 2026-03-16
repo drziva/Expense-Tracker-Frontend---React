@@ -40,7 +40,7 @@ export function IncomeDialog({
   onClose,
   income,
   onChange,
-  onSuccess
+  onSuccess,
 }: Props) {
 
   const createIncome = useCreateIncome();

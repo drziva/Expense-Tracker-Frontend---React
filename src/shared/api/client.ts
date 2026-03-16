@@ -11,17 +11,16 @@ api.interceptors.request.use((config)=>{
     config.headers.Authorization = `Bearer ${token}`;
   }
 
+  if(!navigator.onLine) {
+    return Promise.reject(new Error("Network error: Please check your internet connection."));
+  }
+
   return config;
 })
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if(!error.response) {
-      emitApiError("Network error: Please check your internet connection.");
-      return Promise.reject(error);
-    }
-
     const status = error.response.status;
     const message = error.response.data?.message || "Unexpected error occurred.";
 

@@ -9,14 +9,15 @@ type Props = {
   data?: Income[] | Expense[];
   onEdit: (tx: Income | Expense) => void;
   onDelete: (tx: Income | Expense) => void;
+  onClick: (tx: Income | Expense) => void;
   color: string;
 }
 
-export function MobileTransactionTable({data, onEdit, onDelete, color}: Props) {
+export function MobileTransactionTable({data, onEdit, onDelete, onClick, color}: Props) {
   return (
     <Box display="flex" flexDirection="column" gap={1}>
       {data?.map(tx => (
-        <Paper key={tx.id} sx={{ p: 0.7, pr: 0, pl:1}}>
+        <Paper key={tx.id} sx={{ p: 0.7, pr: 0, pl:1}} onClick={() => onClick(tx)}>
         <Box
           sx={{
             display: "flex",
@@ -39,14 +40,20 @@ export function MobileTransactionTable({data, onEdit, onDelete, color}: Props) {
           <Box display="flex" flexDirection="column" gap={1} mt={1}>
             <Button
               size="small"
-              onClick={() => onEdit(tx)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(tx);
+              }}
             >
               <EditIcon fontSize="small"/>
             </Button>
             <Button
               size="small"
               color="error"
-              onClick={() => onDelete(tx)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(tx)
+              }}
               data-cy={`delete-mobile-expense-button-${tx.id}`}
             >
               <DeleteIcon fontSize="small"/>

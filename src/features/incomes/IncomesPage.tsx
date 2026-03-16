@@ -76,15 +76,15 @@ export default function IncomesPage() {
   const [range, setRange] = useState<"week" | "month" | "year">("week");
 
   const [summaryQuery, setSummaryQuery] = useState<IncomeSummaryQuery>({
-    from: from || new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-    to: to || new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+    from: from || dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+    to: to || dayjs().format("YYYY-MM-DD"),
     type: range === "year" ? "yearly" : "regular"
   });
 
   useEffect(()=>{
     setSummaryQuery({
-      from: from || new Date(new Date().setDate(new Date().getDate() - 7)).toISOString(),
-      to: to || new Date(new Date().setDate(new Date().getDate() + 1)).toISOString(),
+      from: from || dayjs().subtract(7, "day").format("YYYY-MM-DD"),
+      to: to || dayjs().format("YYYY-MM-DD"),
       type: range === "year" ? "yearly" : "regular"
     });
   },[from,to])
@@ -261,22 +261,6 @@ export default function IncomesPage() {
         >
           Incomes
         </Typography>
-
-        <Button
-          onClick={() => {
-            filteredReport.mutateAsync(query)
-          }}
-          sx={{
-            height: 40,
-            fontSize: "0.8rem",
-
-          }}
-        >
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="body2">Export Table</Typography>
-            <PictureAsPdf fontSize="small" />
-          </Stack>
-        </Button>
       </Box>
 
       {/* CHART + RANGE SELECTOR */}
@@ -352,6 +336,25 @@ export default function IncomesPage() {
 
           <RowLimitSelect/>
         </Box>
+        <Stack
+          direction={isMobile ? "column" : "row"}
+          spacing={1}
+          sx={{
+            alignItems: isMobile ? "stretch" : "center",
+          }}
+        >
+          <Button
+            variant="outlined"
+            onClick={() => filteredReport.mutateAsync(query)}
+            sx={{
+              height: 40,
+              fontSize: "0.8rem",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Export PDF
+          </Button>
+
           <Button
             onClick={() => setToCreate(true)}
             variant="contained"
@@ -359,10 +362,12 @@ export default function IncomesPage() {
               height: 40,
               fontSize: "0.8rem",
               lineHeight: "1.3",
+              whiteSpace: "nowrap",
             }}
           >
-          <strong>Add Income</strong>
-        </Button>
+            <strong>Add Income</strong>
+          </Button>
+        </Stack>
       </Box>
 
       {/* TABLE */}
@@ -392,6 +397,7 @@ export default function IncomesPage() {
               data={data?.data}
               onDelete={setToDelete}
               onEdit={setToUpdate}
+              onClick={setDetailsOpen}
               color="success"
             />
           )
@@ -433,7 +439,6 @@ export default function IncomesPage() {
         onConfirm={() => {
           if (!toDelete) return;
           deleteIncome.mutate(toDelete.id);
-          setToDelete(null);
         }}
       />
 

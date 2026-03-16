@@ -5,7 +5,7 @@ import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import AppLayout from "@/app/layout/AppLayout";
 import { ReportsPage } from "@/features/reports/ReportsPage";
 
-const DashboardPage = lazy(() => import("@/features/dashboard/pages/DashboardPage"));
+const DashboardPage = lazy(() => import("@/features/dashboard/DashboardPage"));
 const ExpensesPage = lazy(() => import("@/features/expenses/ExpensesPage"));
 const IncomesPage = lazy(() => import("@/features/incomes/IncomesPage"));
 const ExpenseGroupsPage = lazy(() => import("@/features/expense-groups/ExpenseGroupsPage"));

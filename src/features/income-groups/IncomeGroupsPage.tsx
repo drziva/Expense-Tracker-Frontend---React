@@ -271,6 +271,7 @@ export default function IncomeGroupsPage() {
                 data={data.data}
                 onDelete={setToDelete}
                 onEdit={setToUpdate}
+                onClick={(gr) => setDetailsOpen(gr)}
               />
             )
         )}
