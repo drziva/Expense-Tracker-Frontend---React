@@ -422,6 +422,10 @@ export default function ExpenseGroupsPage() {
         setToUpdate(detailsOpen);
         setDetailsOpen(null);
       }}
+      onDelete={() => {
+        setToDelete(detailsOpen);
+        setDetailsOpen(null);
+      }}
     />
   </>
 );

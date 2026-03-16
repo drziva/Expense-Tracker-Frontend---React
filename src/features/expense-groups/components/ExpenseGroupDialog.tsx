@@ -124,12 +124,7 @@ export function ExpenseGroupDialog({
       }
     >
 
-      <Paper
-        sx={{
-          p: 0,
-          borderRadius: 3
-        }}
-      >
+      <Paper>
 
         <Stack spacing={2}>
 

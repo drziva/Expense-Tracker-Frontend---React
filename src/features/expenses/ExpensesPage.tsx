@@ -531,6 +531,10 @@ export default function ExpensesPage() {
           setToUpdate(detailsOpen);
           setDetailsOpen(null);
         }}
+        onDelete={() => {
+          setToDelete(detailsOpen);
+          setDetailsOpen(null);
+        }}
       />
 
     </>

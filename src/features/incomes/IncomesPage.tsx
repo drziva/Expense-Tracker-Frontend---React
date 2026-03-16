@@ -500,6 +500,10 @@ export default function IncomesPage() {
           setToUpdate(detailsOpen);
           setDetailsOpen(null);
         }}
+        onDelete={() => {
+          setToDelete(detailsOpen);
+          setDetailsOpen(null);
+        }}
       />
     </>
   );

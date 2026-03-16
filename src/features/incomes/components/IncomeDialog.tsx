@@ -120,13 +120,7 @@ export function IncomeDialog({
       onSubmit={form.handleSubmit(onSubmit)}
       submitting={createIncome.isPending || updateIncome.isPending}
     >
-      <Paper
-        variant="outlined"
-        sx={{
-          p: 3,
-          borderRadius: 3
-        }}
-      >
+      <Paper>
         <Stack spacing={2}>
 
           <Stack direction="row" alignItems="center" spacing={1}>
