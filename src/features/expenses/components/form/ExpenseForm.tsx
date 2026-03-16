@@ -1,6 +1,17 @@
 import { Controller, type UseFormReturn } from "react-hook-form";
 import type { ExpenseGroup } from "@/features/expense-groups/types/expenseGroup.responses";
-import { FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem, Select, Stack, TextField, useMediaQuery } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  useMediaQuery
+} from "@mui/material";
+import { NumericFormat } from "react-number-format";
 import { expenseSchema } from "@/features/expenses/schemas/expense.schema";
 import type { z } from "zod";
 
@@ -12,21 +23,25 @@ type Props = {
   groups: ExpenseGroup[];
 };
 
-export function ExpenseForm({form, groups}: Props) {
+export function ExpenseForm({ form, groups }: Props) {
+
   const {
     register,
-    formState: {errors, isDirty},
-  } = form
+    control,
+    formState: { errors }
+  } = form;
+
   const isMobile = useMediaQuery("(max-width: 600px)");
 
-  return(
+  return (
     <Stack
       sx={{
         gap: "12px",
-        minWidth: isMobile ? "150px" :"480px",
-        padding: "10px",
+        minWidth: isMobile ? "150px" : "480px",
+        padding: "10px"
       }}
     >
+
       <TextField
         label="Description"
         {...register("description")}
@@ -39,46 +54,77 @@ export function ExpenseForm({form, groups}: Props) {
           }
         }}
       />
-
-      <TextField
-        label="Amount"
-        {...register("amount")}
-        error={!!errors.amount}
-        helperText={errors.amount?.message}
+      <Controller
+        name="amount"
+        control={control}
+        render={({ field }) => (
+          <NumericFormat
+            name={field.name}
+            value={(field.value as string) ?? ""}
+            customInput={TextField}
+            label="Amount"
+            thousandSeparator=","
+            decimalScale={2}
+            fixedDecimalScale
+            allowNegative={false}
+            onValueChange={(values) => {
+              field.onChange(values.value);
+            }}
+            error={!!errors.amount}
+            helperText={errors.amount?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    €
+                  </InputAdornment>
+                )
+              },
+              htmlInput: {
+                "data-cy": "expense-amount-input",
+                "data-testid": "expense-amount-input"
+              }
+            }}
+          />
+        )}
       />
 
       <FormControl error={!!errors.groupId}>
+
         <InputLabel id="expense-group-label">
           Expense Group
         </InputLabel>
 
-      <Controller
-        name="groupId"
-        control={form.control}
-        render={({ field }) => (
-          <Select
-            {...field}
-            labelId="expense-group-label"
-            label="Expense Group"
-            data-cy="expense-group-select"
-            data-testid="expense-group-select"
-          >
-            {groups.map((gr) => (
-              <MenuItem 
-                key={gr.id} 
-                value={String(gr.id)}
-                data-cy={`expense-group-option-${gr.id}`}
-              >
-                {gr.name}
-              </MenuItem>
-            ))}
-          </Select>
-        )}
-      />
+        <Controller
+          name="groupId"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              labelId="expense-group-label"
+              label="Expense Group"
+              data-cy="expense-group-select"
+              data-testid="expense-group-select"
+            >
+              {groups.map((gr) => (
+                <MenuItem
+                  key={gr.id}
+                  value={String(gr.id)}
+                  data-cy={`expense-group-option-${gr.id}`}
+                >
+                  {gr.name}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        />
+
         <FormHelperText>
           {errors.groupId?.message}
         </FormHelperText>
+
       </FormControl>
+
     </Stack>
-  )
+  );
 }

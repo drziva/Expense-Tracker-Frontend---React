@@ -120,8 +120,16 @@ export function ExpenseDialog({
       }
     >
 
-      <Paper>
+      <Paper
+        variant="outlined"
+        sx={{
+          p: 3,
+          borderRadius: 3
+        }}
+      >
+
         <Stack spacing={2}>
+
           <Stack direction="row" alignItems="center" spacing={1}>
             <ReceiptIcon color="error" />
             <Typography variant="h6">

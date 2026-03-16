@@ -4,7 +4,7 @@ import { positiveInt } from "@/features/expense-groups/schemas/expense-group.sch
 export const scheduledTransactionSchema = z
   .object({
     description: z.string().min(1, "Description must be defined"),
-    amount: positiveInt("Amount must be a positive number"),
+    amount: z.coerce.number().positive("Amount must be a positive number"),
     date: z.string(),
     type: z.enum(["income", "expense"], "Transaction type must be selected"),
     incomeGroupId: z.number("Income Group must be selected").optional(),
