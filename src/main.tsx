@@ -15,6 +15,7 @@ import { ErrorListener } from '@/app/providers/error/ErrorListener';
 import { GlobalErrorSnackbar } from '@/shared/errors/GlobalErrorSnackbar';
 import { registerSW } from "virtual:pwa-register";
 import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
+import { initPushNotifications } from "./shared/firebase/firebase-app";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,9 +35,11 @@ const queryClient = new QueryClient({
   }
 });
 
-registerSW({
-  immediate: true
-});
+// registerSW({
+//   immediate: true
+// });
+
+initPushNotifications();
 
 createRoot(document.getElementById('root')!).render(    
   //<StrictMode>
