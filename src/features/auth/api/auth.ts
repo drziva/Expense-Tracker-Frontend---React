@@ -5,6 +5,12 @@ export type LoginRequest = {
   password: string;
 };
 
+export type SignUpRequest = {
+  email: string,
+  password: string,
+  username: string
+}
+
 export type LoginResponse = {
   accessToken: string;
   user: {
@@ -18,6 +24,11 @@ export type LoginResponse = {
 
 export async function login(dto: LoginRequest): Promise<LoginResponse> {
   const res = await api.post<LoginResponse>("/auth/login", dto);
+  return res.data;
+}
+
+export async function signUp(dto: SignUpRequest): Promise<LoginResponse> {
+  const res = await api.post<LoginResponse>("/auth/signup", dto);
   return res.data;
 }
 
