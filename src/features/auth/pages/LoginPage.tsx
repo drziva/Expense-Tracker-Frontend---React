@@ -132,6 +132,26 @@ export default function LoginPage() {
               }}
             />
 
+            <Typography
+              variant="subtitle2"
+              color="text.secondary"
+            >
+              Don't have an account yet?
+              <Typography 
+                sx={{
+                  cursor: "pointer",
+                  textDecoration: "underline"
+                }}
+                onClick={() => location.href = "/signup"}
+                variant="subtitle2"
+                color="text.primary"
+              >
+                Sign Up
+              </Typography>
+
+            </Typography>
+
+
             <Button
               name="submit"
               type="submit"

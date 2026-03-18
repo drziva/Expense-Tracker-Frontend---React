@@ -304,7 +304,6 @@ export default function ExpenseGroupsPage() {
               columns={columns}
               getRowKey={(gr) => gr.id}
               onRowClick={(gr) => {
-                //location.href = `/app/expenses?group=${gr.id}`;
                 setDetailsOpen(gr);
               }}
             />

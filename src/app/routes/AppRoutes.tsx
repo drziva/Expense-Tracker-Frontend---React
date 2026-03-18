@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy } from "react";
-import LoginPage from "@/features/auth/pages/LoginPage"; // eager (correct)
+import LoginPage from "@/features/auth/pages/LoginPage";
+import  SignUpPage from "@/features/auth/pages/SignUpPage";
 import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import AppLayout from "@/app/layout/AppLayout";
 import { ReportsPage } from "@/features/reports/ReportsPage";
@@ -17,6 +18,7 @@ export default function AppRoutes() {
   return(
     <Routes>
       <Route path="/login" element={<LoginPage/>}/>
+      <Route path="/signup" element={<SignUpPage/>}/>
 
       <Route element={<ProtectedRoute/>}>
         <Route path="/app" element={<AppLayout/>}>

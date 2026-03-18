@@ -20,6 +20,7 @@ import { Income } from "@/features/incomes/types/incomes.responses"
 import { SchedTransaction } from "@/features/scheduled-transactions/types/scheduled-transactions.responses"
 
 import formatEuros from "../lib/formatMoney"
+import { useNavigate } from "react-router-dom"
 
 type DetailsData =
   | { type: "expense"; item: Expense | null }
@@ -122,12 +123,12 @@ function ViewGroupButton({
   href: string
   label: string
 }) {
+  const navigate = useNavigate();
+
   return (
     <Button
       variant="outlined"
-      onClick={() => {
-        location.href = href
-      }}
+      onClick={() => navigate(href)}
     >
       {label}
     </Button>
