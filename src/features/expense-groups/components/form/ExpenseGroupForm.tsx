@@ -1,7 +1,8 @@
-import { Stack, TextField, useMediaQuery } from "@mui/material";
+import { InputAdornment, Stack, TextField, useMediaQuery } from "@mui/material";
 import type { z } from "zod";
 import type { expenseGroupSchema } from "@/features/expense-groups/schemas/expense-group.schema";
-import type { UseFormReturn } from "react-hook-form";
+import { Controller, type UseFormReturn } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
 
 type FormInput = z.input<typeof expenseGroupSchema>;
 type FormOutput = z.infer<typeof expenseGroupSchema>
@@ -13,7 +14,8 @@ type Props = {
 export function ExpenseGroupForm({form}: Props) {
   const {
     register,
-    formState:{errors}
+    formState:{errors},
+    control
   } = form
   const isMobile = useMediaQuery("(max-width: 600px)");
   
@@ -39,12 +41,39 @@ export function ExpenseGroupForm({form}: Props) {
         helperText={errors.description?.message}
         fullWidth
       />
-      <TextField
-        label="Budget Cap"
-        {...register("budgetCap")}
-        error={!!errors.budgetCap}
-        helperText={errors.budgetCap?.message}
-        fullWidth
+      <Controller
+        name="budgetCap"
+        control={control}
+        render={({ field }) => (
+          <NumericFormat
+            name={field.name}
+            value={(field.value as string) ?? ""}
+            customInput={TextField}
+            label="Budget Cap"
+            thousandSeparator=","
+            decimalScale={2}
+            fixedDecimalScale
+            allowNegative={false}
+            onValueChange={(values) => {
+              field.onChange(values.value);
+            }}
+            error={!!errors.budgetCap}
+            helperText={errors.budgetCap?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    €
+                  </InputAdornment>
+                )
+              },
+              htmlInput: {
+                "data-cy": "income-amount-input",
+                "data-testid": "income-amount-input"
+              }
+            }}
+          />
+        )}
       />
     </Stack>
   )
