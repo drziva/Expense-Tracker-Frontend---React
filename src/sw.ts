@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import { precacheAndRoute } from "workbox-precaching";
+import { createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { CacheFirst, NetworkFirst } from "workbox-strategies";
 import { ExpirationPlugin } from "workbox-expiration";
@@ -25,13 +25,21 @@ precacheAndRoute(self.__WB_MANIFEST);
 onBackgroundMessage(messaging, (payload) => {
     console.log("[SW] Background message: ", payload);
 
+    const title = payload.notification?.title || payload.data?.title || "Notification";
+    const body = payload.notification?.body || payload.data?.body || "";
+
     self.registration.showNotification(
-        payload.notification?.title ?? "Notification",
+        title,
         {
-            body: payload.notification?.body
+            body: body
         }
     )
 })
+
+registerRoute(
+    ({request, url}) => request.mode === "navigate" && !url.pathname.startsWith("/api"),
+    createHandlerBoundToURL("/index.html") 
+)
 
 registerRoute(
     ({request}) => 
@@ -62,7 +70,7 @@ registerRoute(
 )
 
 registerRoute(
-    ({url}) => url.pathname.startsWith("api"),
+    ({url}) => url.pathname.startsWith("/api"),
     new NetworkFirst({
         cacheName: "api-cache",
         networkTimeoutSeconds: 5,
