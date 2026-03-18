@@ -6,7 +6,7 @@ import formatEuros from "@/shared/lib/formatMoney"
 import type { Expense } from "@/features/expenses/types/expenses.responses";
 import type { Income } from "@/features/incomes/types/incomes.responses";
 import { MobileTransactionCard } from "@/shared/mobile/MobileTransactionCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DashboardTimelineChart } from "@/features/dashboard/components/DashboardTimelineChart";
 import dayjs from "dayjs";
 

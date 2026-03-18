@@ -15,19 +15,44 @@ import { ErrorListener } from '@/app/providers/error/ErrorListener';
 import { GlobalErrorSnackbar } from '@/shared/errors/GlobalErrorSnackbar';
 import { registerSW } from "virtual:pwa-register";
 import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
+import { AxiosError } from 'axios';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      networkMode: "always",
-      retry: (failureCount) => {
+      networkMode: "online",
+      retry: (failureCount, error) => {
+          if(error instanceof AxiosError){
+            const status = error?.response?.status;
+
+          if(status && status >= 500 && failureCount < 3) {
+            return true;
+          }
+
+          if(status && status >= 400) {
+            return false;
+          }
+        }
+
         return navigator.onLine && failureCount < 3;
       }
     },
 
     mutations: {
-      networkMode: "always",
-      retry: (failureCount) => {
+      networkMode: "online",
+      retry: (failureCount, error) => {
+          if(error instanceof AxiosError){
+            const status = error?.response?.status;
+
+          if(status && status >= 500 && failureCount < 3) {
+            return true;
+          }
+
+          if(status && status >= 400) {
+            return false;
+          }
+        }
+
         return navigator.onLine && failureCount < 3;
       }
     }

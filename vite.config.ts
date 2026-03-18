@@ -7,6 +7,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "sw.ts",
+      
       registerType: "autoUpdate",
       manifest: {
         name: "Expense Tracker",
@@ -29,53 +33,6 @@ export default defineConfig({
           }
         ]
       },
-      workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: ({request}) => 
-              request.destination === "script" || 
-              request.destination === "style",
-
-            handler: "CacheFirst",
-
-            options: {
-              cacheName: "static-assets",
-              expiration: {
-                maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
-          },
-          {
-            urlPattern: ({request}) => 
-              request.destination === "image",
-            
-            handler: "CacheFirst",
-            
-            options: {
-              cacheName: "images",
-              expiration: {
-                maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
-          },
-          {
-            urlPattern: ({url}) => url.port === "3000",
-
-            handler: "NetworkFirst",
-
-            options: {
-              cacheName: "api-cache",
-              networkTimeoutSeconds: 5,
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 5
-              }
-            }
-          }
-        ]
-      }
     })
   ],
   resolve: {
