@@ -68,13 +68,13 @@ createRoot(document.getElementById('root')!).render(
       <AppThemeProvider>
         <ErrorProvider>
           <AppErrorBoundary>
-            <ErrorListener />
-            <GlobalErrorSnackbar />
-            <GlobalOfflineSnackbar />
             <ToastProvider>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <QueryClientProvider client={queryClient}>
                   <AuthProvider>
+                    <ErrorListener />
+                    <GlobalErrorSnackbar />
+                    <GlobalOfflineSnackbar />
                     <App />
                   </AuthProvider>
                   <ReactQueryDevtools initialIsOpen={false} />

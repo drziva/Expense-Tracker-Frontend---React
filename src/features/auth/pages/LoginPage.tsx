@@ -25,12 +25,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     loginMutation.mutate(
-      { email, password },
-      {
-        onSuccess: () => {
-          navigate("/app", { replace: true });
-        },
-      }
+      { email, password }
     );
   };
 
