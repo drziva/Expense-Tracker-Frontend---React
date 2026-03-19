@@ -107,6 +107,7 @@ export default function IncomesPage() {
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<Income | null>(null);
   const [toDelete, setToDelete] = useState<Income | null>(null);
+  const [prevDelete, setPrevDelete] = useState<Income | null>(null);
   const [detailsOpen, setDetailsOpen] = useState<Income | null>(null);
   const [toFilter, setToFilter] = useState(false);
   const [toClose, setToClose] = useState(false);
@@ -184,6 +185,7 @@ export default function IncomesPage() {
                 onClick={e => {
                   e.stopPropagation()
                   setToDelete(income)
+                  setPrevDelete(income)
                 }}
             >
               <DeleteIcon color="error" fontSize="small" />
@@ -433,7 +435,7 @@ export default function IncomesPage() {
         open={!!toDelete}
         title="Delete income"
         action="Delete"
-        description={`Are you sure you want to delete "${toDelete?.description}"`}
+        description={`Are you sure you want to delete "${prevDelete?.description}"`}
         loading={deleteIncome.isPending}
         onCancel={() => setToDelete(null)}
         onConfirm={() => {
@@ -444,6 +446,7 @@ export default function IncomesPage() {
 
       <IncomeDialog 
         open={toCreate} 
+        title="Create"
         onClose={() => {
           if(formDirty) {
             setToClose(true);
@@ -460,6 +463,7 @@ export default function IncomesPage() {
 
       <IncomeDialog
         open={!!toUpdate}
+        title="Edit"
         onClose={() => {
           if(formDirty) {
             setToClose(true);

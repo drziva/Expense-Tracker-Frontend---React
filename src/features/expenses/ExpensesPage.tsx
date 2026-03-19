@@ -139,6 +139,7 @@ export default function ExpensesPage() {
   const [toCreate, setToCreate] = useState(false)
   const [toUpdate, setToUpdate] = useState<Expense | null>(null)
   const [toDelete, setToDelete] = useState<Expense | null>(null)
+  const [prevDelete, setPrevDelete] = useState<Expense | null>(null)
   const [detailsOpen, setDetailsOpen] = useState<Expense | null>(null)
   const [toFilter, setToFilter] = useState(false)
   const [toClose, setToClose] = useState(false)
@@ -195,6 +196,7 @@ export default function ExpensesPage() {
               onClick={e => {
                 e.stopPropagation()
                 setToDelete(expense)
+                setPrevDelete(expense);
               }}
             >
               <DeleteIcon color="error" fontSize="small" />
@@ -460,7 +462,7 @@ export default function ExpensesPage() {
         open={!!toDelete}
         title="Delete expense"
         action="Delete"
-        description={`Are you sure you want to delete "${toDelete?.description}"`}
+        description={`Are you sure you want to delete "${prevDelete?.description}"`}
         loading={deleteExpense.isPending}
         onCancel={() => setToDelete(null)}
         onConfirm={() => {
@@ -472,6 +474,7 @@ export default function ExpensesPage() {
 
       <ExpenseDialog
         open={toCreate}
+        title="Create"
         onClose={() => {
             if(formDirty) {
               setToClose(true);
@@ -506,6 +509,7 @@ export default function ExpensesPage() {
 
       <ExpenseDialog
         open={!!toUpdate}
+        title="Edit"
         onClose={() => {
           if(formDirty) {
             setToClose(true);

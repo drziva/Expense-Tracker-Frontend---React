@@ -1,10 +1,11 @@
-import { Alert } from "@mui/material";
+import { Alert, Divider, Paper, Stack, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 
 import { FormDialog } from "@/shared/ui/FormDialog";
+import PaymentsIcon from "@mui/icons-material/Payments";
 import { ScheduledTransactionForm } from "@/features/scheduled-transactions/components/form/ScheduledTransactionForm";
 import { scheduledTransactionSchema } from "@/features/scheduled-transactions/schemas/scheduled-transaction.schema";
 
@@ -14,6 +15,7 @@ import { useUpdateSchedTransaction } from "@/features/scheduled-transactions/hoo
 
 type Props = {
   open: boolean;
+  title: string;
   onClose: () => void;
   transaction?: SchedTransaction | null;
   onChange?: (isDirty: boolean) => void;
@@ -25,6 +27,7 @@ type FormOutput = z.infer<typeof scheduledTransactionSchema>;
 
 export function ScheduledTransactionDialog({
   open,
+  title,
   onClose,
   transaction,
   onChange,
@@ -96,10 +99,6 @@ export function ScheduledTransactionDialog({
     } catch {}
   }
 
-  const title = isUpdate
-    ? "Update Scheduled Transaction"
-    : "Create Scheduled Transaction";
-
   const isSubmitting = isUpdate
     ? updateTx.isPending
     : createTx.isPending;
@@ -113,21 +112,34 @@ export function ScheduledTransactionDialog({
   return (
     <FormDialog
       open={open}
-      title={title}
-      action={isUpdate ? "Update" : "Create"}
+      title={title === "Edit" ? "Edit Scheduled Transaction" : "Create Scheduled Transaction"}
+      action={title === "Edit" ? "Update" : "Create"}
       onClose={onClose}
       onSubmit={form.handleSubmit(onSubmit)}
       submitting={isSubmitting}
     >
-      {apiError && (
-        <Alert severity="error">
-          {`There has been an error ${
-            isUpdate ? "updating" : "creating"
-          } the scheduled transaction`}
-        </Alert>
-      )}
+      <Paper>
 
-      <ScheduledTransactionForm form={form} />
+        <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+          <PaymentsIcon color="success" />
+          <Typography variant="h6">
+            {title === "Create" ? "Add Transaction" : "Edit Transaction"}
+          </Typography>
+        </Stack>
+
+        <Divider sx={{ mb: 2}}/>
+
+        {apiError && (
+          <Alert severity="error">
+            {`There has been an error ${
+              title === "Edit" ? "updating" : "creating"
+            } the scheduled transaction`}
+          </Alert>
+        )}
+
+        <ScheduledTransactionForm form={form} />
+
+      </Paper>
     </FormDialog>
   );
 }

@@ -45,6 +45,7 @@ export default function ExpenseGroupsPage() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [toDelete, setToDelete] = useState<ExpenseGroup | null>(null);
+  const [prevDelete, setPrevDelete] = useState<ExpenseGroup | null>(null);
   const [toUpdate, setToUpdate] = useState<ExpenseGroup | null>(null);
   const [detailsOpen, setDetailsOpen] = useState<ExpenseGroup | null>(null);
   const [toCreate, setToCreate] = useState(false);
@@ -178,6 +179,7 @@ export default function ExpenseGroupsPage() {
                 onClick={e => {
                   e.stopPropagation()
                   setToDelete(gr)
+                  setPrevDelete(gr);
                 }}
             >
               <DeleteIcon color="error" fontSize="small" />
@@ -356,7 +358,7 @@ export default function ExpenseGroupsPage() {
     <ConfirmDialog
       title="Delete Expense Group"
       action="Delete"
-      description={`Are you sure you want to delete the "${toDelete?.name}" group?`}
+      description={`Are you sure you want to delete the "${prevDelete?.name}" group?`}
       open={!!toDelete}
       onConfirm={() => {
         if (!toDelete) return
@@ -368,6 +370,7 @@ export default function ExpenseGroupsPage() {
 
     <ExpenseGroupDialog
       open={toCreate}
+      title="Create"
       onClose={() => {
         if(formDirty) {
           setToClose(true);
@@ -384,6 +387,7 @@ export default function ExpenseGroupsPage() {
 
     <ExpenseGroupDialog
       open={!!toUpdate}
+      title="Edit"
       onClose={() => {
         if(formDirty) {
           setToClose(true);

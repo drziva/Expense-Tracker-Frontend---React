@@ -63,6 +63,7 @@ export default function IncomeGroupsPage() {
 
   const deleteIncomeGroup = useDeleteIncomeGroup();
   const [toDelete, setToDelete] = useState<IncomeGroup | null>(null);
+  const [prevDelete, setPrevDelete] = useState<IncomeGroup | null>(null);
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<IncomeGroup | null>(null);
   const [detailsOpen, setDetailsOpen] = useState<IncomeGroup | null>(null)  
@@ -134,6 +135,7 @@ export default function IncomeGroupsPage() {
                 onClick={e => {
                   e.stopPropagation()
                   setToDelete(gr)
+                  setPrevDelete(gr);
                 }}
             >
               <DeleteIcon color="error" fontSize="small" />
@@ -309,7 +311,7 @@ export default function IncomeGroupsPage() {
       <ConfirmDialog
         title="Delete Income Group"
         action="Delete"
-        description={`Are you sure you want to delete the "${toDelete?.name}" group?`}
+        description={`Are you sure you want to delete the "${prevDelete?.name}" group?`}
         open={!!toDelete}
         onConfirm={() => {
           if (!toDelete) return
@@ -322,6 +324,7 @@ export default function IncomeGroupsPage() {
 
       <IncomeGroupDialog
         open={toCreate}
+        title="Create"
         onClose={() => {
           if(formDirty){
             setToClose(true);
@@ -337,6 +340,7 @@ export default function IncomeGroupsPage() {
 
       <IncomeGroupDialog
         open={!!toUpdate}
+        title="Edit"
         onClose={() => {
             if(formDirty){
               setToClose(true);

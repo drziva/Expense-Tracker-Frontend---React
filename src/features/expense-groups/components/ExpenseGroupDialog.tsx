@@ -27,6 +27,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt"
 
 type Props = {
   open: boolean
+  title: string
   onClose: () => void
   group?: ExpenseGroup | null
   onChange?: (isDirty: boolean) => void
@@ -38,6 +39,7 @@ type FormOutput = z.infer<typeof expenseGroupSchema>
 
 export function ExpenseGroupDialog({
   open,
+  title,
   onClose,
   group,
   onChange,
@@ -113,8 +115,8 @@ export function ExpenseGroupDialog({
   return (
     <FormDialog
       open={open}
-      title={isUpdate ? "Update Expense Group" : "Create Expense Group"}
-      action={isUpdate ? "Update" : "Create"}
+      title={title === "Edit" ? "Edit Expense Group" : "Create Expense Group"}
+      action={title === "Edit" ? "Update" : "Create"}
       onClose={onClose}
       onSubmit={form.handleSubmit(onSubmit)}
       submitting={
@@ -131,9 +133,9 @@ export function ExpenseGroupDialog({
           <Stack direction="row" alignItems="center" spacing={1}>
             <ReceiptIcon color="error" />
             <Typography variant="h6">
-              {isUpdate
+              {title === "Edit"
                 ? "Expense Group Details"
-                : "New Expense Group"}
+                : "Add Expense Group"}
             </Typography>
           </Stack>
 

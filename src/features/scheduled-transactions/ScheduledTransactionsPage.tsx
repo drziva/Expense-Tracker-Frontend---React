@@ -39,6 +39,7 @@ export default function ScheduledTransactionsPage() {
   const [toCreate, setToCreate] = useState(false);
   const [toUpdate, setToUpdate] = useState<SchedTransaction | null>(null);
   const [toDelete, setToDelete] = useState<SchedTransaction | null>(null);
+  const [prevDelete, setPrevDelete] = useState<SchedTransaction | null>(null);
   const [toClose, setToClose] = useState(false);
   const [formDirty, setFormDirty] = useState(false);
 
@@ -117,6 +118,7 @@ export default function ScheduledTransactionsPage() {
             onClick={e => {
               e.stopPropagation();
               setToDelete(tx);
+              setPrevDelete(tx);
             }}
             color="error"
           >
@@ -187,7 +189,7 @@ export default function ScheduledTransactionsPage() {
         open={!!toDelete}
         title="Delete scheduled transaction"
         action="Delete"
-        description={`Are you sure you want to delete "${toDelete?.description}"?`}
+        description={`Are you sure you want to delete "${prevDelete?.description}"?`}
         loading={deleteTransaction.isPending}
         onCancel={() => setToDelete(null)}
         onConfirm={() => {
@@ -199,6 +201,7 @@ export default function ScheduledTransactionsPage() {
 
       <ScheduledTransactionDialog
         open={toCreate}
+        title="Create"
         onClose={() => {
           if(formDirty) {
             setToClose(true);
@@ -215,6 +218,7 @@ export default function ScheduledTransactionsPage() {
 
       <ScheduledTransactionDialog
         open={!!toUpdate}
+        title="Edit"
         transaction={toUpdate}
         onClose={() => {
           if(formDirty) {

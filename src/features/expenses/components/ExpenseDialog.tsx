@@ -20,6 +20,7 @@ import type { z } from "zod"
 
 type Props = {
   open: boolean
+  title: string
   onClose: () => void
   expense?: Expense | null
   onChange?: (isDirty: boolean) => void
@@ -31,6 +32,7 @@ type FormOutput = z.infer<typeof expenseSchema>
 
 export function ExpenseDialog({
   open,
+  title,
   onClose,
   expense,
   onChange,
@@ -109,8 +111,8 @@ export function ExpenseDialog({
   return (
     <FormDialog
       open={open}
-      title={isUpdate ? "Update Expense" : "Create Expense"}
-      action={isUpdate ? "Update" : "Create"}
+      title={title}
+      action={title === "Edit" ? "Update" : "Create"}
       onClose={onClose}
       onSubmit={form.handleSubmit(onSubmit)}
       submitting={
@@ -131,7 +133,7 @@ export function ExpenseDialog({
           <Stack direction="row" alignItems="center" spacing={1}>
             <ReceiptIcon color="error" />
             <Typography variant="h6">
-              {isUpdate ? "Expense Details" : "New Expense"}
+              {title === "Edit" ? "Expense Details" : "Add Expense"}
             </Typography>
           </Stack>
 

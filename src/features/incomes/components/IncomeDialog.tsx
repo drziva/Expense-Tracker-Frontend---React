@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Alert,
   Box,
@@ -28,6 +28,7 @@ type Props = {
   open: boolean;
   onClose: () => void;
   income?: Income | null;
+  title: string;
   onChange?: (isDirty: boolean) => void;
   onSuccess: () => void;
 };
@@ -38,6 +39,7 @@ type FormOutput = z.infer<typeof incomeSchema>;
 export function IncomeDialog({
   open,
   onClose,
+  title,
   income,
   onChange,
   onSuccess,
@@ -114,8 +116,8 @@ export function IncomeDialog({
   return (
     <FormDialog
       open={open}
-      title={isUpdate ? "Update Income" : "Create Income"}
-      action={isUpdate ? "Update" : "Create"}
+      title={title}
+      action={title}
       onClose={onClose}
       onSubmit={form.handleSubmit(onSubmit)}
       submitting={createIncome.isPending || updateIncome.isPending}
@@ -126,7 +128,7 @@ export function IncomeDialog({
           <Stack direction="row" alignItems="center" spacing={1}>
             <PaymentsIcon color="success" />
             <Typography variant="h6">
-              {isUpdate ? "Income Details" : "New Income"}
+              {title === "Create" ? "Add Income" : "Edit Income"}
             </Typography>
           </Stack>
 

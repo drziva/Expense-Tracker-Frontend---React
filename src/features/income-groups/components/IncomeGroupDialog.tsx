@@ -28,6 +28,7 @@ type FormOutput = z.infer<typeof incomeGroupSchema>
 
 type Props = {
   open: boolean
+  title: string
   onClose: () => void
   group?: IncomeGroup | null
   onChange?: (isDirty: boolean) => void
@@ -39,7 +40,8 @@ export function IncomeGroupDialog({
   onClose,
   group,
   onChange,
-  onSuccess
+  onSuccess,
+  title
 }: Props) {
 
   const createIncomeGroup = useCreateIncomeGroup()
@@ -106,9 +108,9 @@ export function IncomeGroupDialog({
   return (
     <FormDialog
       open={open}
-      action={isUpdate ? "Update" : "Create"}
+      action={title === "Edit" ? "Update" : "Create"}
       submitting={isUpdate ? updateIncomeGroup.isPending : createIncomeGroup.isPending}
-      title={isUpdate ? "Update Income Group" : "Create Income Group"}
+      title={title}
       onClose={onClose}
       onSubmit={form.handleSubmit(onSubmit)}
     >
@@ -119,7 +121,7 @@ export function IncomeGroupDialog({
           <Stack direction="row" alignItems="center" spacing={1}>
             <PaymentsIcon color="success" />
             <Typography variant="h6">
-              {isUpdate ? "Income Group Details" : "New Income Group"}
+              {title === "Edit" ? "Edit Income Group" : "Add Income Group"}
             </Typography>
           </Stack>
 
