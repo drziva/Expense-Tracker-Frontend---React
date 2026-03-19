@@ -33,6 +33,7 @@ export function FormDialog({
           border: "1px solid #383737"
         }
       }}
+      component="form"
     >
 
       <DialogContent>{children}</DialogContent>

@@ -121,9 +121,7 @@ export function ExpenseDialog({
     >
 
       <Paper
-        variant="outlined"
         sx={{
-          p: 3,
           borderRadius: 3
         }}
       >
