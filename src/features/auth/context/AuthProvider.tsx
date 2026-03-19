@@ -14,6 +14,8 @@ type AuthContextValue = {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isPremium: boolean;
+  isLoading: boolean;
+  isError: boolean;
   setUser: (user: AuthUser | null) => void;
   logout: () => void;
 };
@@ -24,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const postLogout = useLogout().mutate;
 
-  const { data, isError } = useMe();
+  const { data, isError, isLoading } = useMe();
 
   useEffect(() => {
     if (data) {
@@ -41,7 +43,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     postLogout();
     setUser(null);
-    window.location.href = "/login"
   };
 
   return (
@@ -50,6 +51,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         isAuthenticated: !!user,
         isPremium: !!user?.premium,
+        isError,
+        isLoading,
         setUser,
         logout,
       }}
