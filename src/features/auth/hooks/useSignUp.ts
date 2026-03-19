@@ -12,8 +12,7 @@ export function useSignUp() {
   >({
       mutationFn: signUp,
       onSuccess: (data) => {
-          localStorage.setItem("token", data.accessToken)
-          navigate("/dashboard");
+        navigate("/dashboard");
       }
   })
 }

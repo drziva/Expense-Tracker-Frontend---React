@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useMe } from "@/features/auth/hooks/useMe";
+import { useLogout } from "../hooks/useLogout";
 
 export type AuthUser = {
   id: number;
@@ -21,9 +22,9 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const postLogout = useLogout().mutate;
 
-  const hasToken = !!localStorage.getItem("token");
-  const { data, isError } = useMe(hasToken);
+  const { data, isError } = useMe();
 
   useEffect(() => {
     if (data) {
@@ -33,13 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (isError) {
-      localStorage.removeItem("token");
       setUser(null);
     }
   }, [isError]);
 
   const logout = () => {
-    localStorage.removeItem("token");
+    postLogout();
     setUser(null);
     window.location.href = "/login"
   };

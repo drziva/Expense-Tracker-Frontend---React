@@ -3,3 +3,9 @@ export function emitApiError(message: string) {
     new CustomEvent("api-error", { detail: message })
   )
 }
+
+export function emitAuthError(message: string) {
+  window.dispatchEvent(
+    new CustomEvent("auth-error", { detail: message })
+  );
+}
