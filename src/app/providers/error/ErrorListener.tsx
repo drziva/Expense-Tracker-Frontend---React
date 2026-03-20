@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useError } from "@/app/providers/error/ErrorProvider";
-import { useAuth } from "@/features/auth/context/AuthProvider";
+import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate } from "react-router-dom";
 
 export function ErrorListener() {
     const { showError } = useError();
-    const { setUser } = useAuth();
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     useEffect(()=>{
         const handler = (event: Event) => {
@@ -13,7 +15,9 @@ export function ErrorListener() {
         }
 
         const authErrorHandler = (event: Event) => {
-            setUser(null);
+            const custom = event as CustomEvent<string>;
+            navigate("/login");
+            showError(custom.detail);
         }
 
         window.addEventListener("api-error", handler);

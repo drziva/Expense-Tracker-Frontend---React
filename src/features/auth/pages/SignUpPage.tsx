@@ -5,11 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, Box, Button, CircularProgress, Paper, TextField, Typography } from "@mui/material";
 import WavingHandIcon from '@mui/icons-material/WavingHand';
 import { useSignUp } from "../hooks/useSignUp";
+import { useNavigate } from "react-router-dom";
 
 type formInput = z.input<typeof signupSchema>;
 type formOutput = z.output<typeof signupSchema>;
 
 export default function SignUpPage() {
+	const navigate = useNavigate();
 	const form  = useForm<formInput, any, formOutput>({
 			resolver: zodResolver(signupSchema),
 			reValidateMode: "onSubmit",
@@ -162,24 +164,24 @@ export default function SignUpPage() {
 							}}
 						/>
 
+						<Box sx={{ textAlign: "left", mt: 1 }}>
+						<Typography variant="subtitle2" color="text.secondary">
+							Already have an account?
+						</Typography>
+
 						<Typography
 							variant="subtitle2"
-							color="text.secondary"
+							color="text.primary"
+							sx={{
+							cursor: "pointer",
+							textDecoration: "underline",
+							mt: 0.5,
+							}}
+							onClick={() => navigate("/login")}
 						>
-							Already have an account?
-							<Typography 
-								sx={{
-									cursor: "pointer",
-									textDecoration: "underline"
-								}}
-								onClick={() => location.href = "/login"}
-								variant="subtitle2"
-								color="text.primary"
-							>
-								Log In
-							</Typography>
-
+							Log In
 						</Typography>
+						</Box>
 
 						<Button
 							name="submit"

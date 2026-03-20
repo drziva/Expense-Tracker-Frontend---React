@@ -16,11 +16,32 @@ api.interceptors.request.use((config)=>{
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
     const status = error.response.status;
     const message = error.response.data?.message || "Unexpected error occurred.";
 
-    if(status === 401) emitAuthError("Unauthorized: Please log in again.");
+    if(originalRequest.url.includes("/auth/refresh")) {
+      emitAuthError("Session expired. Please log in again.");
+      return Promise.reject(error);
+    }
+
+    if(status === 401) {
+      if(originalRequest._retry) {
+        emitAuthError(message);
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+
+      try {
+        await api.post("/auth/refresh");
+        return api(originalRequest);
+      } catch (error){
+        emitAuthError("Session expired. Please log in again.");
+        return Promise.reject(error);
+      }
+    }
 
     if(status >=500) {
       emitApiError(message);

@@ -71,12 +71,9 @@ createRoot(document.getElementById('root')!).render(
             <ToastProvider>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <QueryClientProvider client={queryClient}>
-                  <AuthProvider>
-                    <ErrorListener />
                     <GlobalErrorSnackbar />
                     <GlobalOfflineSnackbar />
                     <App />
-                  </AuthProvider>
                   <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
               </LocalizationProvider>
