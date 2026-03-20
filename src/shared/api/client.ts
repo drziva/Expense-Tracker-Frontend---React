@@ -17,11 +17,6 @@ api.interceptors.request.use((config)=>{
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if(!error.response) {
-      emitApiError("Network error: Please check your internet connection.");
-      return Promise.reject(error);
-    }
-
     const originalRequest = error.config;
     const status = error.response.status;
     const message = error.response.data?.message || "Unexpected error occurred.";

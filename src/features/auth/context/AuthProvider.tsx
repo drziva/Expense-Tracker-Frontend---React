@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useMe } from "@/features/auth/hooks/useMe";
 import { useLogout } from "../hooks/useLogout";
+import { useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/shared/constants/queryKeys";
 
 export type AuthUser = {
   id: number;
@@ -23,8 +26,9 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState<AuthUser | null>(null);
-  const postLogout = useLogout().mutate;
+  const queryClient = useQueryClient();
 
   const { data, isError, isLoading } = useMe();
 
@@ -41,8 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [isError]);
 
   const logout = () => {
-    postLogout();
-    setUser(null);
+    queryClient.invalidateQueries({queryKey: [QUERY_KEYS.ME]});
+    navigate('/login');
   };
 
   return (
