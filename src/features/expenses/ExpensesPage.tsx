@@ -30,7 +30,6 @@ import { Table, type Column } from "@/shared/ui/Table"
 import { RowLimitSelect } from "@/shared/ui/RowLimitSelect"
 import ConfirmDialog from "@/shared/ui/ConfirmDialog"
 import { EmptyState } from "@/shared/ui/EmptyState"
-import PictureAsPdf from "@mui/icons-material/PictureAsPdf"
 
 import { TimelineChart } from "@/shared/charts/TimelineChart"
 
@@ -51,7 +50,11 @@ import SearchBox from "@/shared/ui/SearchBox"
 import dayjs from "dayjs"
 
 import { DetailsDialog } from "@/shared/ui/DetailsDialog"
-import { useDownloadFilteredReport, useDownloadReportPdf } from "../reports/hooks/useDownloadReportPdf"
+import { useDownloadFilteredReport } from "../reports/hooks/useDownloadReportPdf"
+import ExportPdfButton from "@/shared/components/ExportPdfButton"
+import AddEntityButton from "@/shared/components/AddEntityButton"
+import { ADD_EXPENSE_TEXT } from "@/shared/constants/app.constants"
+import { FilterButton } from "@/shared/components/FilterButton"
 
 type Range = {
   from: string
@@ -288,49 +291,47 @@ export default function ExpensesPage() {
         </Typography>
       </Box>
 
-      {!isMobile && (
-        <Box sx={{ mb: 1 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
-              {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
-            </Typography>
+      <Box sx={{ mb: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
+            {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
+          </Typography>
 
-            <Select
-              sx={{ ml: 2 }}
-              value={range}
-              size="small"
-              onChange={(e) => {
+          <Select
+            sx={{ ml: 2 }}
+            value={range}
+            size="small"
+            onChange={(e) => {
 
-                const value = e.target.value as "week" | "month" | "year"
-                const range = getRange(value)
+              const value = e.target.value as "week" | "month" | "year"
+              const range = getRange(value)
 
-                setRange(value)
+              setRange(value)
 
-                setSummaryQuery({
-                  from: range.from,
-                  to: range.to,
-                  type: range.type
-                })
+              setSummaryQuery({
+                from: range.from,
+                to: range.to,
+                type: range.type
+              })
 
-              }}
-            >
-              <MenuItem value="week">Last week</MenuItem>
-              <MenuItem value="month">Last month</MenuItem>
-              <MenuItem value="year">Last year</MenuItem>
-            </Select>
-          </Box>
-
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              backgroundColor: "background.paper"
             }}
           >
-            <TimelineChart data={timelineData} color="expense" type={range} />
-          </Box>
+            <MenuItem value="week">Last week</MenuItem>
+            <MenuItem value="month">Last month</MenuItem>
+            <MenuItem value="year">Last year</MenuItem>
+          </Select>
         </Box>
-      )}
+
+        <Box
+          sx={{
+            p: 2,
+            borderRadius: 2,
+            backgroundColor: "background.paper"
+          }}
+        >
+          <TimelineChart data={timelineData} color="expense" type={range} />
+        </Box>
+      </Box>
 
       {/* SEARCH + FILTERS */}
       <Box
@@ -352,13 +353,7 @@ export default function ExpensesPage() {
 
           <SearchBox />
 
-          <Button
-            variant="outlined"
-            onClick={() => setToFilter(true)}
-            sx={{ height: 40 }}
-          >
-            <FilterIcon fontSize="small" />
-          </Button>
+          <FilterButton onClick={() => setToFilter(true)}/>
 
           <RowLimitSelect />
 
@@ -371,31 +366,15 @@ export default function ExpensesPage() {
             alignItems: isMobile ? "stretch" : "center",
           }}
         >
-          <Button
-            variant="outlined"
+          <ExportPdfButton
             onClick={() => filteredReport.mutateAsync(query)}
-            sx={{
-              height: 40,
-              fontSize: "0.8rem",
-              whiteSpace: "nowrap",
-            }}
             disabled={filteredReport.isPending}
-          >
-            Export PDF
-          </Button>
+          />
 
-          <Button
+          <AddEntityButton
             onClick={() => setToCreate(true)}
-            variant="contained"
-            sx={{
-              height: 40,
-              fontSize: "0.8rem",
-              lineHeight: "1.3",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <strong>Add Expense</strong>
-          </Button>
+            title={ADD_EXPENSE_TEXT}
+          />
         </Stack>
       </Box>
 

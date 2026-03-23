@@ -8,6 +8,7 @@ import {
 } from "recharts"
 import formatEuros from "@/shared/lib/formatMoney";
 import { useTheme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 
 type Props = {
   data: {
@@ -33,13 +34,14 @@ const formatCompact = (value: number) => {
 
 export function TimelineChart({ data, color, type }: Props) {
   const theme = useTheme();
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={isMobile ? 250 : 200}>
       <AreaChart data={data}>
         <XAxis
           dataKey="date"
-          tick={{ fontSize: 12, fill: theme.palette.text.primary }}
+          tick={{ fontSize: isMobile ? 10 : 12, fill: theme.palette.text.primary }}
           interval="preserveStartEnd"
           tickFormatter={(date) =>
             new Date(date).toLocaleDateString("en-US", {
@@ -51,7 +53,7 @@ export function TimelineChart({ data, color, type }: Props) {
           }
         />
         <YAxis 
-            tick={{ fontSize: 12, fill: theme.palette.text.primary }}
+            tick={{ fontSize: isMobile ? 10 : 12, fill: theme.palette.text.primary }}
             tickFormatter={(value) => `${formatCompact(value)}€`}
         />
 
@@ -62,7 +64,7 @@ export function TimelineChart({ data, color, type }: Props) {
                 backgroundColor: theme.palette.background.paper,
                 border: `2px solid ${theme.palette.divider}`,
                 borderRadius: "8px",
-                fontSize: "12px"
+                fontSize: isMobile ? "10px" : "12px"
             }}
             labelStyle={{
                 color: theme.palette.text.secondary

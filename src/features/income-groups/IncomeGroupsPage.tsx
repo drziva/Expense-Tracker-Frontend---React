@@ -25,6 +25,9 @@ import { Tooltip } from "@mui/material";
 import dayjs from "dayjs";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
 import { formatBarChartData } from "@/shared/charts/utils/formatChartData";
+import { ADD_GROUP_TEXT } from "@/shared/constants/app.constants";
+import AddEntityButton from "@/shared/components/AddEntityButton";
+import { FilterButton } from "@/shared/components/FilterButton";
 
 export default function IncomeGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -220,29 +223,15 @@ export default function IncomeGroupsPage() {
         >
           <SearchBox />
 
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setToFilter(true)}
-            sx={{ height: 40 }}
-          >
-            <FilterIcon fontSize="small" />
-          </Button>
-
+          <FilterButton onClick={() => setToFilter(true)} />
+            
           <RowLimitSelect />
         </Box>
 
-        <Button
+        <AddEntityButton
           onClick={() => setToCreate(true)}
-          variant="contained"
-          sx={{
-            height: 40,
-            fontSize: "0.8rem",
-            lineHeight: "1.3"
-          }}
-        >
-          <strong>Add Group</strong>
-        </Button>
+          title={ADD_GROUP_TEXT}
+        />
       </Box>
 
       {/* TABLE */}

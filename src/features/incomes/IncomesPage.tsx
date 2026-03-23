@@ -26,6 +26,10 @@ import dayjs from "dayjs";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
 import { useDownloadFilteredReport } from "../reports/hooks/useDownloadReportPdf";
 import PictureAsPdf from "@mui/icons-material/PictureAsPdf";
+import ExportPdfButton from "@/shared/components/ExportPdfButton";
+import AddEntityButton from "@/shared/components/AddEntityButton";
+import { ADD_INCOME_TEXT } from "@/shared/constants/app.constants";
+import { FilterButton } from "@/shared/components/FilterButton";
 
 type Range = {
   from: string;
@@ -266,46 +270,44 @@ export default function IncomesPage() {
       </Box>
 
       {/* CHART + RANGE SELECTOR */}
-      {!isMobile && (
-        <Box sx={{ mb: 1 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
-              {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
-            </Typography>
+      <Box sx={{ mb: 1 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
+            {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
+          </Typography>
 
-            <Select
-              sx={{ml: 2}}
-              value={range}
-              size="small"
-              onChange={(e) => {
-                const value = e.target.value as "week" | "month" | "year";
+          <Select
+            sx={{ml: 2}}
+            value={range}
+            size="small"
+            onChange={(e) => {
+              const value = e.target.value as "week" | "month" | "year";
 
-                const range = getRange(value);
-                setRange(value);
+              const range = getRange(value);
+              setRange(value);
 
-                setSummaryQuery({
-                  from: range?.from,
-                  to: range?.to,
-                  type: range?.type ?? "regular"
-                });
-              }}
-            >
-              <MenuItem value="week">Last week</MenuItem>
-              <MenuItem value="month">Last month</MenuItem>
-              <MenuItem value="year">Last year</MenuItem>
-            </Select>
-          </Box>
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              backgroundColor: "background.paper",
+              setSummaryQuery({
+                from: range?.from,
+                to: range?.to,
+                type: range?.type ?? "regular"
+              });
             }}
           >
-            <TimelineChart data={timelineData} color="income" type={range} />
-          </Box>
+            <MenuItem value="week">Last week</MenuItem>
+            <MenuItem value="month">Last month</MenuItem>
+            <MenuItem value="year">Last year</MenuItem>
+          </Select>
         </Box>
-      )}
+        <Box
+          sx={{
+            p: 2,
+            borderRadius: 2,
+            backgroundColor: "background.paper",
+          }}
+        >
+          <TimelineChart data={timelineData} color="income" type={range} />
+        </Box>
+      </Box>
 
       {/* SEARCH + FILTERS */}
       <Box
@@ -327,14 +329,7 @@ export default function IncomesPage() {
 
           <SearchBox/>
 
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setToFilter(true)}
-            sx={{ height: 40 }}
-          >
-            <FilterIcon fontSize="small" />
-          </Button>
+          <FilterButton onClick={() => setToFilter(true)} />
 
           <RowLimitSelect/>
         </Box>
@@ -345,31 +340,15 @@ export default function IncomesPage() {
             alignItems: isMobile ? "stretch" : "center",
           }}
         >
-          <Button
-            variant="outlined"
-            onClick={() => filteredReport.mutateAsync(query)}
-            sx={{
-              height: 40,
-              fontSize: "0.8rem",
-              whiteSpace: "nowrap",
-            }}
+          <ExportPdfButton
             disabled={filteredReport.isPending}
-          >
-            Export PDF
-          </Button>
+            onClick={() => filteredReport.mutateAsync(query)}
+          />
 
-          <Button
+          <AddEntityButton
             onClick={() => setToCreate(true)}
-            variant="contained"
-            sx={{
-              height: 40,
-              fontSize: "0.8rem",
-              lineHeight: "1.3",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <strong>Add Income</strong>
-          </Button>
+            title={ADD_INCOME_TEXT}
+          />
         </Stack>
       </Box>
 

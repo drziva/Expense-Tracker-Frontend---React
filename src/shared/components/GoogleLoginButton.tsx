@@ -38,7 +38,7 @@ export function GoogleLoginButton() {
         {
           theme: "outline",
           size: "large",
-          shape: "rectangular",
+          shape: "pill",
           text: "continue_with",
         }
       );
