@@ -9,9 +9,11 @@ import {
   Paper,
   CircularProgress,
   useTheme,
+  Divider,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useLogin } from "@/features/auth/hooks/useLogin";
+import { GoogleLoginButton } from "@/shared/components/GoogleLoginButton";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -28,7 +30,6 @@ export default function LoginPage() {
       { email, password },
       {
         onSuccess: () => {
-          // after login, backend sets cookies → now fetch /me indirectly
           navigate("/", { replace: true });
         },
       }
@@ -152,7 +153,6 @@ export default function LoginPage() {
               </Typography>
 						</Box>
 
-
           <Button
             name="submit"
             type="submit"
@@ -172,6 +172,15 @@ export default function LoginPage() {
               "Log in"
             )}
           </Button>
+
+          <Divider>
+            <Typography variant="body2" color="text.secondary">
+              OR
+            </Typography>
+          </Divider>
+
+          <GoogleLoginButton />
+
         </Box>
       </Paper>
     </Box>

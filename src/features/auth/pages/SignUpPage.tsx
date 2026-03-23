@@ -2,10 +2,11 @@ import z from "zod";
 import { signupSchema } from "../schemas/signup.schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Alert, Box, Button, CircularProgress, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Divider, Paper, TextField, Typography } from "@mui/material";
 import WavingHandIcon from '@mui/icons-material/WavingHand';
 import { useSignUp } from "../hooks/useSignUp";
 import { useNavigate } from "react-router-dom";
+import { GoogleLoginButton } from "@/shared/components/GoogleLoginButton";
 
 type formInput = z.input<typeof signupSchema>;
 type formOutput = z.output<typeof signupSchema>;
@@ -202,6 +203,14 @@ export default function SignUpPage() {
 								"Sign up"
 							)}
 						</Button>
+			
+						<Divider>
+						<Typography variant="body2" color="text.secondary">
+							OR
+						</Typography>
+						</Divider>
+											
+						<GoogleLoginButton />
 					</Box>
 				</Paper>
 			</Box>

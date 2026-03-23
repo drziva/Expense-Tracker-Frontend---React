@@ -9,6 +9,9 @@ import { MobileTransactionCard } from "@/shared/mobile/MobileTransactionCard";
 import { useEffect, useState } from "react";
 import { DashboardTimelineChart } from "@/features/dashboard/components/DashboardTimelineChart";
 import dayjs from "dayjs";
+import { useMe } from "../auth/hooks/useMe";
+import WelcomeDialog from "@/shared/ui/WelcomeDialog";
+import { useToggleWelcomed } from "../auth/hooks/useToggleWelcomed";
 
 export default function DashboardPage() {
   const isMobile = useMediaQuery("(max-width: 600px)")
@@ -17,14 +20,23 @@ export default function DashboardPage() {
     from: dayjs().subtract(7, "day").startOf("day").toISOString(),
     to: dayjs().endOf("day").toISOString(),
   });
-
-  const [detailsOpen, setDetailsOpen] = useState<Income | Expense | null>(null);
-
+  
+  const { data: user } = useMe();
   const { data, isError, isLoading } = useDashboard();
   const {data: summaryData} = useDashboardSummary(summaryQuery);
 
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
+  const toggleWelcomed = useToggleWelcomed();
+
+  useEffect(()=>{
+    if(user && !user.welcomed) {
+      setWelcomeOpen(true);
+    }
+  }, [user])
+  
   if(isError) return <Alert severity="error">There was an error loading the dashboard page.</Alert>
   if(isLoading) return <CircularProgress/>
+
 
   const txColumns: Column<Expense | Income>[] = [
     {
@@ -84,6 +96,15 @@ export default function DashboardPage() {
         </Box>
 
       </Paper>
+
+      <WelcomeDialog 
+        open={welcomeOpen} 
+        name={user?.username}
+        onClose={async ()=>{
+          setWelcomeOpen(false);
+          await toggleWelcomed.mutateAsync();
+        }} 
+      />
 
       {!isMobile && (      
       <Paper

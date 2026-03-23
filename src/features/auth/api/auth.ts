@@ -1,25 +1,5 @@
 import { api } from "@/shared/api/client";
-
-export type LoginRequest = {
-  email: string,
-  password: string;
-};
-
-export type SignUpRequest = {
-  email: string,
-  password: string,
-  username: string
-}
-
-export type LoginResponse = {
-  user: {
-    id: number,
-    username: string,
-    email: string,
-    premium: boolean,
-    notifications: boolean
-  }
-};
+import { LoginRequest, LoginResponse, SignUpRequest } from "../types/auth.types";
 
 export async function login(dto: LoginRequest): Promise<LoginResponse> {
   const res = await api.post<LoginResponse>("/auth/login", dto);
