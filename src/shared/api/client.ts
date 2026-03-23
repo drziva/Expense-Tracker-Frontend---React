@@ -26,7 +26,12 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if(status === 401) {
+    if(
+      status === 401 &&
+      originalRequest.url !== "/auth/login" &&
+      originalRequest.url !== "/auth/signup" &&
+      originalRequest.url !== "/auth/google"
+    ) {
       if(originalRequest._retry) {
         emitAuthError(message);
         return Promise.reject(error);

@@ -379,6 +379,7 @@ export default function ExpensesPage() {
               fontSize: "0.8rem",
               whiteSpace: "nowrap",
             }}
+            disabled={filteredReport.isPending}
           >
             Export PDF
           </Button>

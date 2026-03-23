@@ -18,6 +18,7 @@ export function ErrorListener() {
             const custom = event as CustomEvent<string>;
             navigate("/login");
             showError(custom.detail);
+            queryClient.clear();
         }
 
         window.addEventListener("api-error", handler);

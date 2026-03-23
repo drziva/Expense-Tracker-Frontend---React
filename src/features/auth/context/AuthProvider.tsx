@@ -4,6 +4,7 @@ import { useLogout } from "../hooks/useLogout";
 import { useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/shared/constants/queryKeys";
+import WelcomeDialog from "@/shared/ui/WelcomeDialog";
 
 export type AuthUser = {
   id: number;

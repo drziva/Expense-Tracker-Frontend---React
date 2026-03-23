@@ -353,6 +353,7 @@ export default function IncomesPage() {
               fontSize: "0.8rem",
               whiteSpace: "nowrap",
             }}
+            disabled={filteredReport.isPending}
           >
             Export PDF
           </Button>
@@ -463,7 +464,7 @@ export default function IncomesPage() {
 
       <IncomeDialog
         open={!!toUpdate}
-        title="Edit"
+        title="Update"
         onClose={() => {
           if(formDirty) {
             setToClose(true);

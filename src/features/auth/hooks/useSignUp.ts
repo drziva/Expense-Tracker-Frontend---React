@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { LoginResponse, signUp, SignUpRequest } from "../api/auth";
+import { LoginResponse, SignUpRequest } from "../types/auth.types";
 import { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { signUp } from "../api/auth";
 
 export function useSignUp() {
   const navigate = useNavigate();
