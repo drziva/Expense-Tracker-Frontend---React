@@ -29,6 +29,8 @@ import { PremiumRequiredPage } from "@/features/scheduled-transactions/pages/Pre
 import { AxiosError } from "axios";
 import { EmptyState } from "@/shared/ui/EmptyState";
 import { set } from "zod";
+import AddEntityButton from "@/shared/components/AddEntityButton";
+import { ADD_TRANSACTION_TEXT } from "@/shared/constants/app.constants";
 
 export default function ScheduledTransactionsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -145,18 +147,10 @@ export default function ScheduledTransactionsPage() {
           Scheduled Transactions
         </Typography>
 
-        <Button
-          variant="contained"
-          onClick={() => setToCreate(true)}
-          sx={{
-            height: 40,
-            fontSize: "0.8rem",
-            lineHeight: "1.3",
-            width: isMobile ? "100%" : "auto",
-          }}
-        >
-          <strong>Add Transaction</strong>
-        </Button>
+      <AddEntityButton
+        onClick={() => setToCreate(true)}
+        title={ADD_TRANSACTION_TEXT}
+      />
       </Box>
 
       <Paper sx={{ p: 2 }}>

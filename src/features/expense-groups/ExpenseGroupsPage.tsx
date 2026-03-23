@@ -37,6 +37,9 @@ import { GroupBarChart } from "@/shared/charts/GroupBarChart";
 import { DetailsDialog } from "@/shared/ui/DetailsDialog";
 import { formatBarChartData } from "@/shared/charts/utils/formatChartData";
 import { set } from "zod";
+import { ADD_GROUP_TEXT } from "@/shared/constants/app.constants";
+import AddEntityButton from "@/shared/components/AddEntityButton";
+import { FilterButton } from "@/shared/components/FilterButton";
 
 export default function ExpenseGroupsPage() {
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -267,29 +270,15 @@ export default function ExpenseGroupsPage() {
       >
         <SearchBox />
 
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => setToFilter(true)}
-          sx={{ height: 40 }}
-        >
-          <FilterIcon fontSize="small" />
-        </Button>
+        <FilterButton onClick={() => setToFilter(true)} />
 
         <RowLimitSelect />
       </Box>
 
-      <Button
+      <AddEntityButton
         onClick={() => setToCreate(true)}
-        variant="contained"
-        sx={{
-          height: 40,
-          fontSize: "0.8rem",
-          lineHeight: "1.3"
-        }}
-      >
-        <strong>Add Group</strong>
-      </Button>
+        title={ADD_GROUP_TEXT}
+      />
     </Box>
 
     {/* TABLE */}
