@@ -1,22 +1,17 @@
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
+  Drawer,
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Stack,
   TextField,
   Typography
 } from "@mui/material"
 
-import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney"
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
 import SortIcon from "@mui/icons-material/Sort"
@@ -35,8 +30,7 @@ type Props = {
   onClose: () => void
 }
 
-export function IncomesFiltersDialog({ open, onClose }: Props) {
-
+export function IncomesFiltersDrawer({ open, onClose }: Props) {
   const { data } = useIncomeGroups({})
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -64,7 +58,7 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
 
   const [draftFrom, setDraftFrom] = useState(fromDate)
   const [draftTo, setDraftTo] = useState(toDate)
-  const [draftSort, setDraftSort] = useState<SortOption | "">(sort as SortOption || "")
+  const [draftSort, setDraftSort] = useState<SortOption | "">((sort as SortOption) || "")
   const [draftMin, setDraftMin] = useState<number | "">(min ?? "")
   const [draftMax, setDraftMax] = useState<number | "">(max ?? "")
   const [draftGroupId, setDraftGroupId] = useState<number | "">(groupId ?? "")
@@ -79,24 +73,36 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
   }, [searchParams])
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: 420 }
+        }
+      }}
+    >
+      <Box
+        sx={{
+          p: 3,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} mb={2}>
+          Filters
+        </Typography>
 
-      <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <FilterAltIcon />
-        Filter Incomes
-      </DialogTitle>
+        <Divider sx={{ mb: 2 }} />
 
-      <DialogContent>
-
-        <Paper
-          variant="outlined"
-          sx={{
-            p: 3,
-            borderRadius: 3
-          }}
-        >
-
-          <Stack spacing={3} component="form" id="income-filters-form"
+        <Box sx={{ overflow: "auto", pr: 1 }}>
+          <Stack
+            spacing={3}
+            component="form"
+            id="income-filters-form"
             onSubmit={(e) => {
               e.preventDefault()
 
@@ -133,13 +139,12 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
               onClose()
             }}
           >
-
-            {/* Amount */}
-
             <Box>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" spacing={1} alignItems="center">
                 <AttachMoneyIcon color="success" fontSize="small" />
-                <Typography fontWeight={600}>Amount</Typography>
+                <Typography fontWeight={600}>
+                  Amount
+                </Typography>
               </Stack>
 
               <Divider sx={{ my: 1 }} />
@@ -151,7 +156,11 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
                   type="number"
                   value={draftMin}
                   onChange={(e) =>
-                    setDraftMin(e.target.value === "" ? "" : Number(e.target.value))
+                    setDraftMin(
+                      e.target.value === ""
+                        ? ""
+                        : Number(e.target.value)
+                    )
                   }
                   fullWidth
                 />
@@ -162,19 +171,23 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
                   type="number"
                   value={draftMax}
                   onChange={(e) =>
-                    setDraftMax(e.target.value === "" ? "" : Number(e.target.value))
+                    setDraftMax(
+                      e.target.value === ""
+                        ? ""
+                        : Number(e.target.value)
+                    )
                   }
                   fullWidth
                 />
               </Stack>
             </Box>
 
-            {/* Date */}
-
             <Box>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" spacing={1} alignItems="center">
                 <CalendarMonthIcon color="primary" fontSize="small" />
-                <Typography fontWeight={600}>Date range</Typography>
+                <Typography fontWeight={600}>
+                  Date range
+                </Typography>
               </Stack>
 
               <Divider sx={{ my: 1 }} />
@@ -184,30 +197,42 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
                   label="From"
                   value={draftFrom}
                   onChange={setDraftFrom}
-                  slotProps={{ textField: { size: "small", fullWidth: true } }}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      fullWidth: true
+                    }
+                  }}
                 />
 
                 <DatePicker
                   label="To"
                   value={draftTo}
                   onChange={setDraftTo}
-                  slotProps={{ textField: { size: "small", fullWidth: true } }}
+                  slotProps={{
+                    textField: {
+                      size: "small",
+                      fullWidth: true
+                    }
+                  }}
                 />
               </Stack>
             </Box>
 
-            {/* Sorting */}
-
             <Box>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <SortIcon fontSize="small" sx={{ color: "#7b1fa2" }} />
-                <Typography fontWeight={600}>Sorting</Typography>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <SortIcon sx={{ color: "#7b1fa2" }} fontSize="small" />
+                <Typography fontWeight={600}>
+                  Sorting
+                </Typography>
               </Stack>
 
               <Divider sx={{ my: 1 }} />
 
-              <FormControl size="small" fullWidth>
-                <InputLabel>Sort by</InputLabel>
+              <FormControl fullWidth size="small">
+                <InputLabel>
+                  Sort by
+                </InputLabel>
 
                 <Select
                   label="Sort by"
@@ -216,27 +241,43 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
                     setDraftSort(e.target.value as SortOption | "")
                   }
                 >
-                  <MenuItem value=""><em>None</em></MenuItem>
-                  <MenuItem value="date_desc">Date ↓</MenuItem>
-                  <MenuItem value="date_asc">Date ↑</MenuItem>
-                  <MenuItem value="amount_desc">Amount ↓</MenuItem>
-                  <MenuItem value="amount_asc">Amount ↑</MenuItem>
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+
+                  <MenuItem value="date_desc">
+                    Date {"\u2193"}
+                  </MenuItem>
+
+                  <MenuItem value="date_asc">
+                    Date {"\u2191"}
+                  </MenuItem>
+
+                  <MenuItem value="amount_desc">
+                    Amount {"\u2193"}
+                  </MenuItem>
+
+                  <MenuItem value="amount_asc">
+                    Amount {"\u2191"}
+                  </MenuItem>
                 </Select>
               </FormControl>
             </Box>
 
-            {/* Group */}
-
             <Box>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" spacing={1} alignItems="center">
                 <CategoryIcon sx={{ color: "#ed6c02" }} fontSize="small" />
-                <Typography fontWeight={600}>Group</Typography>
+                <Typography fontWeight={600}>
+                  Group
+                </Typography>
               </Stack>
 
               <Divider sx={{ my: 1 }} />
 
-              <FormControl size="small" fullWidth>
-                <InputLabel>Group</InputLabel>
+              <FormControl fullWidth size="small">
+                <InputLabel>
+                  Group
+                </InputLabel>
 
                 <Select
                   label="Group"
@@ -245,7 +286,9 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
                     setDraftGroupId(e.target.value as number | "")
                   }
                 >
-                  <MenuItem value=""><em>All</em></MenuItem>
+                  <MenuItem value="">
+                    <em>All</em>
+                  </MenuItem>
 
                   {data?.data?.map((gr) => (
                     <MenuItem key={gr.id} value={gr.id}>
@@ -253,26 +296,33 @@ export function IncomesFiltersDialog({ open, onClose }: Props) {
                     </MenuItem>
                   ))}
                 </Select>
-
               </FormControl>
             </Box>
-
           </Stack>
+        </Box>
 
-        </Paper>
+        <Box mt={2}>
+          <Divider sx={{ mb: 2 }} />
 
-      </DialogContent>
+          <Stack direction="row" spacing={2}>
+            <Button
+              fullWidth
+              form="income-filters-form"
+              type="submit"
+              variant="contained"
+            >
+              Apply
+            </Button>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button form="income-filters-form" type="submit" variant="contained">
-          Apply Filters
-        </Button>
-
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-
-    </Dialog>
+            <Button
+              fullWidth
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
+    </Drawer>
   )
 }

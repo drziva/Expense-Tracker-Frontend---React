@@ -1,22 +1,17 @@
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
+  Drawer,
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Stack,
   TextField,
   Typography
 } from "@mui/material"
 
-import FilterAltIcon from "@mui/icons-material/FilterAlt"
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney"
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
 import SortIcon from "@mui/icons-material/Sort"
@@ -36,7 +31,6 @@ type Props = {
 }
 
 export function ExpensesFiltersDialog({ open, onClose }: Props) {
-
   const { data } = useExpenseGroups({})
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -64,7 +58,7 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
 
   const [draftFrom, setDraftFrom] = useState(fromDate)
   const [draftTo, setDraftTo] = useState(toDate)
-  const [draftSort, setDraftSort] = useState<SortOption | "">(sort as SortOption || "")
+  const [draftSort, setDraftSort] = useState<SortOption | "">((sort as SortOption) || "")
   const [draftMin, setDraftMin] = useState<number | "">(min ?? "")
   const [draftMax, setDraftMax] = useState<number | "">(max ?? "")
   const [draftGroupId, setDraftGroupId] = useState<number | "">(groupId ?? "")
@@ -79,24 +73,36 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
   }, [searchParams])
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: 420 }
+        }
+      }}
+    >
+      <Box
+        sx={{
+          p: 3,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} mb={2}>
+          Filters
+        </Typography>
 
-      <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <FilterAltIcon />
-        Filter Expenses
-      </DialogTitle>
+        <Divider sx={{ mb: 2 }} />
 
-      <DialogContent>
-
-        <Paper
-          variant="outlined"
-          sx={{
-            p: 3,
-            borderRadius: 3
-          }}
-        >
-
-          <Stack spacing={3} component="form" id="expense-filters-form"
+        <Box sx={{ overflow: "auto", pr: 1 }}>
+          <Stack
+            spacing={3}
+            component="form"
+            id="expense-filters-form"
             onSubmit={(e) => {
               e.preventDefault()
 
@@ -133,9 +139,6 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
               onClose()
             }}
           >
-
-            {/* Amount */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <AttachMoneyIcon color="success" fontSize="small" />
@@ -169,8 +172,6 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
               </Stack>
             </Box>
 
-            {/* Date */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarMonthIcon color="primary" fontSize="small" />
@@ -196,8 +197,6 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
               </Stack>
             </Box>
 
-            {/* Sorting */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <SortIcon fontSize="small" sx={{ color: "#7b1fa2" }} />
@@ -216,16 +215,16 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
                     setDraftSort(e.target.value as SortOption | "")
                   }
                 >
-                  <MenuItem value=""><em>None</em></MenuItem>
-                  <MenuItem value="date_desc">Date ↓</MenuItem>
-                  <MenuItem value="date_asc">Date ↑</MenuItem>
-                  <MenuItem value="amount_desc">Amount ↓</MenuItem>
-                  <MenuItem value="amount_asc">Amount ↑</MenuItem>
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="date_desc">Date {"\u2193"}</MenuItem>
+                  <MenuItem value="date_asc">Date {"\u2191"}</MenuItem>
+                  <MenuItem value="amount_desc">Amount {"\u2193"}</MenuItem>
+                  <MenuItem value="amount_asc">Amount {"\u2191"}</MenuItem>
                 </Select>
               </FormControl>
             </Box>
-
-            {/* Group */}
 
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
@@ -245,7 +244,9 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
                     setDraftGroupId(e.target.value as number | "")
                   }
                 >
-                  <MenuItem value=""><em>All</em></MenuItem>
+                  <MenuItem value="">
+                    <em>All</em>
+                  </MenuItem>
 
                   {data?.data?.map((gr) => (
                     <MenuItem key={gr.id} value={gr.id}>
@@ -253,26 +254,30 @@ export function ExpensesFiltersDialog({ open, onClose }: Props) {
                     </MenuItem>
                   ))}
                 </Select>
-
               </FormControl>
             </Box>
-
           </Stack>
+        </Box>
 
-        </Paper>
+        <Box mt={2}>
+          <Divider sx={{ mb: 2 }} />
 
-      </DialogContent>
+          <Stack direction="row" spacing={2}>
+            <Button
+              fullWidth
+              form="expense-filters-form"
+              type="submit"
+              variant="contained"
+            >
+              Apply
+            </Button>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button form="expense-filters-form" type="submit" variant="contained">
-          Apply Filters
-        </Button>
-
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-
-    </Dialog>
+            <Button fullWidth onClick={onClose}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
+    </Drawer>
   )
 }

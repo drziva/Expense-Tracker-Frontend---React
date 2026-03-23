@@ -1,109 +1,110 @@
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
+  Drawer,
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Stack,
-  Typography,
-} from "@mui/material";
+  Typography
+} from "@mui/material"
 
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import SortIcon from "@mui/icons-material/Sort";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
+import SortIcon from "@mui/icons-material/Sort"
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import type { GroupSortOption } from "@/shared/types/pagination";
-import { useSearchParams } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+import { useEffect, useState } from "react"
+import dayjs from "dayjs"
+import type { GroupSortOption } from "@/shared/types/pagination"
+import { useSearchParams } from "react-router-dom"
 
 export type ExpenseGroupFilterValues = {
-  from?: string;
-  to?: string;
-  sort?: GroupSortOption;
-};
+  from?: string
+  to?: string
+  sort?: GroupSortOption
+}
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
-};
+  open: boolean
+  onClose: () => void
+}
 
 export function ExpenseGroupsFiltersDialog({ open, onClose }: Props) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [draftFromDate, setDraftFromDate] = useState<dayjs.Dayjs | null>(null);
-  const [draftToDate, setDraftToDate] = useState<dayjs.Dayjs | null>(null);
-  const [draftSort, setDraftSort] = useState<GroupSortOption | "">("");
+  const [draftFromDate, setDraftFromDate] = useState<dayjs.Dayjs | null>(null)
+  const [draftToDate, setDraftToDate] = useState<dayjs.Dayjs | null>(null)
+  const [draftSort, setDraftSort] = useState<GroupSortOption | "">("")
 
   useEffect(() => {
-    setDraftFromDate(searchParams.get("from") ? dayjs(searchParams.get("from")) : null);
-    setDraftToDate(searchParams.get("to") ? dayjs(searchParams.get("to")) : null);
-    setDraftSort((searchParams.get("sort") as GroupSortOption) || "");
+    setDraftFromDate(searchParams.get("from") ? dayjs(searchParams.get("from")) : null)
+    setDraftToDate(searchParams.get("to") ? dayjs(searchParams.get("to")) : null)
+    setDraftSort((searchParams.get("sort") as GroupSortOption) || "")
   }, [searchParams])
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: 420 }
+        }
+      }}
+    >
+      <Box
+        sx={{
+          p: 3,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} mb={2}>
+          Filters
+        </Typography>
 
-      <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <FilterAltIcon />
-        Filter Expense Groups
-      </DialogTitle>
+        <Divider sx={{ mb: 2 }} />
 
-      <DialogContent>
-
-        <Paper
-          variant="outlined"
-          sx={{
-            p: 3,
-            borderRadius: 3
-          }}
-        >
-
+        <Box sx={{ overflow: "auto", pr: 1 }}>
           <Stack
             spacing={3}
             component="form"
             id="expense-group-filters-form"
             onSubmit={(e) => {
-              e.preventDefault();
+              e.preventDefault()
 
-              setSearchParams(prev => {
-                const params = new URLSearchParams(prev);
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev)
 
                 if (draftFromDate) {
-                  params.set("from", draftFromDate.format("YYYY-MM-DD"));
+                  params.set("from", draftFromDate.format("YYYY-MM-DD"))
                 } else {
-                  params.delete("from");
+                  params.delete("from")
                 }
 
                 if (draftToDate) {
-                  params.set("to", draftToDate.format("YYYY-MM-DD"));
+                  params.set("to", draftToDate.format("YYYY-MM-DD"))
                 } else {
-                  params.delete("to");
+                  params.delete("to")
                 }
 
                 if (draftSort) {
-                  params.set("sort", draftSort);
+                  params.set("sort", draftSort)
                 } else {
-                  params.delete("sort");
+                  params.delete("sort")
                 }
 
-                return params;
-              });
+                return params
+              })
 
-              onClose();
+              onClose()
             }}
           >
-
-            {/* Date */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarMonthIcon color="primary" fontSize="small" />
@@ -129,8 +130,6 @@ export function ExpenseGroupsFiltersDialog({ open, onClose }: Props) {
               </Stack>
             </Box>
 
-            {/* Sorting */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <SortIcon fontSize="small" sx={{ color: "#7b1fa2" }} />
@@ -153,32 +152,35 @@ export function ExpenseGroupsFiltersDialog({ open, onClose }: Props) {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-
-                  <MenuItem value="date_desc">Date ↓</MenuItem>
-                  <MenuItem value="date_asc">Date ↑</MenuItem>
-                  <MenuItem value="name_desc">Name ↓</MenuItem>
-                  <MenuItem value="name_asc">Name ↑</MenuItem>
+                  <MenuItem value="date_desc">Date {"\u2193"}</MenuItem>
+                  <MenuItem value="date_asc">Date {"\u2191"}</MenuItem>
+                  <MenuItem value="name_desc">Name {"\u2193"}</MenuItem>
+                  <MenuItem value="name_asc">Name {"\u2191"}</MenuItem>
                 </Select>
-
               </FormControl>
             </Box>
-
           </Stack>
+        </Box>
 
-        </Paper>
+        <Box mt={2}>
+          <Divider sx={{ mb: 2 }} />
 
-      </DialogContent>
+          <Stack direction="row" spacing={2}>
+            <Button
+              fullWidth
+              form="expense-group-filters-form"
+              type="submit"
+              variant="contained"
+            >
+              Apply
+            </Button>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button form="expense-group-filters-form" type="submit" variant="contained">
-          Apply Filters
-        </Button>
-
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-
-    </Dialog>
-  );
+            <Button fullWidth onClick={onClose}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
+    </Drawer>
+  )
 }
