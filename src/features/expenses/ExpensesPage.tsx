@@ -291,48 +291,49 @@ export default function ExpensesPage() {
         </Typography>
       </Box>
 
-      <Box sx={{ mb: 1 }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
-            {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
-          </Typography>
+      {!isMobile && (
+        <Box sx={{ mb: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
+              {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
+            </Typography>
 
-          <Select
-            sx={{ ml: 2 }}
-            value={range}
-            size="small"
-            onChange={(e) => {
+            <Select
+              sx={{ ml: 2 }}
+              value={range}
+              size="small"
+              onChange={(e) => {
 
-              const value = e.target.value as "week" | "month" | "year"
-              const range = getRange(value)
+                const value = e.target.value as "week" | "month" | "year"
+                const range = getRange(value)
 
-              setRange(value)
+                setRange(value)
 
-              setSummaryQuery({
-                from: range.from,
-                to: range.to,
-                type: range.type
-              })
+                setSummaryQuery({
+                  from: range.from,
+                  to: range.to,
+                  type: range.type
+                })
 
+              }}
+            >
+              <MenuItem value="week">Last week</MenuItem>
+              <MenuItem value="month">Last month</MenuItem>
+              <MenuItem value="year">Last year</MenuItem>
+            </Select>
+          </Box>
+
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: "background.paper"
             }}
           >
-            <MenuItem value="week">Last week</MenuItem>
-            <MenuItem value="month">Last month</MenuItem>
-            <MenuItem value="year">Last year</MenuItem>
-          </Select>
-        </Box>
-
-        <Box
-          sx={{
-            p: 2,
-            borderRadius: 2,
-            backgroundColor: "background.paper"
-          }}
-        >
-          <TimelineChart data={timelineData} color="expense" type={range} />
-        </Box>
-      </Box>
-
+            <TimelineChart data={timelineData} color="expense" type={range} />
+          </Box>
+      </Box>)}
+      
       {/* SEARCH + FILTERS */}
       <Box
         sx={{

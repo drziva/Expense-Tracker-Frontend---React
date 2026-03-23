@@ -1,124 +1,124 @@
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
+  Drawer,
   FormControl,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   Stack,
-  Typography,
-} from "@mui/material";
+  Typography
+} from "@mui/material"
 
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import SortIcon from "@mui/icons-material/Sort";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth"
+import SortIcon from "@mui/icons-material/Sort"
 
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import type { GroupSortOption } from "@/shared/types/pagination";
-import { useSearchParams } from "react-router-dom";
-import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker"
+import type { GroupSortOption } from "@/shared/types/pagination"
+import { useSearchParams } from "react-router-dom"
+import dayjs from "dayjs"
+import { useEffect, useState } from "react"
 
 export type IncomeFilterValues = {
-  from?: string;
-  to?: string;
-  sort?: GroupSortOption;
-};
+  from?: string
+  to?: string
+  sort?: GroupSortOption
+}
 
 type Props = {
-  open: boolean;
-  onClose: () => void;
-};
+  open: boolean
+  onClose: () => void
+}
 
 export function IncomeGroupsFiltersDialog({ open, onClose }: Props) {
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const fromParam = searchParams.get("from");
+  const fromParam = searchParams.get("from")
   const fromDate =
     fromParam && dayjs(fromParam, "YYYY-MM-DD").isValid()
       ? dayjs(fromParam, "YYYY-MM-DD")
-      : null;
+      : null
 
-  const toParam = searchParams.get("to");
+  const toParam = searchParams.get("to")
   const toDate =
     toParam && dayjs(toParam, "YYYY-MM-DD").isValid()
       ? dayjs(toParam, "YYYY-MM-DD")
-      : null;
+      : null
 
-  const sort = searchParams.get("sort") ?? null;
+  const sort = searchParams.get("sort") ?? null
 
-  const [draftFrom, setDraftFrom] = useState<dayjs.Dayjs | null>(fromDate || null);
-  const [draftTo, setDraftTo] = useState<dayjs.Dayjs | null>(toDate || null);
-  const [draftSort, setDraftSort] = useState<GroupSortOption | "">(sort as GroupSortOption || "");
+  const [draftFrom, setDraftFrom] = useState<dayjs.Dayjs | null>(fromDate || null)
+  const [draftTo, setDraftTo] = useState<dayjs.Dayjs | null>(toDate || null)
+  const [draftSort, setDraftSort] = useState<GroupSortOption | "">((sort as GroupSortOption) || "")
 
   useEffect(() => {
-    setDraftFrom(fromDate || null);
-    setDraftTo(toDate || null);
-    setDraftSort((sort as GroupSortOption) || "");
-  }, [searchParams]);
+    setDraftFrom(fromDate || null)
+    setDraftTo(toDate || null)
+    setDraftSort((sort as GroupSortOption) || "")
+  }, [searchParams])
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          width: { xs: "100%", sm: 420 }
+        }
+      }}
+    >
+      <Box
+        sx={{
+          p: 3,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden"
+        }}
+      >
+        <Typography variant="h6" fontWeight={600} mb={2}>
+          Filters
+        </Typography>
 
-      <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <FilterAltIcon />
-        Filter Income Groups
-      </DialogTitle>
+        <Divider sx={{ mb: 2 }} />
 
-      <DialogContent>
-
-        <Paper
-          variant="outlined"
-          sx={{
-            p: 3,
-            borderRadius: 3
-          }}
-        >
-
+        <Box sx={{ overflow: "auto", pr: 1 }}>
           <Stack
             spacing={3}
             component="form"
             id="income-group-filters-form"
             onSubmit={(e) => {
-              e.preventDefault();
+              e.preventDefault()
 
-              setSearchParams(prev => {
-                const params = new URLSearchParams(prev);
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev)
 
                 if (draftFrom) {
-                  params.set("from", draftFrom.format("YYYY-MM-DD"));
+                  params.set("from", draftFrom.format("YYYY-MM-DD"))
                 } else {
-                  params.delete("from");
+                  params.delete("from")
                 }
 
                 if (draftTo) {
-                  params.set("to", draftTo.format("YYYY-MM-DD"));
+                  params.set("to", draftTo.format("YYYY-MM-DD"))
                 } else {
-                  params.delete("to");
+                  params.delete("to")
                 }
 
                 if (draftSort) {
-                  params.set("sort", draftSort);
+                  params.set("sort", draftSort)
                 } else {
-                  params.delete("sort");
+                  params.delete("sort")
                 }
 
-                return params;
-              });
+                return params
+              })
 
-              onClose();
+              onClose()
             }}
           >
-
-            {/* Date */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarMonthIcon color="primary" fontSize="small" />
@@ -144,8 +144,6 @@ export function IncomeGroupsFiltersDialog({ open, onClose }: Props) {
               </Stack>
             </Box>
 
-            {/* Sorting */}
-
             <Box>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <SortIcon fontSize="small" sx={{ color: "#7b1fa2" }} />
@@ -168,32 +166,35 @@ export function IncomeGroupsFiltersDialog({ open, onClose }: Props) {
                   <MenuItem value="">
                     <em>None</em>
                   </MenuItem>
-
-                  <MenuItem value="date_desc">Date ↓</MenuItem>
-                  <MenuItem value="date_asc">Date ↑</MenuItem>
-                  <MenuItem value="name_desc">Name ↓</MenuItem>
-                  <MenuItem value="name_asc">Name ↑</MenuItem>
+                  <MenuItem value="date_desc">Date {"\u2193"}</MenuItem>
+                  <MenuItem value="date_asc">Date {"\u2191"}</MenuItem>
+                  <MenuItem value="name_desc">Name {"\u2193"}</MenuItem>
+                  <MenuItem value="name_asc">Name {"\u2191"}</MenuItem>
                 </Select>
-
               </FormControl>
             </Box>
-
           </Stack>
+        </Box>
 
-        </Paper>
+        <Box mt={2}>
+          <Divider sx={{ mb: 2 }} />
 
-      </DialogContent>
+          <Stack direction="row" spacing={2}>
+            <Button
+              fullWidth
+              form="income-group-filters-form"
+              type="submit"
+              variant="contained"
+            >
+              Apply
+            </Button>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button form="income-group-filters-form" type="submit" variant="contained">
-          Apply Filters
-        </Button>
-
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-
-    </Dialog>
-  );
+            <Button fullWidth onClick={onClose}>
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </Box>
+    </Drawer>
+  )
 }

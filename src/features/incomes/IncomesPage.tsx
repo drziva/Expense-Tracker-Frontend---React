@@ -10,7 +10,7 @@ import ConfirmDialog from "@/shared/ui/ConfirmDialog";
 import type { Income } from "@/features/incomes/types/incomes.responses";
 import { IncomeDialog } from "@/features/incomes/components/IncomeDialog";
 import type { IncomeQuery, IncomeSummaryQuery, SummaryType } from "@/features/incomes/types/incomes.requests";
-import { IncomesFiltersDialog } from "@/features/incomes/components/filters/IncomesFiltersDialog";
+import { IncomesFiltersDrawer } from "@/features/incomes/components/filters/IncomesFiltersDrawer";
 import FilterIcon from '@mui/icons-material/FilterAlt';
 import { RowLimitSelect } from "@/shared/ui/RowLimitSelect";
 import { ActiveIncomeFilters } from "@/features/incomes/components/filters/ActiveIncomeFilters";
@@ -270,7 +270,7 @@ export default function IncomesPage() {
       </Box>
 
       {/* CHART + RANGE SELECTOR */}
-      <Box sx={{ mb: 1 }}>
+      {!isMobile && (<Box sx={{ mb: 1 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Typography variant="body2" color="textSecondary" sx={{ ml: 2 }}>
             {graphDescriptionText(summaryQuery.from, summaryQuery.to)}
@@ -307,7 +307,7 @@ export default function IncomesPage() {
         >
           <TimelineChart data={timelineData} color="income" type={range} />
         </Box>
-      </Box>
+      </Box>)}
 
       {/* SEARCH + FILTERS */}
       <Box
@@ -406,7 +406,7 @@ export default function IncomesPage() {
       />
 
       {/* DIALOGS */}
-      <IncomesFiltersDialog
+      <IncomesFiltersDrawer
         open={toFilter}
         onClose={() => setToFilter(false)}
       />
