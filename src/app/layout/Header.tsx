@@ -84,9 +84,12 @@ export default function Header({ onMenuClick, showMenuButton }: Props) {
           }}
         />
         {!showMenuButton &&(
-          <Typography color="text.primary" variant={showMenuButton ? "h6" : "h4"}>
-            Expense Tracker
-          </Typography>
+          <>
+            <Typography color="text.primary" variant={showMenuButton ? "h6" : "h4"}>
+              Expense Tracker
+            </Typography>
+          </>
+
         )}
       </Box>
 

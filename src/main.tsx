@@ -7,11 +7,9 @@ import { AppThemeProvider } from '@/app/providers/theme/AppThemeProvider';
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ToastProvider } from '@/app/providers/toast/ToastProvider';
-import { AuthProvider } from '@/features/auth/context/AuthProvider';
 import { AppErrorBoundary } from '@/shared/errors/AppErrorBoundary';
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { ErrorProvider } from '@/app/providers/error/ErrorProvider';
-import { ErrorListener } from '@/app/providers/error/ErrorListener';
 import { GlobalErrorSnackbar } from '@/shared/errors/GlobalErrorSnackbar';
 import { registerSW } from "virtual:pwa-register";
 import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
