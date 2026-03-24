@@ -27,7 +27,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [user, setUser] = useState<AuthUser | null>(null);
   const queryClient = useQueryClient();
 
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     queryClient.invalidateQueries({queryKey: [QUERY_KEYS.ME]});
-    navigate('/login');
+    window.location.href = "/login";
   };
 
   return (

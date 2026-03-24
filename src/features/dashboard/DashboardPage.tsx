@@ -12,9 +12,12 @@ import dayjs from "dayjs";
 import { useMe } from "../auth/hooks/useMe";
 import WelcomeDialog from "@/shared/ui/WelcomeDialog";
 import { useToggleWelcomed } from "../auth/hooks/useToggleWelcomed";
+import { EmptyState } from "@/shared/ui/EmptyState";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
-  const isMobile = useMediaQuery("(max-width: 600px)")
+  const isMobile = useMediaQuery("(max-width: 600px)");
+  const navigate = useNavigate();
 
   const [summaryQuery, setSummaryQuery] = useState({
     from: dayjs().subtract(7, "day").startOf("day").toISOString(),
@@ -24,6 +27,9 @@ export default function DashboardPage() {
   const { data: user } = useMe();
   const { data, isError, isLoading } = useDashboard();
   const {data: summaryData} = useDashboardSummary(summaryQuery);
+
+  const expensesEmpty = data?.expenses.length === 0;
+  const incomesEmpty = data?.incomes.length === 0;
 
   const [welcomeOpen, setWelcomeOpen] = useState(false);
   const toggleWelcomed = useToggleWelcomed();
@@ -131,14 +137,17 @@ export default function DashboardPage() {
             color="success.main"
             sign="+"
             >
-              <Table
-                rows={data?.incomes ?? []}
-                columns={txColumns}
-                getRowKey={tx=> tx.id}
-                onRowClick={(tx) => {
-                  location.href = `/app/incomes?search=${tx.description}`
+              {incomesEmpty ? (
+                <EmptyState name="incomes"/>
+              ) : (
+                <Table
+                  rows={data?.incomes ?? []}
+                  columns={txColumns}
+                  getRowKey={tx=> tx.id}
+                  onRowClick={(tx) => {
+                    navigate(`/app/incomes?search=${tx.description}`)
                 }}  
-              />
+              />)}
 
             </DashboardTableSection>
             <DashboardTableSection
@@ -147,14 +156,17 @@ export default function DashboardPage() {
               color="error.main"
               sign="-"
             >
-              <Table
-                rows={data?.expenses ?? []}
-                columns={txColumns}
-                getRowKey={tx=> tx.id}
-                onRowClick={(tx) => {
-                  location.href = `/app/expenses?search=${tx.description}`
-                }}
-              />
+              {expensesEmpty ? (
+                <EmptyState name="expenses"/>
+              ) : (
+                <Table
+                  rows={data?.expenses ?? []}
+                  columns={txColumns}
+                  getRowKey={tx=> tx.id}
+                  onRowClick={(tx) => {
+                    navigate(`/app/expenses?search=${tx.description}`)
+                }}  
+              />)}
             </DashboardTableSection>
           </>
         )}
@@ -171,7 +183,7 @@ export default function DashboardPage() {
                 data={data?.incomes}
                 color="success.main"
                 onClick={(tx) => {
-                  location.href = `/app/incomes?search=${tx.description}`
+                  navigate(`/app/incomes?search=${tx.description}`)
                 }}
               />
             </DashboardTableSection>
@@ -186,7 +198,7 @@ export default function DashboardPage() {
                 data={data?.expenses}
                 color="error.main"
                 onClick={(tx) => {
-                  location.href = `/app/expenses?search=${tx.description}`
+                  navigate(`/app/expenses?search=${tx.description}`)
                 }}
               />  
             </DashboardTableSection>

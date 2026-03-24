@@ -14,6 +14,7 @@ import { GlobalErrorSnackbar } from '@/shared/errors/GlobalErrorSnackbar';
 import { registerSW } from "virtual:pwa-register";
 import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
 import { AxiosError } from 'axios';
+import { AuthProvider } from './features/auth/context/AuthProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -69,10 +70,12 @@ createRoot(document.getElementById('root')!).render(
             <ToastProvider>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <QueryClientProvider client={queryClient}>
+                  <AuthProvider>
                     <GlobalErrorSnackbar />
                     <GlobalOfflineSnackbar />
                     <App />
                   <ReactQueryDevtools initialIsOpen={false} />
+                  </AuthProvider>
                 </QueryClientProvider>
               </LocalizationProvider>
             </ToastProvider>
