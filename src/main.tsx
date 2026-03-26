@@ -15,6 +15,7 @@ import { registerSW } from "virtual:pwa-register";
 import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
 import { AxiosError } from 'axios';
 import { AuthProvider } from './features/auth/context/AuthProvider';
+import VoiceAgent from './features/eleven-labs/VoiceAgent';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,13 +69,14 @@ createRoot(document.getElementById('root')!).render(
         <ErrorProvider>
           <AppErrorBoundary>
             <ToastProvider>
+              <VoiceAgent />
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <QueryClientProvider client={queryClient}>
                   <AuthProvider>
                     <GlobalErrorSnackbar />
                     <GlobalOfflineSnackbar />
                     <App />
-                  <ReactQueryDevtools initialIsOpen={false} />
+                  {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                   </AuthProvider>
                 </QueryClientProvider>
               </LocalizationProvider>
