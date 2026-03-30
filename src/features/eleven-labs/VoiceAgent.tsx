@@ -1,5 +1,5 @@
 import { useConversation } from "@elevenlabs/react";
-import { useState } from "react";
+import { useState, createContext, useContext } from "react";
 
 import {
   Fab,
@@ -13,16 +13,62 @@ import {
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
+import { useNavigate } from "react-router-dom";
 
-export default function VoiceAssistant() {
+
+// CONTEXT
+const ConversationContext = createContext<any>(null);
+
+export const useVoiceConversation = () => useContext(ConversationContext);
+
+
+export default function VoiceAssistant({ children }: any) {
 
   const [open, setOpen] = useState(false);
 
+  const navigate = useNavigate();
+
+
   const conversation = useConversation({
+
     onConnect: () => setOpen(true),
+
     onDisconnect: () => setOpen(false),
-    onError: console.error
+
+    onError: console.error,
+
+
+    tools: [
+      {
+        name: "navigate",
+        description: "Navigate user to another page",
+        parameters: {
+          type: "object",
+          properties: {
+            route: {
+              type: "string"
+            }
+          },
+          required: ["route"]
+        }
+      }
+    ],
+
+
+    toolHandlers: {
+
+      navigate: async ({ route }: { route: string }) => {
+
+        console.log("AI navigating to:", route);
+
+        navigate(route);
+
+      }
+
+    }
+
   });
+
 
   const startConversation = async () => {
 
@@ -30,11 +76,14 @@ export default function VoiceAssistant() {
 
     await conversation.startSession({
       agentId: "agent_4301kmjga3n4fkkvtxqcnw1n99zh",
-      connectionType: "webrtc"
+      connectionType: "webrtc",
     });
+
   };
 
+
   const stopConversation = () => conversation.endSession();
+
 
   const getStatusText = () => {
 
@@ -50,11 +99,18 @@ export default function VoiceAssistant() {
     return "Ready";
   };
 
-  const isActive = conversation.status === "connected" || conversation.status === "connecting";
+
+  const isActive =
+    conversation.status === "connected" ||
+    conversation.status === "connecting";
+
 
   return (
-    <>
-      {/* FAB trigger */}
+
+    <ConversationContext.Provider value={conversation}>
+
+      {children}
+
 
       <Fab
         onClick={startConversation}
@@ -70,9 +126,8 @@ export default function VoiceAssistant() {
       </Fab>
 
 
-      {/* session bar */}
-
       <Fade in={isActive}>
+
         <Paper
           elevation={6}
           sx={{
@@ -122,8 +177,11 @@ export default function VoiceAssistant() {
           </IconButton>
 
         </Paper>
+
       </Fade>
 
-    </>
+    </ConversationContext.Provider>
+
   );
+
 }

@@ -5,6 +5,7 @@ import  SignUpPage from "@/features/auth/pages/SignUpPage";
 import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import AppLayout from "@/app/layout/AppLayout";
 import { ReportsPage } from "@/features/reports/ReportsPage";
+import OnboardingWelcome from "@/features/onboarding/pages/OnboardingWelcome";
 
 const DashboardPage = lazy(() => import("@/features/dashboard/DashboardPage"));
 const ExpensesPage = lazy(() => import("@/features/expenses/ExpensesPage"));
@@ -19,6 +20,9 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/signup" element={<SignUpPage/>}/>
+
+      
+      <Route path="onboarding" element={<OnboardingWelcome/>} />
 
       <Route element={<ProtectedRoute/>}>
         <Route path="/app" element={<AppLayout/>}>

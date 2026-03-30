@@ -4,58 +4,61 @@ import { api } from "../api/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function GoogleLoginButton() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  // const navigate = useNavigate();
+  // const queryClient = useQueryClient();
 
-  const handleCredentialResponse = async (response: any) => {
-    try {
-      await api.post("/auth/google", {
-        credential: response.credential,
-      });
+  // console.log("GOOGLE CLIENT ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
 
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
-      navigate("/");
-    } catch (error) {
-      console.error("Google login failed", error);
-    }
-  };
+  // const handleCredentialResponse = async (response: any) => {
+  //   try {
+  //     await api.post("/auth/google", {
+  //       credential: response.credential,
+  //     });
 
-  useEffect(() => {
-    const tryInitialize = () => {
-      const google = window.google as any;
+  //     await queryClient.invalidateQueries({ queryKey: ["me"] });
+  //     navigate("/");
+  //   } catch (error) {
+  //     console.error("Google login failed", error);
+  //   }
+  // };
 
-      if (!google?.accounts?.id) {
-        return false;
-      }
+  // useEffect(() => {
+  //   const tryInitialize = () => {
+  //     const google = window.google as any;
 
-      google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: handleCredentialResponse,
-      });
+  //     if (!google?.accounts?.id) {
+  //       return false;
+  //     }
 
-      google.accounts.id.renderButton(
-        document.getElementById("google-login-btn")!,
-        {
-          theme: "outline",
-          size: "large",
-          shape: "pill",
-          text: "continue_with",
-        }
-      );
+  //     google.accounts.id.initialize({
+  //       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  //       callback: handleCredentialResponse,
+  //     });
 
-      return true;
-    };
+  //     google.accounts.id.renderButton(
+  //       document.getElementById("google-login-btn")!,
+  //       {
+  //         theme: "outline",
+  //         size: "large",
+  //         shape: "pill",
+  //         text: "continue_with",
+  //       }
+  //     );
 
-    if (tryInitialize()) return;
+  //     return true;
+  //   };
 
-    const interval = setInterval(() => {
-      if (tryInitialize()) {
-        clearInterval(interval);
-      }
-    }, 100);
+  //   if (tryInitialize()) return;
 
-    return () => clearInterval(interval);
-  }, []);
+  //   const interval = setInterval(() => {
+  //     if (tryInitialize()) {
+  //       clearInterval(interval);
+  //     }
+  //   }, 100);
 
-  return <div id="google-login-btn" />;
+  //   return () => clearInterval(interval);
+  // }, []);
+
+  // return <div id="google-login-btn" />;
+  return null;
 }

@@ -16,6 +16,7 @@ import { GlobalOfflineSnackbar } from './shared/errors/GlobalOfflineSnackbar';
 import { AxiosError } from 'axios';
 import { AuthProvider } from './features/auth/context/AuthProvider';
 import VoiceAgent from './features/eleven-labs/VoiceAgent';
+import { BrowserRouter } from 'react-router-dom';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,7 @@ registerSW({
 
 createRoot(document.getElementById('root')!).render(    
   //<StrictMode>
+    <BrowserRouter>
       <AppThemeProvider>
         <ErrorProvider>
           <AppErrorBoundary>
@@ -75,7 +77,7 @@ createRoot(document.getElementById('root')!).render(
                   <AuthProvider>
                     <GlobalErrorSnackbar />
                     <GlobalOfflineSnackbar />
-                    <App />
+                      <App />
                   {/* <ReactQueryDevtools initialIsOpen={false} /> */}
                   </AuthProvider>
                 </QueryClientProvider>
@@ -84,5 +86,6 @@ createRoot(document.getElementById('root')!).render(
           </AppErrorBoundary>
         </ErrorProvider>
       </AppThemeProvider>
+      </BrowserRouter>
   //</StrictMode>
 );
