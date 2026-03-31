@@ -1,5 +1,11 @@
 import { useConversation } from "@elevenlabs/react";
-import { useState, createContext, useContext } from "react";
+import {
+  useState,
+  createContext,
+  useContext,
+  useMemo,
+  useCallback,
+} from "react";
 
 import {
   Fab,
@@ -7,181 +13,219 @@ import {
   Typography,
   IconButton,
   Stack,
-  Fade
+  Fade,
+  TextField,
 } from "@mui/material";
 
 import MicIcon from "@mui/icons-material/Mic";
 import StopIcon from "@mui/icons-material/Stop";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
+import SendIcon from "@mui/icons-material/Send";
+
 import { useNavigate } from "react-router-dom";
 
-
-// CONTEXT
+// context
 const ConversationContext = createContext<any>(null);
 
 export const useVoiceConversation = () => useContext(ConversationContext);
 
-
 export default function VoiceAssistant({ children }: any) {
-
-  const [open, setOpen] = useState(false);
-
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
 
-  const conversation = useConversation({
+  // ElevenLabs client tools
+  const clientTools = useMemo(
+    () => ({
+      navigate: async (parameters: { route?: string }) => {
+        console.log("CLIENT TOOL:", parameters);
 
-    onConnect: () => setOpen(true),
+        const route = parameters?.route;
 
-    onDisconnect: () => setOpen(false),
-
-    onError: console.error,
-
-
-    tools: [
-      {
-        name: "navigate",
-        description: "Navigate user to another page",
-        parameters: {
-          type: "object",
-          properties: {
-            route: {
-              type: "string"
-            }
-          },
-          required: ["route"]
+        if (!route || typeof route !== "string") {
+          console.error("Invalid route:", parameters);
+          return "Navigation failed";
         }
-      }
-    ],
-
-
-    toolHandlers: {
-
-      navigate: async ({ route }: { route: string }) => {
-
-        console.log("AI navigating to:", route);
 
         navigate(route);
 
-      }
+        return `Navigated to ${route}`;
+      },
+    }),
+    [navigate]
+  );
 
-    }
+  const conversation = useConversation({
+    clientTools,
 
+    onConnect: () => {
+      setOpen(true);
+      console.log("CONNECTED");
+    },
+
+    onDisconnect: () => {
+      setOpen(false);
+      console.log("DISCONNECTED");
+    },
+
+    onError: (err) => {
+      console.error("ELEVEN ERROR:", err);
+    },
+
+    onMessage: (msg) => {
+      console.log("MESSAGE:", msg);
+    },
   });
 
+  // start voice
+  const startConversation = useCallback(async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  const startConversation = async () => {
+      await conversation.startSession({
+        agentId: "agent_4301kmjga3n4fkkvtxqcnw1n99zh",
+        connectionType: "webrtc",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [conversation]);
 
-    await navigator.mediaDevices.getUserMedia({ audio: true });
+  const stopConversation = useCallback(() => {
+    conversation.endSession();
+  }, [conversation]);
 
-    await conversation.startSession({
-      agentId: "agent_4301kmjga3n4fkkvtxqcnw1n99zh",
-      connectionType: "webrtc",
-    });
+  // send text message
+  const sendMessage = useCallback(() => {
+    const trimmed = input.trim();
 
-  };
+    if (!trimmed) return;
 
+    conversation.sendUserMessage(trimmed);
 
-  const stopConversation = () => conversation.endSession();
+    setInput("");
+  }, [conversation, input]);
 
-
+  // UI helpers
   const getStatusText = () => {
-
-    if (conversation.status === "connecting")
-      return "Connecting…";
-
-    if (conversation.isSpeaking)
-      return "AI speaking…";
-
-    if (conversation.status === "connected")
-      return "Listening…";
-
+    if (conversation.status === "connecting") return "Connecting…";
+    if (conversation.isSpeaking) return "AI speaking…";
+    if (conversation.status === "connected") return "Listening…";
     return "Ready";
   };
-
 
   const isActive =
     conversation.status === "connected" ||
     conversation.status === "connecting";
 
-
   return (
-
     <ConversationContext.Provider value={conversation}>
-
       {children}
 
-
+      {/* mic button */}
       <Fab
         onClick={startConversation}
-        color="primary"
         sx={{
           position: "fixed",
           bottom: 24,
           right: 24,
-          zIndex: 1200
+          background:
+            "linear-gradient(135deg, rgb(12,216,199), rgb(8,170,160))",
+          boxShadow: "0 12px 30px rgba(12,216,199,0.4)",
+          zIndex: 1200,
         }}
       >
         <MicIcon />
       </Fab>
 
-
+      {/* assistant panel */}
       <Fade in={isActive}>
-
         <Paper
-          elevation={6}
+          elevation={8}
           sx={{
             position: "fixed",
             bottom: 24,
             left: "50%",
             transform: "translateX(-50%)",
-
-            px: 2,
-            py: 1.5,
-
+            width: 600,
+            maxWidth: "94vw",
             borderRadius: 3,
-
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-
-            width: 420,
-            maxWidth: "90vw",
-
-            bgcolor: "background.paper",
-
-            zIndex: 1200
+            backdropFilter: "blur(16px)",
+            background: "rgba(15,18,24,0.9)",
+            border: "1px solid rgba(255,255,255,0.05)",
+            overflow: "hidden",
+            zIndex: 1200,
           }}
         >
+          <Stack spacing={1.5} p={1.5}>
+            {/* status row */}
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Stack direction="row" spacing={1.2} alignItems="center">
+                {conversation.isSpeaking ? (
+                  <GraphicEqIcon sx={{ color: "rgb(12,216,199)" }} />
+                ) : (
+                  <MicIcon sx={{ color: "rgb(12,216,199)" }} />
+                )}
 
-          <Stack direction="row" spacing={1.5} alignItems="center">
+                <Typography
+                  variant="body2"
+                  sx={{ color: "rgba(255,255,255,0.7)" }}
+                >
+                  {getStatusText()}
+                </Typography>
+              </Stack>
 
-            {conversation.isSpeaking
-              ? <GraphicEqIcon color="primary" />
-              : <MicIcon color="primary" />
-            }
+              <IconButton onClick={stopConversation} size="small">
+                <StopIcon />
+              </IconButton>
+            </Stack>
 
-            <Typography variant="body2">
-              {getStatusText()}
-            </Typography>
+            {/* text input */}
+            <Stack direction="row" spacing={1}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder="Type a message…"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                    color: "white",
+                    background: "rgba(255,255,255,0.03)",
+                  },
+                }}
+              />
 
+              <IconButton
+                onClick={sendMessage}
+                sx={{
+                  background:
+                    "linear-gradient(135deg, rgb(12,216,199), rgb(8,170,160))",
+                  color: "white",
+                  "&:hover": {
+                    background:
+                      "linear-gradient(135deg, rgb(12,216,199), rgb(8,170,160))",
+                  },
+                }}
+              >
+                <SendIcon />
+              </IconButton>
+            </Stack>
           </Stack>
-
-
-          <IconButton
-            onClick={stopConversation}
-            size="small"
-            color="inherit"
-          >
-            <StopIcon />
-          </IconButton>
-
         </Paper>
-
       </Fade>
-
     </ConversationContext.Provider>
-
   );
-
 }
