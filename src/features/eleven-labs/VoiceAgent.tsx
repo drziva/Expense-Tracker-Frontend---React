@@ -38,20 +38,47 @@ export default function VoiceAssistant({ children }: any) {
   // ElevenLabs client tools
   const clientTools = useMemo(
     () => ({
+
       navigate: async (parameters: { route?: string }) => {
-        console.log("CLIENT TOOL:", parameters);
 
         const route = parameters?.route;
 
-        if (!route || typeof route !== "string") {
-          console.error("Invalid route:", parameters);
-          return "Navigation failed";
-        }
+        if (!route) return;
 
         navigate(route);
 
-        return `Navigated to ${route}`;
+        return `navigated to ${route}`;
       },
+
+      onboarding_next: async () => {
+
+        window.dispatchEvent(
+          new Event("onboarding_next")
+        );
+
+        return "moved to next onboarding step";
+      },
+
+
+      onboarding_prev: async () => {
+
+        window.dispatchEvent(
+          new Event("onboarding_prev")
+        );
+
+        return "moved to previous onboarding step";
+      },
+
+
+      onboarding_finish: async () => {
+
+        window.dispatchEvent(
+          new Event("onboarding_finish")
+        );
+
+        return "finished onboarding";
+      }
+
     }),
     [navigate]
   );
@@ -133,7 +160,7 @@ export default function VoiceAssistant({ children }: any) {
           background:
             "linear-gradient(135deg, rgb(12,216,199), rgb(8,170,160))",
           boxShadow: "0 12px 30px rgba(12,216,199,0.4)",
-          zIndex: 1200,
+          zIndex: 124400,
         }}
       >
         <MicIcon />
@@ -186,7 +213,7 @@ export default function VoiceAssistant({ children }: any) {
             </Stack>
 
             {/* text input */}
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} zIndex={149992}>
               <TextField
                 fullWidth
                 size="small"

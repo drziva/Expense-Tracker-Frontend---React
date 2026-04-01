@@ -6,6 +6,7 @@ import ProtectedRoute from "@/app/routes/ProtectedRoute";
 import AppLayout from "@/app/layout/AppLayout";
 import { ReportsPage } from "@/features/reports/ReportsPage";
 import OnboardingWelcome from "@/features/onboarding/pages/OnboardingWelcome";
+import DemoDashboardPage from "@/features/eleven-labs/demo-pages/DemoDashboardPage";
 
 const DashboardPage = lazy(() => import("@/features/dashboard/DashboardPage"));
 const ExpensesPage = lazy(() => import("@/features/expenses/ExpensesPage"));
@@ -22,7 +23,12 @@ export default function AppRoutes() {
       <Route path="/signup" element={<SignUpPage/>}/>
 
       
-      <Route path="onboarding" element={<OnboardingWelcome/>} />
+      <Route path="onboarding">
+        <Route path="dashboard" element={<DemoDashboardPage />} />
+        {/* <Route path="incomes" element={<DemoIncomesPage />} />
+        <Route path="expenses" element={<DemoExpensesPage />} />
+        <Route path="complete" element={<OnboardingCompletePage />} /> */}
+      </Route>
 
       <Route element={<ProtectedRoute/>}>
         <Route path="/app" element={<AppLayout/>}>
